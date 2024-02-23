@@ -1,0 +1,23 @@
+.container{
+    width:100%;
+}
+
+img{
+    width: fit-content;
+}
+
+.bottom-container{
+    background-color: #999797;
+}
+
+button{
+    background-color: #9E2222;
+}
+
+
+button:focus {
+    outline-color: transparent;
+    outline-style:solid;
+    box-shadow: 0 0 0 2px #9E2222;
+    transition: 0.7s;
+}
