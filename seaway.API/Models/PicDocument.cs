@@ -7,7 +7,6 @@
         public string? PicType { get; set;}
         public string? PicName { get; set;}
         public string? PicValue { get; set;}
-        public bool? IsActive { get; set; }
 
     }
 }

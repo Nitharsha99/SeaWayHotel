@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="XMLFile\" />
+    <Folder Include="wwwroot\Uploads\" />
+    <Folder Include="wwwroot\XMLFile\" />
   </ItemGroup>
 
 </Project>

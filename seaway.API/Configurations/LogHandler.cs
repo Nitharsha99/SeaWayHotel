@@ -24,12 +24,10 @@ namespace seaway.API.Configurations
 
                 MegaLogData log = new MegaLogData
                 {
-                    RequestContentType = request?.Content?.Headers.ContentType?.ToString(),
                     RequestMethod = request?.Method.Method,
                     RequestUrl = request?.RequestUri?.AbsoluteUri,
                     RequestBody = requestBody,
                     RequestTimestamp = DateTime.Now,
-                    ResponseContentType = response?.Content?.Headers.ContentType?.ToString(),
                     ResponseStatusCode = (HttpStatusCode)response?.StatusCode,
                     ResponseTimestamp = DateTime.Now,
                     content = responseBody

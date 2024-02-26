@@ -4,6 +4,7 @@ using seaway.API.Models;
 using seaway.API.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection;
 
 namespace seaway.API.Manager
 {
@@ -44,7 +45,7 @@ namespace seaway.API.Manager
                         {
                             ActivityName = row["Name"].ToString(),
                             Description = row["Description"].ToString(),
-                            Pics = Convert.ToBase64String(Pics),
+                        //    Pics = Convert.ToBase64String(Pics),
                             ActivityIsActive = Convert.ToBoolean(row["IsActive"])
                         });
                     }
@@ -61,8 +62,34 @@ namespace seaway.API.Manager
             }
         }
 
-        //public ActivityWithPicModel PostActivity()
+        //public ActivityWithPicModel PostActivity(ActivityWithPicModel activity)
         //{
+        //    try
+        //    {
+        //        using(SqlConnection _con = new SqlConnection(this._conString))
+        //        {
+        //            using(SqlCommand command = new SqlCommand("InsertActivityWithPic", _con))
+        //            {
+        //                command.CommandType = CommandType.StoredProcedure;
+
+        //                command.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
+        //                command.Parameters.AddWithValue("@ActivityDescription", activity.Description);
+        //                command.Parameters.AddWithValue("@IsActive", activity.ActivityIsActive);
+        //                command.Parameters.AddWithValue("@PicType", activity.PicType);
+        //                command.Parameters.AddWithValue("@PicName", activity.PicName);
+        //                command.Parameters.AddWithValue("@PicValue", activity.PicValue);
+
+
+        //                _con.Open();
+        //                command.ExecuteNonQuery();
+
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //    }
 
         //}
     }
