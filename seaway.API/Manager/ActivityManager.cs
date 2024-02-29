@@ -46,7 +46,7 @@ namespace seaway.API.Manager
                             ActivityName = row["Name"].ToString(),
                             Description = row["Description"].ToString(),
                         //    Pics = Convert.ToBase64String(Pics),
-                            ActivityIsActive = Convert.ToBoolean(row["IsActive"])
+                            //ActivityIsActive = Convert.ToBoolean(row["IsActive"])
                         });
                     }
 
@@ -62,35 +62,43 @@ namespace seaway.API.Manager
             }
         }
 
-        //public ActivityWithPicModel PostActivity(ActivityWithPicModel activity)
-        //{
-        //    try
-        //    {
-        //        using(SqlConnection _con = new SqlConnection(this._conString))
-        //        {
-        //            using(SqlCommand command = new SqlCommand("InsertActivityWithPic", _con))
-        //            {
-        //                command.CommandType = CommandType.StoredProcedure;
+        public int PostActivity(Activity activity)
+        {
+            try
+            {
+                int activityId = 0;
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand command = new SqlCommand("InsertActivityWithPic", _con))
+                    {
+                        _con.Open();
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Clear();
 
-        //                command.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
-        //                command.Parameters.AddWithValue("@ActivityDescription", activity.Description);
-        //                command.Parameters.AddWithValue("@IsActive", activity.ActivityIsActive);
-        //                command.Parameters.AddWithValue("@PicType", activity.PicType);
-        //                command.Parameters.AddWithValue("@PicName", activity.PicName);
-        //                command.Parameters.AddWithValue("@PicValue", activity.PicValue);
+                        int active = (bool)activity.IsActive ? 1 : 0;
 
+                        command.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
+                        command.Parameters.AddWithValue("@ActivityDescription", activity.Description);
+                        command.Parameters.AddWithValue("@IsActive", active);
 
-        //                _con.Open();
-        //                command.ExecuteNonQuery();
+                        activityId = (int)command.ExecuteScalar();
+                        
 
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
+                        //activityId = Convert.ToInt32(outputIdParam.Value);
 
-        //    }
+                    }
+                }
 
-        //}
+                _logger.LogTrace("Get Activity Id --> " + activityId);
+
+                return activityId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning at Post Activity : " + ex.Message);
+                throw;
+            }
+
+        }
     }
 }

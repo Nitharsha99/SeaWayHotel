@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
@@ -14,39 +15,67 @@ namespace seaway.API.Controllers
     public class ActivityController : ControllerBase
     {
 
-        //private readonly ILogger<LogHandler> _logger;
+        private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         public readonly IWebHostEnvironment _environment;
-        //LogHandler _log;
-        //ActivityManager _activityManager;
-        PicDocumentManager _documentManager;
+        LogHandler _log;
+        ActivityManager _activityManager;
+        private readonly PicDocumentManager _documentManager;
 
-        public ActivityController( IConfiguration configuration,   IWebHostEnvironment environment, PicDocumentManager documentManager)
+        public ActivityController( IConfiguration configuration,   IWebHostEnvironment environment, PicDocumentManager documentManager, ActivityManager activityManager, LogHandler log, ILogger<LogHandler> logger)
         {
-            //_logger = logger;
+            _logger = logger;
             _configuration = configuration;
             _environment = environment;
-            //_log = log;
-            //_activityManager = activityManager;
+            _log = log;
+            _activityManager = activityManager;
             _documentManager = documentManager;
         }
 
+        [Route("")]
         [HttpPost]
-        public async Task<IActionResult> PostActivity(ActivityWithPicModel activity)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult PostActivity(ActivityWithPicModel activity)
         {
             try
             {
-                Activity act= new Activity();
-                PicDocument pic= new PicDocument();
+                if (activity != null)
+                {
+                    Activity act = new Activity();
+                    act.ActivityName = activity.ActivityName;
+                    act.IsActive = activity.ActivityIsActive;
+                    act.Description = activity.Description;
 
+                    int actId = _activityManager.PostActivity(act);
 
+                    PicDocument pic = new PicDocument();
+                    pic.PicType = "Activity";
+                    pic.PicTypeId = actId;
 
-              
+                    if (activity.PicValue != null)
+                    {
+                        foreach (var value in activity.PicValue)
+                        {
+                            pic.PicName = Path.GetFileName(value);
+                            pic.PicValue = value;
+                            _documentManager.UploadImage(pic);
+                        }
+                    }
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(activity);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                }
+
                 return Ok(activity);
+
             }
             catch (Exception ex)
             {
-                //_logger.LogError("An exception occurred while retrieving admins : " + ex.Message);
+                _logger.LogError("An exception occurred while inserting activity data : " + ex.Message);
                 return BadRequest(ex.Message);
             }
 

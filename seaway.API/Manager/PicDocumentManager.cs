@@ -3,6 +3,7 @@ using seaway.API.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System;
 
 namespace seaway.API.Manager
 {
@@ -12,11 +13,11 @@ namespace seaway.API.Manager
         private readonly IConfiguration _configuration;
         string _conString;
 
-        public PicDocumentManager(ILogger<LogHandler> logger, IConfiguration configuration, string conString)
+        public PicDocumentManager(ILogger<LogHandler> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
-            _conString = conString;
+            _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
         public async void UploadImage(PicDocument pic)
@@ -40,15 +41,15 @@ namespace seaway.API.Manager
                             using (MemoryStream stream = new MemoryStream(fileBytes))
                             {
 
-                                string sql = "Insert into PicDocuments(PicTypeId, PicType, Name, Value, InsertedTime) Values(@TypeId, @Type, @Name, @Value, GETDATE())";
+                                //string sql = "Insert into PicDocuments(PicTypeId, PicType, Name, Value, InsertedTime) Values(@TypeId, @Type, @Name, @Value, GETDATE())";
                                 using (SqlCommand command = new SqlCommand("UploadImage", _con, transaction))
                                 {
                                     command.CommandType = CommandType.StoredProcedure;
 
-                                    command.Parameters.AddWithValue("@TypeId", pic.PicTypeId);
-                                    command.Parameters.AddWithValue("@Type", pic.PicType);
-                                    command.Parameters.AddWithValue("@Name", pic.PicName);
-                                    command.Parameters.AddWithValue("@Value", stream.ToArray());
+                                    command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
+                                    command.Parameters.AddWithValue("@PicType", pic.PicType);
+                                    command.Parameters.AddWithValue("@PicName", pic.PicName);
+                                    command.Parameters.AddWithValue("@PicValue", stream.ToArray());
                                     await command.ExecuteNonQueryAsync();
                                 }
 
@@ -61,7 +62,7 @@ namespace seaway.API.Manager
 
                 }
 
-                _logger.LogTrace("Sucessfully Upload" + pic.PicName + " Image ");
+                _logger.LogTrace("Sucessfully Upload" + pic?.PicName + " Image ");
             }
             catch(Exception ex) 
             {

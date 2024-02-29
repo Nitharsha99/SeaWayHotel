@@ -19,8 +19,8 @@ namespace seaway.API.Configurations
         {
             try
             {
-                string requestBody = request.Content != null ? request.Content.ReadAsStringAsync().Result : null;
-                string responseBody = response.Content != null ? response.Content.ReadAsStringAsync().Result : null;
+                string? requestBody = request.Content != null ? request.Content.ReadAsStringAsync().Result : null;
+                string? responseBody = response.Content != null ? response.Content.ReadAsStringAsync().Result : null;
 
                 MegaLogData log = new MegaLogData
                 {
@@ -28,7 +28,7 @@ namespace seaway.API.Configurations
                     RequestUrl = request?.RequestUri?.AbsoluteUri,
                     RequestBody = requestBody,
                     RequestTimestamp = DateTime.Now,
-                    ResponseStatusCode = (HttpStatusCode)response?.StatusCode,
+                    ResponseStatusCode = (HttpStatusCode)response.StatusCode,
                     ResponseTimestamp = DateTime.Now,
                     content = responseBody
 

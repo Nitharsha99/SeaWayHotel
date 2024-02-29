@@ -6,6 +6,6 @@
         public string? ActivityName { get; set; }
         public string? Description { get; set; }
         public List<PicDocument>? ActivityPics { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }
