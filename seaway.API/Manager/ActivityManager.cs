@@ -5,6 +5,9 @@ using seaway.API.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
+using System.Text;
+using System.Drawing;
+using System.IO;
 
 namespace seaway.API.Manager
 {
@@ -20,35 +23,65 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<ActivityWithPicModel> GetActivities()
+        public List<Activity> GetActivities()
         {
             try
             {
-                List<ActivityWithPicModel> list = new List<ActivityWithPicModel>();
+                List<Activity> list = new List<Activity>();
 
                 using(SqlConnection _con = new SqlConnection(this._conString))
                 {
                     SqlCommand command = _con.CreateCommand();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "AllAdmin";                                   //TODO: change SP name
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dt = new DataTable();
+                    command.CommandText = "GetAllActivities";                                  
 
                     _con.Open();
-                    adapter.Fill(dt);
-                    _con.Close();
 
-                    foreach (DataRow row in dt.Rows)
+                    using(SqlDataReader reader = command.ExecuteReader())
                     {
-                        byte[] Pics = (byte[])row["Picture"];
-                        list.Add(new ActivityWithPicModel
+                        while(reader.Read())
                         {
-                            ActivityName = row["Name"].ToString(),
-                            Description = row["Description"].ToString(),
-                        //    Pics = Convert.ToBase64String(Pics),
-                            //ActivityIsActive = Convert.ToBoolean(row["IsActive"])
-                        });
+                            Activity activity = new Activity
+                            {
+                                ActivityId = (int)reader["ActivityId"],
+                                ActivityName = reader["Name"].ToString(),
+                                Description = reader["Description"].ToString(),
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
+                            };
+
+                            if (reader["PicName"] != DBNull.Value)
+                            {
+                                byte[] picValueInByte = (byte[])reader["PicValue"];
+                                string val = Convert.ToBase64String(picValueInByte);
+
+                                //using (MemoryStream ms = new MemoryStream(picValueInByte))
+                                //{
+                                //    System.Drawing.Image image = Image.FromStream(ms);
+                                //}
+
+                                PicDocument document = new PicDocument
+                                {
+                                    PicName = reader["PicName"].ToString(),
+                                    PicType = reader["PicType"].ToString(),
+                                    //PicValue = val
+                                    //PicValueInByte = picValueInByte,
+                                   
+                                };
+
+                                if(activity.ActivityPics == null)
+                                {
+                                    activity.ActivityPics = new List<PicDocument>();
+                                }
+
+                                activity.ActivityPics.Add(document);
+
+                            }
+
+                            list.Add(activity);
+                        }
                     }
+
+                    _con.Close();
 
                     _logger.LogTrace("SuccessFully All Activity Data retrieved");
 
@@ -57,7 +90,7 @@ namespace seaway.API.Manager
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Warning -- " + ex.Message);
+                _logger.LogWarning(" Warning -- " + ex.Message);
                 throw;
             }
         }

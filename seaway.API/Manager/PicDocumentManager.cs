@@ -27,10 +27,10 @@ namespace seaway.API.Manager
                 if (pic != null)
                 {
                     byte[] fileBytes = null;
-                    if (System.IO.File.Exists(pic.PicValue))
-                    {
-                        fileBytes = await System.IO.File.ReadAllBytesAsync(pic.PicValue);
-                    }
+                    //if (System.IO.File.Exists(pic.PicValue))
+                    //{
+                    //    fileBytes = await System.IO.File.ReadAllBytesAsync(pic.PicValue);
+                    //}
 
                     using (SqlConnection _con = new SqlConnection(this._conString))
                     {
@@ -49,7 +49,7 @@ namespace seaway.API.Manager
                                     command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
                                     command.Parameters.AddWithValue("@PicType", pic.PicType);
                                     command.Parameters.AddWithValue("@PicName", pic.PicName);
-                                    command.Parameters.AddWithValue("@PicValue", stream.ToArray());
+                                    //command.Parameters.AddWithValue("@PicValue", stream.ToArray());
                                     await command.ExecuteNonQueryAsync();
                                 }
 

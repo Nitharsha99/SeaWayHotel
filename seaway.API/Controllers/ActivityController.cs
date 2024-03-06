@@ -33,10 +33,61 @@ namespace seaway.API.Controllers
         }
 
         [Route("")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetAllActivities()
+        {
+            try
+            {
+                List<Activity> activities = _activityManager.GetActivities();
+
+                string responseBody = JsonConvert.SerializeObject(activities);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                return Ok(activities);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while get all activities data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("file")]
+        public IActionResult UploadFile([FromForm]PicDocument pic)
+        {
+            try
+            {
+                if(pic.PicName != null && pic.PicValue != null)
+                {
+                    string path = Path.Combine(@"D:\\SeaWayHotel\\seaway.Web\\src\\assets\\images", pic.PicName);
+
+                    using(Stream stream = new FileStream(path, FileMode.Create))
+                    {
+                        pic?.PicValue?.CopyTo(stream);
+                    }
+
+                }
+                
+                return Ok(pic);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostActivity(ActivityWithPicModel activity)
+        public IActionResult PostActivity([FromForm]ActivityWithPicModel activity)
         {
             try
             {
@@ -58,7 +109,7 @@ namespace seaway.API.Controllers
                         foreach (var value in activity.PicValue)
                         {
                             pic.PicName = Path.GetFileName(value);
-                            pic.PicValue = value;
+                            //pic.PicValue = value;
                             _documentManager.UploadImage(pic);
                         }
                     }
@@ -80,19 +131,6 @@ namespace seaway.API.Controllers
             }
 
         }
-
-        //[HttpPost]
-        //public IActionResult PostActivities() 
-        //{
-        //    try
-        //    {
-        //        return;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest();
-        //    }
-        //} 
 
     }
 }
