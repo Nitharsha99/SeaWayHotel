@@ -22,6 +22,8 @@ try
     builder.Services.AddScoped<ActivityManager>();
     builder.Services.AddScoped<LoginManager>();
     builder.Services.AddScoped<LogHandler>();
+    builder.Services.AddScoped<CustomerManager>();
+    builder.Services.AddScoped<RoomManager>();
 
     builder.Services.AddSingleton(provider =>
     {

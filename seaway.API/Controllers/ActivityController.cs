@@ -108,7 +108,7 @@ namespace seaway.API.Controllers
                     {
                         foreach (var value in activity.PicValue)
                         {
-                            pic.PicName = Path.GetFileName(value);
+                            //pic.PicName = Path.GetFileName(value);
                             //pic.PicValue = value;
                             _documentManager.UploadImage(pic);
                         }
