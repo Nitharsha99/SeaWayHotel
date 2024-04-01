@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using seaway.API.Configurations;
@@ -78,6 +79,32 @@ namespace seaway.API.Controllers
 
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("convert")]
+        public IActionResult ConvertHexa([FromForm] string hexaValue)
+        {
+
+            byte[] convertValue = _activityManager.HexStringToHex(hexaValue);
+            var base64 = Convert.ToBase64String(convertValue);
+
+            return Ok(base64);
+        }
+
+        [HttpDelete]
+        [Route("image")]
+        public IActionResult DeleteAsset([FromForm]List<string> ids)
+        {
+            try
+            {
+                _documentManager.DeleteAssetFromCloudinary(ids);
+                return Ok(ids);
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

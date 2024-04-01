@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using seaway.API.Configurations;
+using Microsoft.Extensions.Options;
+using seaway.API.Models;
+using Microsoft.Extensions.Configuration;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -24,6 +27,12 @@ try
     builder.Services.AddScoped<LogHandler>();
     builder.Services.AddScoped<CustomerManager>();
     builder.Services.AddScoped<RoomManager>();
+
+    // Load configuration from appsettings.xml
+    //builder.Configuration.AddXmlFile("appsettings.xml", optional: true, reloadOnChange: true);
+
+    //builder.Services.Configure<Appsettings>(builder.Configuration.GetSection("Appsettings"));
+
 
     builder.Services.AddSingleton(provider =>
     {

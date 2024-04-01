@@ -23,6 +23,35 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
+        public byte[] HexStringToHex(string hexString)
+        {
+            if (string.IsNullOrEmpty(hexString))
+            {
+                throw new ArgumentException("Input hexadecimal string is null or empty.");
+            }
+
+            // Remove '0x' prefix if present
+            if (hexString.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                hexString = hexString.Substring(2);
+            }
+
+            // Check if hexString length is even
+            if (hexString.Length % 2 != 0)
+            {
+                throw new ArgumentException("Input hexadecimal string length is not even.");
+            }
+
+            // Convert hexadecimal string to byte array
+            byte[] byteArray = new byte[hexString.Length / 2];
+            for (int i = 0; i < byteArray.Length; i++)
+            {
+                byteArray[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+            }
+
+            return byteArray;
+        }
+
         public List<Activity> GetActivities()
         {
             try
@@ -133,5 +162,6 @@ namespace seaway.API.Manager
             }
 
         }
+
     }
 }

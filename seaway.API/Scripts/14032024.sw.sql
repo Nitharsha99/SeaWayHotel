@@ -1,3 +1,10 @@
+IF NOT EXISTS(SELECT * from INFORMATION_SCHEMA.columns where table_name = 'Room' and column_name = 'RoomName')
+BEGIN
+ALTER TABLE Room
+ADD RoomName VARCHAR(250) NOT null
+END
+GO
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE id = object_id(N'[dbo].[InsertNewRoom]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
 BEGIN
 	DROP PROCEDURE InsertNewRoom
@@ -19,12 +26,12 @@ CREATE PROCEDURE InsertNewRoom
 	@roomName NVARCHAR(250),
 	@guestCountMax INT,
 	@price DECIMAL(18, 2),
-	@discountPercentage DECIMAL(18,2),
+	@discountPercentage DECIMAL(18,2) = null,
 	@isActive BIT
 AS
 BEGIN
 	
-	DECLARE @discountPrice DECIMAL(18,2);
+	DECLARE @discountPrice DECIMAL(18,2) = null;
 
 	IF NOT EXISTS(SELECT 1 FROM Room WHERE RoomName = @roomName AND IsActive = @isActive)
 	BEGIN
