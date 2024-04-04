@@ -97,37 +97,5 @@ namespace seaway.API.Manager
             Console.WriteLine(result.JsonObj);
         }
 
-
-        //[Obsolete]
-        //public ImageUploadResponse UploadImageToCloudinary(IFormFile file)
-        //{
-        //    try
-        //    {
-        //        if (file == null || file.Length == 0)
-        //        {
-        //            throw new ArgumentException("File is not provided or is empty.");
-        //        }
-
-        //        using (var stream = file.OpenReadStream())
-        //        {
-        //            var uploadParams = new ImageUploadParams
-        //            {
-        //                File = new FileDescription(file.FileName, stream)
-        //            };
-
-        //            var uploadResult = _cloudinary.Upload(uploadParams);
-
-        //            return new ImageUploadResponse
-        //            {
-        //                PublicId = uploadResult.PublicId,
-        //                Url = uploadResult.SecureUri.AbsoluteUri
-        //            };
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
     }
 }

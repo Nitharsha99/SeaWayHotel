@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CloudinaryService } from 'src/app/Services/cloudinary.service';
+import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary.service';
 import { Buffer } from 'buffer';
 
 @Component({

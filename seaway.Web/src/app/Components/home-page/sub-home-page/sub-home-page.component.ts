@@ -1,6 +1,6 @@
 import { Component, OnInit, SecurityContext } from '@angular/core';
 import { Activity } from 'src/app/Models/activity';
-import { ActivityService } from 'src/app/Services/activity.service';
+import { ActivityService } from '../../../Services/ActivityService/activity.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({

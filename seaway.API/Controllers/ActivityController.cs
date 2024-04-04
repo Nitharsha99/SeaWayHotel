@@ -58,43 +58,6 @@ namespace seaway.API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("file")]
-        public IActionResult UploadFile([FromForm]PicDocument pic)
-        {
-            try
-            {
-                if(pic.PicName != null && pic.PicValue != null)
-                {
-                    string path = Path.Combine(@"D:\\SeaWayHotel\\seaway.Web\\src\\assets\\images", pic.PicName);
-
-                    using(Stream stream = new FileStream(path, FileMode.Create))
-                    {
-                        pic?.PicValue?.CopyTo(stream);
-                    }
-
-                }
-                
-                return Ok(pic);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost]
-        [Route("convert")]
-        public IActionResult ConvertHexa([FromForm] string hexaValue)
-        {
-
-            byte[] convertValue = _activityManager.HexStringToHex(hexaValue);
-            var base64 = Convert.ToBase64String(convertValue);
-
-            return Ok(base64);
-        }
-
         [HttpDelete]
         [Route("image")]
         public IActionResult DeleteAsset([FromForm]List<string> ids)

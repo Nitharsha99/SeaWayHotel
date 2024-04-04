@@ -25,6 +25,31 @@ namespace seaway.API.Controllers
             _roomManager = roomManager;
         }
 
+        [Route("")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetAllRooms()
+        {
+            try
+            {
+                List<Room> rooms = _roomManager.GetRooms();
+
+                string responseBody = JsonConvert.SerializeObject(rooms);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while get all room data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
