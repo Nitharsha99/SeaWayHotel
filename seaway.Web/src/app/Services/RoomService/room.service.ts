@@ -10,9 +10,9 @@ export class RoomService {
 
   constructor(private http: HttpClient) { }
 
-  baseUrl = "https://localhost:44353/api/Activity";
+  baseUrl = "https://localhost:44353/api/Room";
 
-  GetAllRooms(): Observable<Room>{
-    return this.http.get<Room>(this.baseUrl);
+  GetAllRooms(): Observable<Room[]>{
+    return this.http.get<Room[]>(this.baseUrl);
   }
 }

@@ -16,6 +16,8 @@ import { MainAdminPageComponent } from './Components/Admin/main-admin-page/main-
 import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
 import { ActivitiesComponent } from './Components/Admin/activities/activities.component';
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
+import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
+import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.com
     MainAdminPageComponent,
     RoomsComponent,
     ActivitiesComponent,
-    AdminMainComponent
+    AdminMainComponent,
+    AddRoomComponent,
+    AllRoomsComponent
   ],
   imports: [
     BrowserModule,

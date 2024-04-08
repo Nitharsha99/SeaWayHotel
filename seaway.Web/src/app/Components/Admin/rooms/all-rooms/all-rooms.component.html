@@ -1,0 +1,51 @@
+<div> 
+    <div class="mt-3 mx-3" >
+        <div class="row">
+            <div class="col-10">
+                <h2>Room List</h2>
+            </div>
+            <div class="col-2 mt-1" style="text-align: center;">
+                <button type="button" class="btn btn-primary" (click)="navigateToNewRoom()">+ New</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <div>
+        <table class="table table-striped mx-3 my-3 mt-4">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-white">Id</th>
+                    <th scope="col" class="text-white">Room Name</th>
+                    <th scope="col" class="text-white">Guests(Max)</th>
+                    <th scope="col" class="text-white">PricePerRoom</th>
+                    <th scope="col" class="text-white">Discount(%)</th>
+                    <th scope="col" class="text-white">Discount(LKR)</th>
+                    <th scope="col" class="text-white">Edit</th>
+                    <th scope="col" class="text-white">Delete</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let room of rooms">
+                    <td>{{room.roomId}}</td>
+                    <td>{{room.roomName}}</td>
+                    <td>{{room.guestCountMax}}</td>
+                    <td>{{room.price | currency: 'LKR'}}</td>
+                    <td>{{room.discountPercentage}}</td>
+                    <td>{{room.discountAmount | currency: 'LKR'}}</td>
+                    <td>
+                        <button type="button" class="btn">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
