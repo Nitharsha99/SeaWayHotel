@@ -15,4 +15,9 @@ export class RoomService {
   GetAllRooms(): Observable<Room[]>{
     return this.http.get<Room[]>(this.baseUrl);
   }
+
+  PostRoom(data: any): Observable<any>{
+    console.log("save data", data);
+    return this.http.post<any>(this.baseUrl, data);
+  }
 }

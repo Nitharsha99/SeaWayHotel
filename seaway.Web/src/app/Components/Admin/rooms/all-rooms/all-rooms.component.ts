@@ -25,4 +25,8 @@ export class AllRoomsComponent implements OnInit{
   navigateToNewRoom(){
     this.router.navigate(['addRoom'], {relativeTo: this.route});
   }
+
+  navigateToUpdate(){}
+
+  deleteRoom(){}
 }

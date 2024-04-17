@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-rooms',
-  templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.css']
+  templateUrl: './rooms.component.html'
 })
 export class RoomsComponent{
 

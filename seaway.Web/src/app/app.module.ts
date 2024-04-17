@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +20,7 @@ import { ActivitiesComponent } from './Components/Admin/activities/activities.co
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
 import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,10 @@ import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

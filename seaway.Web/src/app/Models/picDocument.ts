@@ -1,4 +1,5 @@
 export interface PicDocument{
-    picType: string;
     picValue: string; 
+    picName: string;
+    publicId: string;
 }

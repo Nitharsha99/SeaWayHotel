@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using seaway.API.Models.ViewModels;
 using System.Diagnostics;
 
 namespace seaway.API.Controllers
@@ -16,13 +17,15 @@ namespace seaway.API.Controllers
         private readonly IConfiguration _configuration;
         LogHandler _log;
         RoomManager _roomManager;
+        PicDocumentManager _docManager;
 
-        public RoomController(ILogger<LogHandler> logger, IConfiguration configuration, LogHandler log, RoomManager roomManager)
+        public RoomController(ILogger<LogHandler> logger, IConfiguration configuration, LogHandler log, RoomManager roomManager, PicDocumentManager docManager)
         {
             _logger = logger;
             _configuration = configuration;
             _log = log;
             _roomManager = roomManager;
+            _docManager = docManager;
         }
 
         [Route("")]
@@ -54,13 +57,38 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostNewRoom([FromForm] Room room)
+        public IActionResult PostNewRoom(RoomWithPicModel room)
         {
             try
             {
                 if(room != null)
                 {
-                    _roomManager.NewRoom(room);
+                    Room r = new Room
+                    {
+                        RoomName = room.RoomName,
+                        GuestCountMax = room.GuestCountMax,
+                        Price = room.Price,
+                        DiscountPercentage = room.DiscountPercentage
+                    };
+                    int roomId = _roomManager.NewRoom(room);
+
+                    PicDocument pic = new PicDocument
+                    {
+                        PicType = "Room",
+                        PicTypeId = roomId
+                    };
+
+                    if(room?.roomPics?.Length > 0)
+                    {
+                        foreach(var item in room.roomPics)
+                        {
+                            pic.PicValue = item.PicValue;
+                            pic.PicName = item.PicName;
+                            pic.CloudinaryPublicId = item.PublicId;
+
+                            _docManager.UploadImage(pic);
+                        }
+                    }
 
                     string requestUrl = HttpContext.Request.Path.ToString();
                     string responseBody = JsonConvert.SerializeObject(room);

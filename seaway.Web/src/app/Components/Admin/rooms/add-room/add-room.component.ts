@@ -1,10 +1,188 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { RoomService } from 'src/app/Services/RoomService/room.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-room',
   templateUrl: './add-room.component.html',
   styleUrls: ['./add-room.component.css']
 })
-export class AddRoomComponent {
+export class AddRoomComponent implements OnInit{
+
+updateMode: boolean = false;
+files: File[] = [];
+picArrayLength: number = 0;
+
+
+  constructor(private cloudinaryService: CloudinaryService, private location: Location, 
+              private router: Router, private builder: FormBuilder,
+              private roomService: RoomService){}
+
+  roomForm: FormGroup = this.builder.group({
+    roomName: [''],
+    guestCountMax: [''],
+    price: [''],
+    discountPercentage: [''],
+    roomPics: this.builder.array([
+      this.builder.group({
+        picName: [null],
+        picValue: [null],
+        publicId: [null]
+       })
+    ])
+  }) 
+
+  ngOnInit(): void {
+  }
+
+  OnSelect(event: any){
+    console.log(event);
+    this.files.push(...event.addedFiles);
+  }
+
+  OnRemove(event: any){
+    this.files.splice(this.files.indexOf(event), 1);
+    console.log(this.files);
+  }
+
+ async UploadImage(){
+  const formValue = this.roomForm.value;
+  this.picArrayLength = this.files.length;
+  let count = 0;
+
+    for(let i = 0; i < this.files.length; i++){
+      const file_data = this.files[i];
+      const data = new FormData();
+      data.append('file', file_data);
+      data.append('upload_preset', 'seaway_hotel');
+      data.append('cloud_name', 'dly7yjg1w');
+
+      this.cloudinaryService.uploadImage(data).subscribe(res => {
+        console.log('i value', i);
+        const roomPicsArray = this.roomForm.get('roomPics') as FormArray;
+        while (roomPicsArray.length <= i) {
+          roomPicsArray.push(this.builder.group({
+            picName: [null],
+            picValue: [null],
+            publicId: [null]
+          }));
+        }
+
+        (roomPicsArray.at(i) as FormGroup).patchValue({
+          picName: res.original_filename + "." + res.format,
+          picValue: res.url,
+          publicId: res.public_id
+        });
+
+        formValue.roomPics = roomPicsArray.controls.map((control: AbstractControl<any>) => {
+          const formGroup = control as FormGroup;
+          return {
+            picName: formGroup.get('picName')?.value,
+            picValue: formGroup.get('picValue')?.value,
+            publicId: formGroup.get('publicId')?.value
+          };
+        });
+
+        count++;
+       
+        console.log("length", count, "jadh", this.picArrayLength);
+        if(count === this.picArrayLength){
+          console.log("auifhcyieaufajka");
+          Swal.close();
+          this.callRoomService();
+        }
+      })
+       this.showLoadingNotification();
+    }
+
+  }
+
+/****************Click Add or Update Button *********** */
+ addRoom(){
+  if(this.updateMode == false){
+    this.newRoom();
+  }
+  else{
+    this.updateRoom();
+  }
+ }
+
+ async newRoom(){
+  const formValue = this.roomForm.value;
+
+  if(formValue.discount == ""){
+    formValue.discount = 0;
+  }
+
+  if(!formValue.roomName || !formValue.guestCountMax || !formValue.price){
+    Swal.fire({
+      title: "Failed to save room!",
+      text: "Please fill all mandatory fields...",
+      icon: "error"
+    });
+  }
+  else{
+    if(this.files.length > 0){
+    this.UploadImage();
+    }
+    else{
+        this.callRoomService();
+    }
+  }
+    
+
+ }
+
+ callRoomService(){
+  const formValue = this.roomForm.value;
+  if(this.updateMode === false){
+    this.roomService.PostRoom(formValue).subscribe((res) => {
+      console.log('post result', res);
+      Swal.fire({
+        title: "Room Saved Successfully!!",
+        icon: "success"
+      });
+      this.files = [];
+      this.resetForm();
+     },
+     (error) =>{
+      Swal.fire({
+        title: "Error!",
+        text: error.message ,
+        icon: "error"
+      });
+     }
+    )
+  }else{
+    alert("no update");
+  }
+
+ }
+
+ updateRoom(){}
+
+ resetForm(){
+  this.roomForm.reset();
+  this.files = [];
+  console.log("resert");
+ }
+
+ redirectToBack(){
+   this.location.back();
+ }
+
+ showLoadingNotification() {
+  Swal.fire({
+    title: 'Loading...',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+}
 
 }

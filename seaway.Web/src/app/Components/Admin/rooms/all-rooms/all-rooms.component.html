@@ -11,7 +11,9 @@
         
     </div>
 
-    <div>
+    <div *ngIf="rooms.length == 0" class="mt-4 mb-5" style="text-align: center;"> <h3>There is no any Rooms now !!</h3></div>
+
+    <div *ngIf="rooms.length > 0">
         <table class="table table-striped mx-3 my-3 mt-4">
             <thead>
                 <tr>
@@ -31,16 +33,16 @@
                     <td>{{room.roomId}}</td>
                     <td>{{room.roomName}}</td>
                     <td>{{room.guestCountMax}}</td>
-                    <td>{{room.price | currency: 'LKR'}}</td>
+                    <td>{{room.price | currency: 'LKR' : 'Rs '}}</td>
                     <td>{{room.discountPercentage}}</td>
-                    <td>{{room.discountAmount | currency: 'LKR'}}</td>
+                    <td>{{room.discountAmount | currency: 'LKR' : 'Rs '}}</td>
                     <td>
-                        <button type="button" class="btn">
+                        <button type="button" class="btn" (click)="navigateToUpdate()">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn">
+                        <button type="button" class="btn" (click)="deleteRoom()">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </td>

@@ -1,1 +1,63 @@
-<p>add-room works!</p>
+<div>
+    <div class="mx-6 mt-2">
+        <h3>{{ updateMode ? 'Update Room' : 'Add Room'}}</h3>
+    </div>
+
+    <form [formGroup]="roomForm" (ngSubmit)="addRoom()">
+        <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
+            <div class="mb-3 row">
+                <label for="roomName" class="col-sm-2 col-form-label">Name<span>*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="guestCountMax" class="col-sm-2 col-form-label">Guest Count(Max)<span>*</span></label>
+                <div class="col-sm-9">
+                  <input type="number" class="form-control" id="guestCountMax" required placeholder="Maximum Guest Count" formControlName="guestCountMax" min="0">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="price" class="col-sm-2 col-form-label">Price<span>*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="price" required placeholder="Price Per Room" formControlName="price">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="discountPercentage" class="col-sm-2 col-form-label">Discount(%)</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="discountPercentage" placeholder="Discount" formControlName="discountPercentage">
+                </div>
+            </div>
+    
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label" for="selectImages">Upload Images</label>
+    
+                <div class="col-sm-9">
+                    <ngx-dropzone (change)="OnSelect($event)" class="upload-field">
+            
+                        <ngx-dropzone-label>Drag and Drop Images</ngx-dropzone-label>
+                
+                        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="OnRemove(file)">
+                            <div>{{file.name}}</div>
+                            <div>{{file.type}}</div>
+                            <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
+                        </ngx-dropzone-preview>
+                
+                    </ngx-dropzone>
+                </div>
+                <!-- <button>Upload</button> -->
+            </div>
+    
+            <div class="row">
+                <div class="col-2">
+                    <button style="margin-right: 15px;" type="button" class="btn btn-primary" (click)="addRoom()">{{updateMode ? 'Update' : 'Add'}}</button>
+                    <button *ngIf="updateMode == false" type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <button type="button" class="btn btn-dark" (click)="redirectToBack()">Back</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

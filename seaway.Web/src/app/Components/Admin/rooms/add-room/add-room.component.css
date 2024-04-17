@@ -1,0 +1,9 @@
+span{
+    color: red;
+}
+
+.upload-field {
+    border: 1px dotted #ccc; /* Light gray border */
+    border-radius: 5px; /* Optional: Rounded corners */
+    padding: 10px; /* Optional: Add padding for better appearance */
+}

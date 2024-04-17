@@ -1,5 +1,6 @@
 ﻿using seaway.API.Configurations;
 using seaway.API.Models;
+using seaway.API.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -102,10 +103,11 @@ namespace seaway.API.Manager
             }
         }
 
-        public void NewRoom(Room room)
+        public int NewRoom(RoomWithPicModel room)
         {
             try
             {
+                int roomId = 0;
                 using(SqlConnection con = new SqlConnection(this._conString))
                 {
                     using(SqlCommand cmd = new SqlCommand("InsertNewRoom", con))
@@ -117,13 +119,14 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@guestCountMax", room.GuestCountMax);
                         cmd.Parameters.AddWithValue("@price", room.Price);
                         cmd.Parameters.AddWithValue("@discountPercentage", room.DiscountPercentage);
-                        cmd.Parameters.AddWithValue("@isActive", room.IsActive);
 
-                        cmd.ExecuteNonQuery();
+                        roomId = (int)cmd.ExecuteScalar();
                     }
                 }
 
                 _logger.LogTrace("SuccessFully created new room");
+
+                return roomId;
             }
             catch(Exception ex)
             {

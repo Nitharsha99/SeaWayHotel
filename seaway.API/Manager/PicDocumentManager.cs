@@ -6,6 +6,8 @@ using System.IO;
 using System;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using System.Transactions;
+using System.Text;
 
 namespace seaway.API.Manager
 {
@@ -26,46 +28,30 @@ namespace seaway.API.Manager
            
         }
 
-        public async void UploadImage(PicDocument pic)
+        public void UploadImage(PicDocument pic)
         {
             try
             {
                 if (pic != null)
                 {
-                    byte[] fileBytes = null;
-                    //if (System.IO.File.Exists(pic.PicValue))
-                    //{
-                    //    fileBytes = await System.IO.File.ReadAllBytesAsync(pic.PicValue);
-                    //}
+                    byte[] picValueBytes = Encoding.UTF8.GetBytes(pic.PicValue);
 
                     using (SqlConnection _con = new SqlConnection(this._conString))
                     {
-                        await _con.OpenAsync();
-
-                        using (SqlTransaction transaction = _con.BeginTransaction())
+                        using(SqlCommand command = new SqlCommand("UploadImage", _con))
                         {
-                            using (MemoryStream stream = new MemoryStream(fileBytes))
-                            {
+                            _con.Open();
+                            command.CommandType = CommandType.StoredProcedure;
 
-                                //string sql = "Insert into PicDocuments(PicTypeId, PicType, Name, Value, InsertedTime) Values(@TypeId, @Type, @Name, @Value, GETDATE())";
-                                using (SqlCommand command = new SqlCommand("UploadImage", _con, transaction))
-                                {
-                                    command.CommandType = CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
+                            command.Parameters.AddWithValue("@PicType", pic.PicType);
+                            command.Parameters.AddWithValue("@PicName", pic.PicName);
+                            command.Parameters.AddWithValue("PicValue", picValueBytes);
+                            command.Parameters.AddWithValue("PublicId", pic.CloudinaryPublicId);
 
-                                    command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
-                                    command.Parameters.AddWithValue("@PicType", pic.PicType);
-                                    command.Parameters.AddWithValue("@PicName", pic.PicName);
-                                    //command.Parameters.AddWithValue("@PicValue", stream.ToArray());
-                                    await command.ExecuteNonQueryAsync();
-                                }
-
-                            }
-
-                            transaction.Commit();
+                            command.ExecuteNonQuery();
                         }
-
                     }
-
                 }
 
                 _logger.LogTrace("Sucessfully Upload" + pic?.PicName + " Image ");
