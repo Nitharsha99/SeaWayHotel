@@ -53,6 +53,30 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{roomId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult FindRoomById(int roomId)
+        {
+            try
+            {
+                List<Room> rooms = _roomManager.GetRoomById(roomId);
+
+                string responseBody = JsonConvert.SerializeObject(rooms);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+                return Ok(rooms);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("An exception occurred while get room data with Id = " + roomId + " : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -100,9 +124,31 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while inserting activity data : " + ex.Message);
+                _logger.LogError("An exception occurred while inserting room data : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpPut]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public IActionResult UpdateRoom(RoomWithPicModel room, int roomId)
+        //{
+        //    try
+        //    {
+        //        if((room != null) && (roomId != 0))
+        //        {
+                   
+        //        }
+
+        //        return Ok(room);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError("An exception occurred while updating room data : " + ex.Message);
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
     }
 }

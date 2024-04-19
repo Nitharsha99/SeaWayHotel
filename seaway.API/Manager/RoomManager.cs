@@ -24,7 +24,6 @@ namespace seaway.API.Manager
             try
             {
                 List<Room> roomList = new List<Room>();
-                List<PicDocument> pics = new List<PicDocument>();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
@@ -38,34 +37,28 @@ namespace seaway.API.Manager
                     {
                         while (reader.Read())
                         {
-                            var price = reader["Price"];
-                            var discountPer = reader["DiscountPercent"];
-                            if (reader["DiscountPercent"] == DBNull.Value)
+                            var roomId = (int)reader["RoomId"];
+                            Room room = roomList.FirstOrDefault(r => r.RoomId == roomId) ?? new Room();
+
+                            if (room.RoomId == null)
                             {
-                                discountPer = 0.0;
-                            }
-                            
-                            var discountAmount = reader["DiscountPrice"];
-                            if(reader["DiscountPrice"] == DBNull.Value)
-                            {
-                                discountAmount = 0.0;
+                                room = new Room
+                                {
+                                    RoomId = (int)reader["RoomId"],
+                                    RoomName = reader["RoomName"].ToString(),
+                                    GuestCountMax = (int)reader["CountOfMaxGuest"],
+                                    Price = Convert.ToDouble(reader["Price"]),
+                                    DiscountPercentage = reader["DiscountPercent"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercent"]),
+                                    DiscountAmount = reader["DiscountPrice"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPrice"]),
+                                };
+
+                                roomList.Add(room);
                             }
 
-                            Room room = new Room
-                            {
-                                RoomId = (int)reader["RoomId"],
-                                RoomName = reader["RoomName"].ToString(),
-                                GuestCountMax = (int)reader["CountOfMaxGuest"],
-                                Price = Convert.ToDouble(price),
-                                DiscountPercentage = Convert.ToDouble(discountPer),
-                                DiscountAmount = Convert.ToDouble(discountAmount)
-                            };
-
-                            if (reader["PicName"] != DBNull.Value)
+                            if (room.RoomId == (int)reader["PicTypeId"] && reader["PicName"] != DBNull.Value)
                             {
                                 byte[] picValueInByte = (byte[])reader["PicValue"];
                                 string val = Convert.ToBase64String(picValueInByte);
-
 
                                 PicDocument document = new PicDocument
                                 {
@@ -82,10 +75,7 @@ namespace seaway.API.Manager
                                 }
 
                                 room.RoomPics.Add(document);
-
                             }
-
-                            roomList.Add(room);
                         }
                     }
 
@@ -134,5 +124,96 @@ namespace seaway.API.Manager
                 throw;
             }
         }
+
+        public List<Room> GetRoomById(int roomId)
+        {
+            try
+            {
+                List<Room> roomList = new List<Room>();
+
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    _con.Open();
+                    using(var cmd = new SqlCommand("GetAllRoomsWithPicDetails", _con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@roomId", roomId);
+
+                        using(var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var Id = (int)reader["RoomId"];
+                                var type = reader["PicType"].ToString();
+                                var name = reader["PicName"].ToString();
+                                Room room = roomList.FirstOrDefault(r => r.RoomId == Id) ?? new Room();
+
+                                if (room.RoomId == null)
+                                {
+                                    room = new Room
+                                    {
+                                        RoomId = (int)reader["RoomId"],
+                                        RoomName = reader["RoomName"].ToString(),
+                                        GuestCountMax = (int)reader["CountOfMaxGuest"],
+                                        Price = Convert.ToDouble(reader["Price"]),
+                                        DiscountPercentage = reader["DiscountPercent"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercent"]),
+                                        DiscountAmount = reader["DiscountPrice"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPrice"]),
+                                    };
+
+                                    roomList.Add(room);
+                                }
+
+                                var pname = reader["PicName"].ToString();
+                                if (reader["PicName"] != DBNull.Value && room.RoomId == (int)reader["PicTypeId"])
+                                {
+                                    byte[] picValueInByte = (byte[])reader["PicValue"];
+                                    string val = Convert.ToBase64String(picValueInByte);
+
+                                    PicDocument document = new PicDocument
+                                    {
+                                        PicName = reader["PicName"].ToString(),
+                                        PicType = reader["PicType"].ToString(),
+                                        PicTypeId = (int)reader["PicTypeId"],
+                                        CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
+                                        PicValue = val
+                                    };
+
+                                    if (room.RoomPics == null)
+                                    {
+                                        room.RoomPics = new List<PicDocument>();
+                                    }
+
+                                    room.RoomPics.Add(document);
+                                }
+                            }
+                        }
+                    }
+
+                    _con.Close();
+                    _logger.LogTrace("SuccessFully All Room Data retrieved");
+
+                }
+                return roomList;
+            }
+            catch(Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                throw;
+            }
+        }
+
+        //public bool DeleteRoom(int roomId)
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch(Exception e)
+        //    {
+
+        //    }
+        //}
+
     }
 }

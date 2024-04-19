@@ -8,7 +8,6 @@
         public double? Price { get; set; }
         public double? DiscountPercentage { get; set; }
         public double? DiscountAmount { get; set; }
-        public bool? IsActive { get; set; }
         public List<PicDocument>? RoomPics { get; set; }
     }
 }
