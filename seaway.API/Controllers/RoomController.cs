@@ -61,14 +61,14 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<Room> rooms = _roomManager.GetRoomById(roomId);
+                Room room = _roomManager.GetRoomById(roomId);
 
-                string responseBody = JsonConvert.SerializeObject(rooms);
+                string responseBody = JsonConvert.SerializeObject(room);
 
                 string requestUrl = HttpContext.Request.Path.ToString();
 
                 _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-                return Ok(rooms);
+                return Ok(room);
             }
             catch(Exception ex)
             {
@@ -138,7 +138,7 @@ namespace seaway.API.Controllers
         //    {
         //        if((room != null) && (roomId != 0))
         //        {
-                   
+
         //        }
 
         //        return Ok(room);
@@ -149,6 +149,81 @@ namespace seaway.API.Controllers
         //        return BadRequest(ex.Message);
         //    }
         //}
+
+
+        [HttpDelete]
+        [Route("image/{ids}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteAsset([FromRoute] List<string> ids)
+        {
+            try
+            {
+                bool IsRemoveFromCLoudinary = false;
+
+                IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(ids).Result;
+
+                if (IsRemoveFromCLoudinary)
+                {
+                    _docManager.DeleteImageFromDB(ids);
+                }
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+                string responseBody = JsonConvert.SerializeObject(ids);
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                return Ok("Deleted " + responseBody);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting room pictures : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteRoom([FromRoute] int Id)
+        {
+            try
+            {
+                Room room = new Room();
+                bool isRoomRemove = false;
+
+                room = _roomManager.GetRoomById(Id);
+
+                if (room.RoomId != null)
+                {
+                    isRoomRemove = _roomManager.DeleteRoom(Id).Result;
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(room);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    if (isRoomRemove)
+                    {
+                        return Ok(room);
+                    }
+                    else
+                    {
+                        return BadRequest("Issue in deleting process");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Room is not exist for this Id");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting room : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

@@ -125,11 +125,12 @@ namespace seaway.API.Manager
             }
         }
 
-        public List<Room> GetRoomById(int roomId)
+        public Room GetRoomById(int roomId)
         {
             try
             {
                 List<Room> roomList = new List<Room>();
+                Room mainRoom = new Room();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
@@ -192,9 +193,10 @@ namespace seaway.API.Manager
 
                     _con.Close();
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
+                    mainRoom = roomList.FirstOrDefault() ?? new Room();
 
                 }
-                return roomList;
+                return mainRoom;
             }
             catch(Exception e)
             {
@@ -203,17 +205,34 @@ namespace seaway.API.Manager
             }
         }
 
-        //public bool DeleteRoom(int roomId)
-        //{
-        //    try
-        //    {
+        public async Task<bool> DeleteRoom(int roomId)
+        {
+            try
+            {
+                var query = "DELETE FROM Room WHERE RoomId = @Id";
 
-        //    }
-        //    catch(Exception e)
-        //    {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", roomId);
 
-        //    }
-        //}
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        _logger.LogTrace("Sucessfully Deleted Room of Id --> " + roomId + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
 
     }
 }

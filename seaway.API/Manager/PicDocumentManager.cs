@@ -63,24 +63,59 @@ namespace seaway.API.Manager
             }
         }
 
-        public async void DeleteAssetFromCloudinary(List<string> Ids)
+        public async Task<bool> DeleteAssetFromCloudinary(List<string> Ids)
         {
-            List<string> AssetIds = new List<string>();
-            foreach (var asset in Ids)
+            try
             {
-                string id = "Seaway/" + asset;
+                var deleteParams = new DelResParams()
+                {
+                    PublicIds = Ids,
+                    Type = "upload",
+                    ResourceType = ResourceType.Image
+                };
 
-                AssetIds.Add(id);
+                var result = this._cloudinary.DeleteResources(deleteParams);
+
+                _logger.LogTrace("Sucessfully Deleted PicPublic -- " + result );
+                return true;
             }
-            var deleteParams = new DelResParams()
+            catch(Exception ex)
             {
-                PublicIds = AssetIds,
-                Type = "upload",
-                ResourceType = ResourceType.Image
-            };
+                _logger.LogWarning("Warning -- " + ex.Message);
+                return false;
+            }
+           
+        }
 
-            var result = this._cloudinary.DeleteResources(deleteParams);
-            Console.WriteLine(result.JsonObj);
+        public async void DeleteImageFromDB(List<string> Ids)
+        {
+            var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = 'Room'";
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        foreach (var Id in Ids)
+                        {
+                            cmd.Parameters.AddWithValue("@Id", Id);
+
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+
+                            _logger.LogTrace("Sucessfully Deleted PicPublic Id --> " + Id + "From Database");
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning -- " + ex.Message);
+                throw;
+            }
+
         }
 
     }
