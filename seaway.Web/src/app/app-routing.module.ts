@@ -8,21 +8,26 @@ import { ActivitiesComponent } from './Components/Admin/activities/activities.co
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
 import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { LoginComponent } from './Components/Admin/login/login.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
   {path: "rooms", component: RoomListComponent},
   {path: 'Administration', component: AdminMainComponent,
    children: [
-    {path: '', component: MainAdminPageComponent},
+    {path: '', component: LoginComponent},
+    {path: 'Home', component: MainAdminPageComponent},
     {path: 'Rooms', component: RoomsComponent,
     children: [
       {path: '', component: AllRoomsComponent},
-      {path: 'addRoom', component:AddRoomComponent}
+      {path: 'addRoom', component:AddRoomComponent},
+      {path: 'editRoom/:id', component:AddRoomComponent}
     ]
-  },
+    },
     {path: 'Activities', component: ActivitiesComponent}
-   ]}
+        
+    ]
+  }
 ];
 
 @NgModule({
