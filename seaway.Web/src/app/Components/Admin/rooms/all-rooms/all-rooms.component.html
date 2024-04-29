@@ -23,6 +23,7 @@
                     <th scope="col" class="text-white">PricePerRoom</th>
                     <th scope="col" class="text-white">Discount(%)</th>
                     <th scope="col" class="text-white">Discount(LKR)</th>
+                    <!-- <th scope="col" class="text-white">Active</th> -->
                     <th scope="col" class="text-white">Edit</th>
                     <th scope="col" class="text-white">Delete</th>
                 </tr>
@@ -36,13 +37,18 @@
                     <td>{{room.price | currency: 'LKR' : 'Rs '}}</td>
                     <td>{{room.discountPercentage}}</td>
                     <td>{{room.discountAmount | currency: 'LKR' : 'Rs '}}</td>
+                    <!-- <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                        </div>
+                    </td> -->
                     <td>
-                        <button type="button" class="btn" (click)="navigateToUpdate()">
+                        <button type="button" class="btn" (click)="navigateToUpdate(room.roomId)">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn" (click)="deleteRoom()">
+                        <button type="button" class="btn" (click)="deleteRoom(room.roomId)">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </td>
