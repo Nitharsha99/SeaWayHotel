@@ -6,7 +6,7 @@
     <form [formGroup]="roomForm" (ngSubmit)="addRoom()">
         <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
             <div class="mb-3 row">
-                <label for="roomName" class="col-sm-2 col-form-label">Name<span>*</span></label>
+                <label class="col-sm-2 col-form-label">Name<span>*</span></label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
                 </div>
@@ -29,16 +29,44 @@
                   <input type="text" class="form-control" id="discountPercentage" placeholder="Discount" formControlName="discountPercentage">
                 </div>
             </div>
+
+            <div class="mb-3 row" *ngIf="updateMode">
+                <label class="col-sm-2 col-form-label" for="selectedImages">Room Images</label>
+
+                <div class="col-sm-9">
+                    <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 3px; display: flex;">
+                        <div *ngIf="pictures.length === 0" class="mx-2">
+                            <p style="color: #6c757d;"> There is no any Pictures</p>
+                        </div>
+                        <div class="shadow p-1 mb-2 bg-white rounded" style="background-color: aqua; margin-right: 15px;" *ngFor="let pic of pictures">
+                            <label>
+                                <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
+                                <div>
+                                    <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; width: 170px; height: 110px;">
+                                    <p class="text-center">{{pic.picName}}</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <span class="input-group-btn mx-2" style="margin-right: 100px;" *ngIf="pictures.length > 0 && selectedPictures.length > 0">
+                            <button class="btn btn-outline-danger" type="button" (click)="deleteImages()">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
     
             <div class="mb-3 row">
                 <label class="col-sm-2 col-form-label" for="selectImages">Upload Images</label>
     
                 <div class="col-sm-9">
-                    <ngx-dropzone (change)="OnSelect($event)" class="upload-field">
+                    <ngx-dropzone (change)="onSelect($event)" class="upload-field">
             
                         <ngx-dropzone-label>Drag and Drop Images</ngx-dropzone-label>
                 
-                        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="OnRemove(file)">
+                        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
                             <div>{{file.name}}</div>
                             <div>{{file.type}}</div>
                             <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
@@ -46,7 +74,7 @@
                 
                     </ngx-dropzone>
                 </div>
-                <!-- <button>Upload</button> -->
+
             </div>
     
             <div class="row">

@@ -14,11 +14,12 @@ export class MainAdminPageComponent implements OnInit{
     
   }
 
-  NavigateToRooms(){
-    this.router.navigate(['Rooms'], {relativeTo: this.route});
+  navigateToRooms(){
+    console.log("HDGAK");
+    this.router.navigate(['../Rooms'], {relativeTo: this.route});
   }
 
-  NavigateToActivities(){
-    this.router.navigate(['Activities'], {relativeTo: this.route});
+  navigateToActivities(){
+    this.router.navigate(['../Activities'], {relativeTo: this.route});
   }
 }

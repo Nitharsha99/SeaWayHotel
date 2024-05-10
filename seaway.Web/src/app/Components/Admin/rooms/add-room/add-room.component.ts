@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RoomService } from 'src/app/Services/RoomService/room.service';
 import Swal from 'sweetalert2';
+import { Room } from 'src/app/Models/room';
+import { PicDocument } from 'src/app/Models/picDocument';
 
 @Component({
   selector: 'app-add-room',
@@ -16,14 +18,16 @@ export class AddRoomComponent implements OnInit{
 updateMode: boolean = false;
 files: File[] = [];
 picArrayLength: number = 0;
-
+roomId!: number;
+pictures: PicDocument[] = [];
+selectedPictures: string[] = [];
 
   constructor(private cloudinaryService: CloudinaryService, private location: Location, 
               private router: Router, private builder: FormBuilder,
-              private roomService: RoomService){}
+              private roomService: RoomService, private route: ActivatedRoute){}
 
   roomForm: FormGroup = this.builder.group({
-    roomName: [''],
+    roomName: ['', Validators.required],
     guestCountMax: [''],
     price: [''],
     discountPercentage: [''],
@@ -37,19 +41,40 @@ picArrayLength: number = 0;
   }) 
 
   ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      if(params['id']){
+        this.roomId = params['id'];
+        this.updateMode = true;
+        this.roomService.FindRoomById(this.roomId).subscribe(res => {
+          this.roomForm.patchValue(res);
+          console.log('Form Value:', this.roomForm.value);
+          this.pictures = res.roomPics;
+          this.pictures.forEach(element => {
+            const urlLink = this.convertBase64ToString(element.picValue);
+            element.picValue = urlLink;
+          });
+          console.log("pics", this.pictures);
+        })
+      }
+    });
   }
 
-  OnSelect(event: any){
+  onSelect(event: any){
     console.log(event);
     this.files.push(...event.addedFiles);
   }
 
-  OnRemove(event: any){
+  onRemove(event: any){
     this.files.splice(this.files.indexOf(event), 1);
     console.log(this.files);
   }
 
- async UploadImage(){
+  updateSelectedPics(picId: string){
+    this.selectedPictures.push(picId);
+    console.log("daaia", this.selectedPictures);
+  }
+
+ async uploadImage(){
   const formValue = this.roomForm.value;
   this.picArrayLength = this.files.length;
   let count = 0;
@@ -68,14 +93,14 @@ picArrayLength: number = 0;
           roomPicsArray.push(this.builder.group({
             picName: [null],
             picValue: [null],
-            publicId: [null]
+            cloudinaryPublicId: [null]
           }));
         }
 
         (roomPicsArray.at(i) as FormGroup).patchValue({
           picName: res.original_filename + "." + res.format,
           picValue: res.url,
-          publicId: res.public_id
+          cloudinaryPublicId: res.public_id
         });
 
         formValue.roomPics = roomPicsArray.controls.map((control: AbstractControl<any>) => {
@@ -83,13 +108,12 @@ picArrayLength: number = 0;
           return {
             picName: formGroup.get('picName')?.value,
             picValue: formGroup.get('picValue')?.value,
-            publicId: formGroup.get('publicId')?.value
+            cloudinaryPublicId: formGroup.get('cloudinaryPublicId')?.value
           };
         });
 
         count++;
        
-        console.log("length", count, "jadh", this.picArrayLength);
         if(count === this.picArrayLength){
           console.log("auifhcyieaufajka");
           Swal.close();
@@ -127,7 +151,7 @@ picArrayLength: number = 0;
   }
   else{
     if(this.files.length > 0){
-    this.UploadImage();
+    this.uploadImage();
     }
     else{
         this.callRoomService();
@@ -183,6 +207,18 @@ picArrayLength: number = 0;
       Swal.showLoading();
     }
   });
+}
+
+deleteImages(){
+  this.roomService.DeleteImages(this.selectedPictures).subscribe((res) =>{
+    console.log("res");
+  });
+}
+
+convertBase64ToString(base64: string){
+  const decodedString = atob(base64);
+
+  return decodedString;
 }
 
 }
