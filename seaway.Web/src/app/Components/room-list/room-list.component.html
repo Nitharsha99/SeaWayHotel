@@ -1,17 +1,17 @@
 <div>
     <h1>Upload Images</h1>
 
-    <ngx-dropzone (change)="OnSelect($event)">
+    <ngx-dropzone (change)="onSelect($event)">
 
         <ngx-dropzone-label>Drag and Drop Images</ngx-dropzone-label>
 
-        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="OnRemove(file)">
+        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
             <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
         </ngx-dropzone-preview>
 
     </ngx-dropzone>
 
-    <button (click)="UploadImage()">Upload</button>
+    <button (click)="uploadImage()">Upload</button>
 
     <div *ngIf="imageVisible">
         <img [src]="image">

@@ -18,20 +18,20 @@ export class RoomListComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.ConvertBase64ToString();
+    this.convertBase64ToString();
   }
 
-  OnSelect(event: any){
+  onSelect(event: any){
     console.log(event);
     this.files.push(...event.addedFiles);
   }
 
-  OnRemove(event: any){
+  onRemove(event: any){
     this.files.splice(this.files.indexOf(event), 1);
     console.log(this.files);
   }
 
-  UploadImage(){
+  uploadImage(){
     if(!this.files[0]){
       alert("No Image Selected Yet!!");
     }
@@ -54,7 +54,7 @@ export class RoomListComponent implements OnInit{
     this.files = [];
   }
 
-  ConvertBase64ToString(){
+  convertBase64ToString(){
     const base64 = 'aHR0cDovL3Jlcy5jbG91ZGluYXJ5LmNvbS9kbHk3eWpnMXcvaW1hZ2UvdXBsb2FkL3YxNzExNTIzNzc3L1NlYXdheS9pbWxwOXhqYzQ4eHJnZG9vaHppai5wbmc=';
 
     const decodedString = atob(base64);
