@@ -63,18 +63,18 @@ namespace seaway.API.Manager
             }
         }
 
-        public async Task<bool> DeleteAssetFromCloudinary(List<string> Ids)
+        public async Task<bool> DeleteAssetFromCloudinary(string[] Ids)
         {
             try
             {
                 var deleteParams = new DelResParams()
                 {
-                    PublicIds = Ids,
+                    PublicIds = Ids.ToList(),
                     Type = "upload",
                     ResourceType = ResourceType.Image
                 };
 
-                var result = this._cloudinary.DeleteResources(deleteParams);
+                var result = await this._cloudinary.DeleteResourcesAsync(deleteParams);
 
                 _logger.LogTrace("Sucessfully Deleted PicPublic -- " + result );
                 return true;
@@ -87,7 +87,7 @@ namespace seaway.API.Manager
            
         }
 
-        public async void DeleteImageFromDB(List<string> Ids)
+        public async void DeleteImageFromDB(string[] Ids)
         {
             var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = 'Room'";
 

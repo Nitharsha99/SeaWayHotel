@@ -58,20 +58,20 @@ namespace seaway.API.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("image")]
-        public IActionResult DeleteAsset([FromForm]List<string> ids)
-        {
-            try
-            {
-                _documentManager.DeleteAssetFromCloudinary(ids);
-                return Ok(ids);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpDelete]
+        //[Route("image")]
+        //public IActionResult DeleteAsset([FromForm]List<string> ids)
+        //{
+        //    try
+        //    {
+        //        _documentManager.DeleteAssetFromCloudinary(ids);
+        //        return Ok(ids);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         [Route("")]
         [HttpPost]
