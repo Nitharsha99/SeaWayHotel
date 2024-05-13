@@ -1,5 +1,5 @@
 export interface PicDocument{
     picValue: string; 
     picName: string;
-    publicId: string;
+    cloudinaryPublicId: string;
 }
