@@ -21,7 +21,6 @@ export class AllRoomsComponent implements OnInit{
       this.rooms = res;
       console.log('ch', this.rooms);
     })
-
   }
 
   navigateToNewRoom(){

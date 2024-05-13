@@ -29,7 +29,7 @@ namespace seaway.API.Manager
                 {
                     SqlCommand command = _con.CreateCommand();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "GetAllRooms";                
+                    command.CommandText = "GetAllRoomsWithPicDetails";                
 
                     _con.Open();
 
@@ -55,27 +55,27 @@ namespace seaway.API.Manager
                                 roomList.Add(room);
                             }
 
-                            //if (room.RoomId == (int)reader["PicTypeId"] && reader["PicName"] != DBNull.Value)
-                            //{
-                            //    byte[] picValueInByte = (byte[])reader["PicValue"];
-                            //    string val = Convert.ToBase64String(picValueInByte);
+                            if (room.RoomId == (int)reader["PicTypeId"] && reader["PicName"] != DBNull.Value)
+                            {
+                                byte[] picValueInByte = (byte[])reader["PicValue"];
+                                string val = Convert.ToBase64String(picValueInByte);
 
-                            //    PicDocument document = new PicDocument
-                            //    {
-                            //        PicName = reader["PicName"].ToString(),
-                            //        PicType = reader["PicType"].ToString(),
-                            //        PicTypeId = (int)reader["PicTypeId"],
-                            //        CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
-                            //        PicValue = val
-                            //    };
+                                PicDocument document = new PicDocument
+                                {
+                                    PicName = reader["PicName"].ToString(),
+                                    PicType = reader["PicType"].ToString(),
+                                    PicTypeId = (int)reader["PicTypeId"],
+                                    CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
+                                    PicValue = val
+                                };
 
-                            //    if (room.RoomPics == null)
-                            //    {
-                            //        room.RoomPics = new List<PicDocument>();
-                            //    }
+                                if (room.RoomPics == null)
+                                {
+                                    room.RoomPics = new List<PicDocument>();
+                                }
 
-                            //    room.RoomPics.Add(document);
-                            //}
+                                room.RoomPics.Add(document);
+                            }
                         }
                     }
 

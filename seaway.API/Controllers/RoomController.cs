@@ -152,21 +152,20 @@ namespace seaway.API.Controllers
 
 
         [HttpDelete]
-        [Route("image")]
+        [Route("image/{ids}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteAsset([FromQuery] string ids)
+        public IActionResult DeleteAsset([FromRoute] List<string> ids)
         {
             try
             {
-                string[] idArray = ids.Split(',');
                 bool IsRemoveFromCLoudinary = false;
 
-                IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(idArray).Result;
+                IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(ids).Result;
 
                 if (IsRemoveFromCLoudinary)
                 {
-                    _docManager.DeleteImageFromDB(idArray);
+                    _docManager.DeleteImageFromDB(ids);
                 }
 
                 string requestUrl = HttpContext.Request.Path.ToString();

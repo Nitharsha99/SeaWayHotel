@@ -42,8 +42,7 @@
                             <label>
                                 <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
                                 <div>
-                                    <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px;" [title]="pic.picName"
-                                    [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
+                                    <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; width: 170px; height: 110px;">
                                     <p class="text-center">{{pic.picName}}</p>
                                 </div>
                             </label>
