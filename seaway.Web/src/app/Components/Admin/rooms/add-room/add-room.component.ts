@@ -21,6 +21,9 @@ picArrayLength: number = 0;
 roomId!: number;
 pictures: PicDocument[] = [];
 selectedPictures: string[] = [];
+imageWidth: number = 170;
+imageMargin: number = 2;
+imageHeight: number = 110;
 
   constructor(private cloudinaryService: CloudinaryService, private location: Location, 
               private router: Router, private builder: FormBuilder,
