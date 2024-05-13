@@ -1,19 +1,18 @@
 <div class="container">
     <div>
 
-        <form style="margin-left: 30%; margin-right: 30%; border-radius: 20px;" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
+        <form style="margin-left: 30%; margin-right: 30%; border-radius: 20px;" class="shadow-lg p-3 mb-5 bg-body rounded mt-5" [formGroup]="loginForm">
             <div style="text-align: center; margin-top: 5%;">
                 <h2>Administartion</h2>
             </div>
 
-            <div class="mx-5 my-5 pt-3">
-                <label for="exampleFormControlInput1" class="form-label">Username : </label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            <div class="input">
+                <input type="text" id="username" placeholder="Username" required formControlName="username">
             </div>
 
-            <div class="mx-5 my-5">
-                <label for="exampleFormControlInput1" class="form-label">Password : </label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            <div class="input">
+                <input [type]="visible ? 'text' : 'password' " id="password" placeholder="Password" required formControlName="password">
+                <i (click)="passwordVisible()" [ngClass]="visible? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill' "></i>
             </div>
 
             <div style="text-align: center;">

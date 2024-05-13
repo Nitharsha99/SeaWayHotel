@@ -2,3 +2,36 @@
     height: 100%;
     width: 100%;
 }
+
+.input{
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    margin-left: 8%;
+    margin-right: 8%;
+    margin-bottom: 5%;
+    background-color: antiquewhite;
+    font-size: 16px;
+    position: relative;
+}
+
+input {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    width: 100%;
+    height: 40px;
+}
+
+input:focus-within {
+    /* Target the entire input container when a child element is focused */
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 3px 3px rgba(0, 123, 255, 0.2);
+  }
+
+.input i{
+    cursor: pointer;
+    position:absolute;
+    right: 2%;
+    top: 28%;
+}

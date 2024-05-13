@@ -14,7 +14,7 @@ using System.Net.Http;
 
 namespace seaway.API.Controllers
 {
-    [Route("api/login")]
+    [Route("api/admin")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -57,6 +57,77 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult NewAdmin([FromForm]Admin admin)
+        {
+            try
+            {
+                if(admin == null)
+                {
+                    return BadRequest("Admin details are empty");
+                }
+                else
+                {
+                    if(admin.Password != null)
+                    {
+                        admin.Password = PasswordHelper.EncryptPassword(admin.Password);
+                    }
+
+                    var newAdmin = _logginManager.NewAdmin(admin);
+
+                    string responseBody = JsonConvert.SerializeObject(admin);
+                    string requestUrl = HttpContext.Request.Path.ToString();
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                    if (newAdmin == null)
+                    {
+                        return BadRequest("Creation of new admin Failed");
+                    }
+                    else
+                    {
+                        return Ok(newAdmin);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while creating new admin : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Login(Admin admin)
+        {
+            try
+            {
+                if( admin == null)
+                {
+                    return BadRequest("login credentials are empty");
+                }
+                else
+                {
+                    bool isValidUser = false;
+                    if(admin.Password != null)
+                    {
+                        isValidUser = _logginManager.CheckUserValid(admin);
+                    }
+                    return Ok(isValidUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while login : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
 
