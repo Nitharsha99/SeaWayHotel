@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/Services/AuthService/auth.service';
 
 @Component({
   selector: 'app-main-admin-page',
@@ -8,10 +9,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class MainAdminPageComponent implements OnInit{
 
-  constructor(private router: Router, private route: ActivatedRoute){}
+  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService){}
 
   ngOnInit(): void {
     
+  }
+
+  get currentUser(): any {
+    return this.authService.getCurrentUser();
   }
 
   navigateToRooms(){
