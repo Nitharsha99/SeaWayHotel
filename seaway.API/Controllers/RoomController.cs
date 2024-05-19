@@ -129,26 +129,65 @@ namespace seaway.API.Controllers
             }
         }
 
-        //[HttpPut]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public IActionResult UpdateRoom(RoomWithPicModel room, int roomId)
-        //{
-        //    try
-        //    {
-        //        if((room != null) && (roomId != 0))
-        //        {
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateRoom([FromForm]RoomWithPicModel room, int roomId)
+        {
+            try
+            {
+                if ((room.RoomName != null) && (roomId != 0))
+                {
+                    Room oldRoom = _roomManager.GetRoomById(roomId);
+                    if (oldRoom.RoomName != null)
+                    {
+                        Room updateRoom = new Room
+                        {
+                            RoomName = room.RoomName,
+                            GuestCountMax = room.GuestCountMax,
+                            Price = room.Price,
+                            DiscountPercentage = room.DiscountPercentage,
+                        };
+                        _roomManager.UpdateRoom(updateRoom, roomId);
 
-        //        }
+                        PicDocument pic = new PicDocument
+                        {
+                            PicType = "Room",
+                            PicTypeId = roomId
+                        };
 
-        //        return Ok(room);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError("An exception occurred while updating room data : " + ex.Message);
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+                        if (room?.roomPics?.Length > 0)
+                        {
+                            foreach (var item in room.roomPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.PublicId;
+
+                                _docManager.UploadImage(pic);
+                            }
+                        }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(room);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid RoomId");
+                    }
+                }
+
+                return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while updating room data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
 
 
         [HttpDelete]
