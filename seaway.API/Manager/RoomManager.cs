@@ -205,6 +205,36 @@ namespace seaway.API.Manager
             }
         }
 
+        public void UpdateRoom(Room room, int roomId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateRoom", con))
+                    {
+                        con.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@roomId", roomId);
+                        cmd.Parameters.AddWithValue("@roomName", room.RoomName);
+                        cmd.Parameters.AddWithValue("@guestCount", room.GuestCountMax);
+                        cmd.Parameters.AddWithValue("@price", room.Price);
+                        cmd.Parameters.AddWithValue("@discountPercent", room.DiscountPercentage);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                _logger.LogTrace("SuccessFully updated the room");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning at Update the " + room.RoomName + " : " + ex.Message);
+                throw;
+            }
+        }
+
         public async Task<bool> DeleteRoom(int roomId)
         {
             try
