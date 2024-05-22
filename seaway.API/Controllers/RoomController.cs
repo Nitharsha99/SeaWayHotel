@@ -108,7 +108,7 @@ namespace seaway.API.Controllers
                         {
                             pic.PicValue = item.PicValue;
                             pic.PicName = item.PicName;
-                            pic.CloudinaryPublicId = item.PublicId;
+                            pic.CloudinaryPublicId = item.CloudinaryPublicId;
 
                             _docManager.UploadImage(pic);
                         }
@@ -162,7 +162,7 @@ namespace seaway.API.Controllers
                             {
                                 pic.PicValue = item.PicValue;
                                 pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.PublicId;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
 
                                 _docManager.UploadImage(pic);
                             }
@@ -198,7 +198,8 @@ namespace seaway.API.Controllers
         {
             try
             {
-                string[] idArray = ids.Split(',');
+                List<string> idArray = new List<string>();
+                idArray = ids.Split(',').ToList();
                 bool IsRemoveFromCLoudinary = false;
 
                 IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(idArray).Result;
@@ -231,12 +232,27 @@ namespace seaway.API.Controllers
             {
                 Room room = new Room();
                 bool isRoomRemove = false;
+                List<string> publicIds = new List<string>();
+                bool IsRemoveFromCLoudinary = false;
 
                 room = _roomManager.GetRoomById(Id);
 
                 if (room.RoomId != null)
                 {
-                    isRoomRemove = _roomManager.DeleteRoom(Id).Result;
+                    if(room?.RoomPics?.Count > 0)
+                    {
+                        foreach(var pic in room.RoomPics)
+                        {
+                            publicIds.Add(pic.CloudinaryPublicId ?? "");
+                        }
+                       IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(publicIds).Result;
+
+                        if (IsRemoveFromCLoudinary)
+                        {
+                            isRoomRemove = _roomManager.DeleteRoom(Id);
+                        }
+                    }
+                    isRoomRemove = _roomManager.DeleteRoom(Id);
 
                     string requestUrl = HttpContext.Request.Path.ToString();
                     string responseBody = JsonConvert.SerializeObject(room);

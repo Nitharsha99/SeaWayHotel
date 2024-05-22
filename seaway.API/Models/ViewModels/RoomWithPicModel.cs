@@ -13,6 +13,6 @@
     {
         public string? PicName { get; set; }
         public string? PicValue { get; set; }
-        public string? PublicId { get; set; }
+        public string? CloudinaryPublicId { get; set; }
     }
 }

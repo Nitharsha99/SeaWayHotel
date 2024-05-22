@@ -46,8 +46,8 @@ namespace seaway.API.Manager
                             command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
                             command.Parameters.AddWithValue("@PicType", pic.PicType);
                             command.Parameters.AddWithValue("@PicName", pic.PicName);
-                            command.Parameters.AddWithValue("PicValue", picValueBytes);
-                            command.Parameters.AddWithValue("PublicId", pic.CloudinaryPublicId);
+                            command.Parameters.AddWithValue("@PicValue", picValueBytes);
+                            command.Parameters.AddWithValue("@PublicId", pic.CloudinaryPublicId);
 
                             command.ExecuteNonQuery();
                         }
@@ -63,7 +63,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public async Task<bool> DeleteAssetFromCloudinary(string[] Ids)
+        public async Task<bool> DeleteAssetFromCloudinary(List<string> Ids)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace seaway.API.Manager
            
         }
 
-        public async void DeleteImageFromDB(string[] Ids)
+        public async void DeleteImageFromDB(List<string> Ids)
         {
             var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = 'Room'";
 
@@ -97,15 +97,20 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
+                        cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
+
+                        if (con.State != ConnectionState.Open)
+                        {
+                            await con.OpenAsync();
+                        }
+
                         foreach (var Id in Ids)
                         {
-                            cmd.Parameters.AddWithValue("@Id", Id);
+                            cmd.Parameters["@Id"].Value = Id;
 
-                            con.Open();
-                            cmd.ExecuteNonQuery();
+                            await cmd.ExecuteNonQueryAsync();
 
-                            _logger.LogTrace("Sucessfully Deleted PicPublic Id --> " + Id + "From Database");
-
+                            _logger.LogTrace("Successfully Deleted PicPublic Id --> " + Id + "From Database");
                         }
                     }
                 }
