@@ -38,7 +38,7 @@ imageHeight: number = 110;
       this.builder.group({
         picName: [null],
         picValue: [null],
-        publicId: [null]
+        cloudinaryPublicId: [null]
        })
     ])
   }) 
@@ -99,6 +99,7 @@ imageHeight: number = 110;
             cloudinaryPublicId: [null]
           }));
         }
+        console.log(res.public_id, res);
 
         (roomPicsArray.at(i) as FormGroup).patchValue({
           picName: res.original_filename + "." + res.format,
@@ -106,6 +107,7 @@ imageHeight: number = 110;
           cloudinaryPublicId: res.public_id
         });
 
+        console.log("sajnjadjjjjjj", roomPicsArray);
         formValue.roomPics = roomPicsArray.controls.map((control: AbstractControl<any>) => {
           const formGroup = control as FormGroup;
           return {
@@ -118,7 +120,7 @@ imageHeight: number = 110;
         count++;
        
         if(count === this.picArrayLength){
-          console.log("auifhcyieaufajka");
+          console.log("auifhcyieaufajka", count, this.picArrayLength);
           Swal.close();
           this.callRoomService();
         }

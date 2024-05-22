@@ -235,19 +235,19 @@ namespace seaway.API.Manager
             }
         }
 
-        public async Task<bool> DeleteRoom(int roomId)
+        public bool DeleteRoom(int roomId)
         {
             try
             {
-                var query = "DELETE FROM Room WHERE RoomId = @Id";
-
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand("DeleteRoomWithPics", con))
                     {
-                        cmd.Parameters.AddWithValue("@Id", roomId);
-
                         con.Open();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@roomId", roomId);
+
                         cmd.ExecuteNonQuery();
 
                         _logger.LogTrace("Sucessfully Deleted Room of Id --> " + roomId + "From Database");
