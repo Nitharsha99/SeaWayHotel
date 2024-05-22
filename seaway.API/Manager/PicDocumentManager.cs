@@ -87,9 +87,9 @@ namespace seaway.API.Manager
            
         }
 
-        public async void DeleteImageFromDB(List<string> Ids)
+        public async void DeleteImageFromDB(List<string> Ids, string picType)
         {
-            var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = 'Room'";
+            var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = @PicType";
 
             try
             {
@@ -98,6 +98,7 @@ namespace seaway.API.Manager
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
+                        cmd.Parameters.Add("@PicType", SqlDbType.NVarChar);
 
                         if (con.State != ConnectionState.Open)
                         {
@@ -107,6 +108,7 @@ namespace seaway.API.Manager
                         foreach (var Id in Ids)
                         {
                             cmd.Parameters["@Id"].Value = Id;
+                            cmd.Parameters["@PicType"].Value = picType;
 
                             await cmd.ExecuteNonQueryAsync();
 

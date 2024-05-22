@@ -206,7 +206,8 @@ namespace seaway.API.Controllers
 
                 if (IsRemoveFromCLoudinary)
                 {
-                    _docManager.DeleteImageFromDB(idArray);
+                    string picType = "Room";
+                    _docManager.DeleteImageFromDB(idArray, picType);
                 }
 
                 string requestUrl = HttpContext.Request.Path.ToString();
