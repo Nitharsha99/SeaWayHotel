@@ -146,5 +146,51 @@ namespace seaway.API.Controllers
 
         }
 
+
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteActivity([FromRoute] int Id)
+        {
+            try
+            {
+                Activity activity = new Activity();
+                bool isActivityRemove = false;
+
+                activity = _activityManager.GetActivityById(Id);
+
+                if (activity.ActivityId != null)
+                {
+
+                    isActivityRemove = _activityManager.DeleteActivity(Id);
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(activity);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    if (isActivityRemove)
+                    {
+                        return Ok(activity);
+                    }
+                    else
+                    {
+                        return BadRequest("Issue in deleting process");
+                    }
+                }
+                else
+                {
+                    return BadRequest("No Activity exist for this Id");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting room : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

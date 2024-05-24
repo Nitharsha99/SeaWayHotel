@@ -181,5 +181,34 @@ namespace seaway.API.Manager
 
         }
 
+        public bool DeleteActivity(int activityId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("DeleteActivity", con))
+                    {
+                        con.Open();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@activityId", activityId);
+
+                        cmd.ExecuteNonQuery();
+
+                        _logger.LogTrace("Sucessfully Deleted Activity of Id --> " + activityId + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
+
     }
 }
