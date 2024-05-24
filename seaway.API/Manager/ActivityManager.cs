@@ -49,34 +49,6 @@ namespace seaway.API.Manager
                                 IsActive = Convert.ToBoolean(reader["IsActive"])
                             };
 
-                            if (reader["PicName"] != DBNull.Value)
-                            {
-                                byte[] picValueInByte = (byte[])reader["PicValue"];
-                                string val = Convert.ToBase64String(picValueInByte);
-
-                                //using (MemoryStream ms = new MemoryStream(picValueInByte))
-                                //{
-                                //    System.Drawing.Image image = Image.FromStream(ms);
-                                //}
-
-                                PicDocument document = new PicDocument
-                                {
-                                    PicName = reader["PicName"].ToString(),
-                                    PicType = reader["PicType"].ToString(),
-                                    //PicValue = val
-                                    //PicValueInByte = picValueInByte,
-                                   
-                                };
-
-                                if(activity.ActivityPics == null)
-                                {
-                                    activity.ActivityPics = new List<PicDocument>();
-                                }
-
-                                activity.ActivityPics.Add(document);
-
-                            }
-
                             list.Add(activity);
                         }
                     }
