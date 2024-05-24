@@ -101,7 +101,7 @@ namespace seaway.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostActivity([FromForm]ActivityWithPicModel activity)
+        public IActionResult NewActivity(ActivityWithPicModel activity)
         {
             try
             {
@@ -118,12 +118,14 @@ namespace seaway.API.Controllers
                     pic.PicType = "Activity";
                     pic.PicTypeId = actId;
 
-                    if (activity.PicValue != null)
+                    if (activity?.ActivityPics?.Length > 0)
                     {
-                        foreach (var value in activity.PicValue)
+                        foreach (var item in activity.ActivityPics)
                         {
-                            //pic.PicName = Path.GetFileName(value);
-                            //pic.PicValue = value;
+                            pic.PicValue = item.PicValue;
+                            pic.PicName = item.PicName;
+                            pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
                             _documentManager.UploadImage(pic);
                         }
                     }
