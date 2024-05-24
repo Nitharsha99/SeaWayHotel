@@ -136,7 +136,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if ((room.RoomName != null) && (roomId != 0))
+                if (roomId != 0)
                 {
                     Room oldRoom = _roomManager.GetRoomById(roomId);
                     if (oldRoom.RoomName != null)
