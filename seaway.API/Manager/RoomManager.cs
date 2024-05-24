@@ -146,8 +146,6 @@ namespace seaway.API.Manager
                             while (reader.Read())
                             {
                                 var Id = (int)reader["RoomId"];
-                                var type = reader["PicType"].ToString();
-                                var name = reader["PicName"].ToString();
                                 Room room = roomList.FirstOrDefault(r => r.RoomId == Id) ?? new Room();
 
                                 if (room.RoomId == null)
@@ -165,8 +163,7 @@ namespace seaway.API.Manager
                                     roomList.Add(room);
                                 }
 
-                                var pname = reader["PicName"].ToString();
-                                if (reader["PicName"] != DBNull.Value && room.RoomId == (int)reader["PicTypeId"])
+                                if (reader["PicName"] != DBNull.Value)
                                 {
                                     byte[] picValueInByte = (byte[])reader["PicValue"];
                                     string val = Convert.ToBase64String(picValueInByte);

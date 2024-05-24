@@ -28,23 +28,6 @@ try
     builder.Services.AddScoped<CustomerManager>();
     builder.Services.AddScoped<RoomManager>();
 
-    // Load configuration from appsettings.xml
-    //builder.Configuration.AddXmlFile("appsettings.xml", optional: true, reloadOnChange: true);
-
-    //builder.Services.Configure<Appsettings>(builder.Configuration.GetSection("Appsettings"));
-
-
-    builder.Services.AddSingleton(provider =>
-    {
-        // Here, you can resolve the string dependency from configuration or any other source
-        // For demonstration purposes, let's assume the base path is retrieved from appsettings.json
-        var configuration = provider.GetRequiredService<IConfiguration>();
-        var basePath = configuration["ImagePathBasePath"]; // Assuming "ImagePathBasePath" is the key in appsettings.json
-
-        // If the configuration key doesn't exist or the value is null, provide a default value
-        return basePath ?? "C:\\"; // Default base path
-    });
-
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
