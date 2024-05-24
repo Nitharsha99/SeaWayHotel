@@ -57,7 +57,7 @@ namespace seaway.API.Controllers
         [Route("{roomId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindRoomById(int roomId)
+        public IActionResult FindRoomById([FromRoute] int roomId)
         {
             try
             {

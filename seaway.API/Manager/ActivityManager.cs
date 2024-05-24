@@ -67,6 +67,81 @@ namespace seaway.API.Manager
             }
         }
 
+        public Activity GetActivityById(int activityId)
+        {
+            try
+            {
+                List<Activity> activityList = new List<Activity>();
+                Activity mainActivity = new Activity();
+
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    _con.Open();
+                    using (var cmd = new SqlCommand("GetActivityById", _con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@activityId", activityId);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var Id = (int)reader["ActivityId"];
+                                Activity activity = activityList.FirstOrDefault(r => r.ActivityId == Id) ?? new Activity();
+
+                                if (activity?.ActivityId == 0)
+                                {
+                                    activity = new Activity
+                                    {
+                                        ActivityId = (int)reader["ActivityId"],
+                                        ActivityName = reader["ActivityName"].ToString(),
+                                        Description = reader["Description"].ToString(),
+                                        IsActive = (bool)reader["IsActive"]
+                                    };
+
+                                    activityList.Add(activity);
+                                }
+
+                                if (reader["PicName"] != DBNull.Value)
+                                {
+                                    byte[] picValueInByte = (byte[])reader["PicValue"];
+                                    string val = Convert.ToBase64String(picValueInByte);
+
+                                    PicDocument document = new PicDocument
+                                    {
+                                        PicName = reader["PicName"].ToString(),
+                                        PicType = reader["PicType"].ToString(),
+                                        PicTypeId = (int)reader["PicTypeId"],
+                                        CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
+                                        PicValue = val
+                                    };
+
+                                    if (activity.ActivityPics == null)
+                                    {
+                                        activity.ActivityPics = new List<PicDocument>();
+                                    }
+
+                                    activity.ActivityPics.Add(document);
+                                }
+                            }
+                        }
+                    }
+
+                    _con.Close();
+                    _logger.LogTrace("SuccessFully Activity Data retrieved By Id : " + activityId);
+                    mainActivity = activityList.FirstOrDefault() ?? new Activity();
+
+                }
+                return mainActivity;
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                throw;
+            }
+        }
+
         public int PostActivity(Activity activity)
         {
             try

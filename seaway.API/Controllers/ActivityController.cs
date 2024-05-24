@@ -58,6 +58,30 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult FindRoomById([FromRoute] int Id)
+        {
+            try
+            {
+                Activity activity = _activityManager.GetActivityById(Id);
+
+                string responseBody = JsonConvert.SerializeObject(activity);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+                return Ok(activity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while get activity data with Id = " + Id + " : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         //[HttpDelete]
         //[Route("image")]
         //public IActionResult DeleteAsset([FromForm]List<string> ids)
