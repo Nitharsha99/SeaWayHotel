@@ -64,8 +64,8 @@ project.fragment.lock.json
 artifacts/
 
 # Config files
-appsettings.json
-appsettings.Development.json
+seaway.API/appsettings.json
+seaway.API/appsettings.Development.json
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
