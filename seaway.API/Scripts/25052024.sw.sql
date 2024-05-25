@@ -33,11 +33,6 @@ GO
 
 
 
-
-
-USE [seaway]
-GO
-
 IF EXISTS (SELECT 1 FROM sysobjects WHERE id = object_id(N'[dbo].[UpdateActivity]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
 BEGIN
 	DROP PROCEDURE UpdateActivity

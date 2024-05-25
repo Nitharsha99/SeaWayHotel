@@ -6,6 +6,7 @@ using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
+using System;
 using System.Data.SqlClient;
 using System.IO;
 
@@ -198,25 +199,41 @@ namespace seaway.API.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateActivity([FromForm] Activity activity, int activityId)
+        public IActionResult UpdateActivity(ActivityWithPicModel activity, int activityId)
         {
             try
             {
-                if ((activity.ActivityName != null || activity.Description != null|| activity.IsActive != null) && (activityId != 0))
+                if ((activity.ActivityName != null || activity.Description != null|| activity?.ActivityIsActive != null) && (activityId != 0))
                 {
                     Activity oldActivity = _activityManager.GetActivityById(activityId);
                     if (oldActivity.ActivityName != null)
                     {
+
                         Activity updateActivity = new Activity
                         {
                             ActivityName = activity.ActivityName,
                             Description = activity.Description,
-                            IsActive = activity.IsActive,
+                            IsActive = activity.ActivityIsActive,
                  
                         };
                         _activityManager.UpdateActivity(updateActivity, activityId);
 
-                        
+
+                        PicDocument pic = new PicDocument();
+                        pic.PicType = "Activity";
+                        pic.PicTypeId = activityId;
+                        if (activity?.ActivityPics?.Length > 0)
+                        {
+                            foreach (var item in activity.ActivityPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                _documentManager.UploadImage(pic);
+                            }
+                        }
+
                         string requestUrl = HttpContext.Request.Path.ToString();
                         string responseBody = JsonConvert.SerializeObject(updateActivity);
 

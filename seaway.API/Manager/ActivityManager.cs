@@ -216,7 +216,7 @@ namespace seaway.API.Manager
             {
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("[UpdateActivity]", con))
+                    using (SqlCommand cmd = new SqlCommand("UpdateActivity", con))
                     {
                         con.Open();
                         cmd.CommandType = CommandType.StoredProcedure;
