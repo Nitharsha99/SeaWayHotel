@@ -66,13 +66,11 @@ CREATE PROCEDURE [dbo].[UpdateActivity]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @InsertedTime DATETIME = GETDATE();
 	IF EXISTS(SELECT 1 FROM Activities WHERE ActivityId = @ActivityId)
 	BEGIN
 		UPDATE Activities
 		SET Name = ISNULL(@Name, Name),
             Description = ISNULL(@Description, Description),
-            InsertedTime = ISNULL(@InsertedTime, InsertedTime),
             IsActive = ISNULL(@IsActive, IsActive)
         WHERE ActivityId = @ActivityId
 	END
