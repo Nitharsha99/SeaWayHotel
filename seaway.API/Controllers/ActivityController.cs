@@ -187,7 +187,51 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting room : " + ex.Message);
+                _logger.LogError("An exception occurred while deleting Activity : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateActivity([FromForm] Activity activity, int activityId)
+        {
+            try
+            {
+                if ((activity.ActivityName != null || activity.Description != null|| activity.IsActive != null) && (activityId != 0))
+                {
+                    Activity oldActivity = _activityManager.GetActivityById(activityId);
+                    if (oldActivity.ActivityName != null)
+                    {
+                        Activity updateActivity = new Activity
+                        {
+                            ActivityName = activity.ActivityName,
+                            Description = activity.Description,
+                            IsActive = activity.IsActive,
+                 
+                        };
+                        _activityManager.UpdateActivity(updateActivity, activityId);
+
+                        
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(updateActivity);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid ActivityId");
+                    }
+                }
+
+                return Ok(activity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while updating Activity data : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
