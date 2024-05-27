@@ -6,6 +6,7 @@ using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
+using System;
 using System.Data.SqlClient;
 using System.IO;
 
@@ -146,6 +147,112 @@ namespace seaway.API.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteActivity([FromRoute] int Id)
+        {
+            try
+            {
+                Activity activity = new Activity();
+                bool isActivityRemove = false;
+
+                activity = _activityManager.GetActivityById(Id);
+
+                if (activity.ActivityId != null)
+                {
+
+                    isActivityRemove = _activityManager.DeleteActivity(Id);
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(activity);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    if (isActivityRemove)
+                    {
+                        return Ok(activity);
+                    }
+                    else
+                    {
+                        return BadRequest("Issue in deleting process");
+                    }
+                }
+                else
+                {
+                    return BadRequest("No Activity exist for this Id");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting Activity : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateActivity(ActivityWithPicModel activity, int activityId)
+        {
+            try
+            {
+                if ((activity.ActivityName != null || activity.Description != null|| activity?.ActivityIsActive != null) && (activityId != 0))
+                {
+                    Activity oldActivity = _activityManager.GetActivityById(activityId);
+                    if (oldActivity.ActivityName != null)
+                    {
+
+                        Activity updateActivity = new Activity
+                        {
+                            ActivityName = activity.ActivityName,
+                            Description = activity.Description,
+                            IsActive = activity.ActivityIsActive,
+                 
+                        };
+                        _activityManager.UpdateActivity(updateActivity, activityId);
+
+
+                        PicDocument pic = new PicDocument();
+                        pic.PicType = "Activity";
+                        pic.PicTypeId = activityId;
+                        if (activity?.ActivityPics?.Length > 0)
+                        {
+                            foreach (var item in activity.ActivityPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                _documentManager.UploadImage(pic);
+                            }
+                        }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(updateActivity);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid ActivityId");
+                    }
+                }
+
+                return Ok(activity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while updating Activity data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
     }

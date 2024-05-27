@@ -181,5 +181,66 @@ namespace seaway.API.Manager
 
         }
 
+        public bool DeleteActivity(int activityId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("DeleteActivity", con))
+                    {
+                        con.Open();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@activityId", activityId);
+
+                        cmd.ExecuteNonQuery();
+
+                        _logger.LogTrace("Sucessfully Deleted Activity of Id --> " + activityId + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
+
+        public void UpdateActivity(Activity activity, int activityId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateActivity", con))
+                    {
+                        con.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@ActivityId", activityId);
+                        cmd.Parameters.AddWithValue("@Name", activity.ActivityName);
+                        cmd.Parameters.AddWithValue("@Description", activity.Description);
+                        cmd.Parameters.AddWithValue("@IsActive", activity.IsActive);
+                     
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                _logger.LogTrace("SuccessFully updated the Activity");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning at Update the " + activity.ActivityName + " : " + ex.Message);
+                throw;
+            }
+        }
+
+
+
     }
 }
