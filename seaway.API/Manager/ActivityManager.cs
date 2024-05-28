@@ -240,7 +240,36 @@ namespace seaway.API.Manager
             }
         }
 
+        public bool ChangeActiveStatus(bool status, int id)
+        {
+            try
+            {
+                var query = "UPDATE Activities SET IsActive = @status WHERE ActivityId = @Id";
 
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        con.Open();
+
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        cmd.Parameters.AddWithValue("@status", status);
+
+                        cmd.ExecuteNonQuery();
+
+                        _logger.LogTrace("Sucessfully Changed Activity Status of Id --> " + id + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogWarning(" Warning -- " + ex.Message);
+                return false;
+            }
+        }
 
     }
 }
