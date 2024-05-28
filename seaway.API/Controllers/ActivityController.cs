@@ -255,5 +255,45 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpPatch]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ChangeActiveStatus(bool status, int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    bool isStatusChanged = false;
+                    Activity activity = _activityManager.GetActivityById(id);
+
+                    if (activity?.ActivityName != null)
+                    {
+                        isStatusChanged = _activityManager.ChangeActiveStatus(status, id);
+
+                        if (isStatusChanged)
+                        {
+                            return Ok(true);
+                        }
+                        else
+                        {
+                            return BadRequest("Error on changing activity status");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("There is no any activity with this Id --> " + id);
+                    }
+                }
+                return BadRequest("Id is not Supplied");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while changing Active status of Activity : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
