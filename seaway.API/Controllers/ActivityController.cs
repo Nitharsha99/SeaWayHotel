@@ -295,5 +295,38 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("image")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteAsset([FromQuery] string ids)
+        {
+            try
+            {
+                List<string> idArray = new List<string>();
+                idArray = ids.Split(',').ToList();
+                bool IsRemoveFromCLoudinary = false;
+
+                IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
+
+                if (IsRemoveFromCLoudinary)
+                {
+                    string picType = "Activity";
+                    _documentManager.DeleteImageFromDB(idArray, picType);
+                }
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+                string responseBody = JsonConvert.SerializeObject(ids);
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                return Ok("Deleted " + responseBody);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting room pictures : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

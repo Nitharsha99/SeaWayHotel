@@ -67,9 +67,24 @@ namespace seaway.API.Manager
         {
             try
             {
+                List<string> deleteAsset = new List<string>();
+                foreach (var item in Ids)
+                {
+                    var assets = _cloudinary.GetResource(item);
+
+                    if(assets != null)
+                    {
+                        deleteAsset.Add(item);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Warning --> " + item + " is not in the Cloudinary");
+                    }
+                }
+                
                 var deleteParams = new DelResParams()
                 {
-                    PublicIds = Ids.ToList(),
+                    PublicIds = deleteAsset.ToList(),
                     Type = "upload",
                     ResourceType = ResourceType.Image
                 };
