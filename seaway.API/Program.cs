@@ -27,6 +27,7 @@ try
     builder.Services.AddScoped<LogHandler>();
     builder.Services.AddScoped<CustomerManager>();
     builder.Services.AddScoped<RoomManager>();
+    builder.Services.AddScoped<OfferManager>();
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
