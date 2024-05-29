@@ -3,7 +3,7 @@
     public class Offer
     {
         public int OfferId { get; set; }
-        public string? OfferName { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set;}
         public double? Price { get; set; }
         public double? DiscountPercentage { get; set; }
