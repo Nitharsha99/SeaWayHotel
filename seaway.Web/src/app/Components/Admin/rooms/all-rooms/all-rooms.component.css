@@ -5,3 +5,16 @@ th{
 table{
     width: 98%;
 }
+
+.pagination{
+    padding: 20px 16px;
+    text-align: right;
+}
+
+.pagination ::ng-deep.ngx-pagination {
+    text-align: right; /* add this to align the pagination controls to the right */
+  }
+
+  .pagination ::ng-deep.ngx-pagination.current {
+    background: #9E2222;
+  }

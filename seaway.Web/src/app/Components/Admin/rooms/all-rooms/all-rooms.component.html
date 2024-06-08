@@ -30,7 +30,7 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let room of rooms">
+                <tr *ngFor="let room of rooms | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: rooms.length }">
                     <td>{{room.roomId}}</td>
                     <td>{{room.roomName}}</td>
                     <td>{{room.guestCountMax}}</td>
@@ -54,6 +54,19 @@
                     </td>
                 </tr>
             </tbody>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <div class="pagination" style="display: inline-block;">
+                    <pagination-controls
+                        (pageChange)="onPageChange($event)"
+                        (totalItems)="rooms.length"
+                        (itemsPerPage)="pageSize"
+                    >
+                    </pagination-controls>
+                </div>
+            </div>
+
         </table>
     </div>
+
 </div>

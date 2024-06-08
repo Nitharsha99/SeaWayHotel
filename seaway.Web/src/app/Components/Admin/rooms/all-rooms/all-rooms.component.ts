@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Room } from 'src/app/Models/room';
 import { RoomService } from 'src/app/Services/RoomService/room.service';
@@ -12,18 +13,23 @@ import Swal from 'sweetalert2';
 export class AllRoomsComponent implements OnInit{
 
   rooms:Room[] = [];
-
+  pageSize:number = 5;
+  page: number = 1;
+ 
   constructor(private roomService: RoomService, private router: Router,
               private route: ActivatedRoute){}
 
   ngOnInit(): void {
     this.roomService.GetAllRooms().subscribe(res => {
       this.rooms = res;
-      console.log('ch', this.rooms);
-    })
+    });
   }
 
-  navigateToNewRoom(){
+  onPageChange(event: number) {
+    this.page = event;
+  }
+
+  navigateToNewRoom(): void{
     this.router.navigate(['addRoom'], {relativeTo: this.route});
   }
 
@@ -44,16 +50,18 @@ export class AllRoomsComponent implements OnInit{
       cancelButtonColor: "#d33",
       iconColor: "#d33"
   }).then((result) => {
+    console.log(result, "jsasjasojaia");
       if (result.isConfirmed) {
+        console.log("jhjhhhhhhhhhhhhh");
        this.roomService.DeleteRoom(id).subscribe(res => {
         Swal.fire({
           icon: "success",
           title: "Successfully Deleted " + res.roomName + " !!! ",
-          showConfirmButton: false,
-          timer: 1700
-        });
-        setTimeout(() => {
-          window.location.reload();
+          showConfirmButton: true
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          });
         });
        });
       } else if (result.dismiss === Swal.DismissReason.cancel) {

@@ -49,15 +49,19 @@ imageHeight: number = 110;
         this.roomId = params['id'];
         this.updateMode = true;
         this.roomService.FindRoomById(this.roomId).subscribe(res => {
-          this.roomForm.patchValue(res);
-          console.log('Form Value:', this.roomForm.value);
-          this.pictures = res.roomPics;
-          this.pictures.forEach(element => {
-            const urlLink = this.convertBase64ToString(element.picValue);
-            element.picValue = urlLink;
-          });
-          console.log("pics", this.pictures);
-        })
+          if(res != null){
+            this.roomForm.patchValue(res);
+            console.log('Form Value:', this.roomForm.value);
+            if(res.roomPics != null && res.roomPics.length > 0){
+              this.pictures = res.roomPics;
+              this.pictures.forEach(element => {
+                const urlLink = this.convertBase64ToString(element.picValue);
+                element.picValue = urlLink;
+              });
+            }
+            console.log("pics", this.pictures);
+          }
+        });
       }
     });
   }
@@ -159,6 +163,7 @@ imageHeight: number = 110;
     this.uploadImage();
     }
     else{
+      formValue.roomPics = null;
         this.callRoomService();
     }
   }
