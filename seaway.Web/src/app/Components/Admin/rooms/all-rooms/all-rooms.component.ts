@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 export class AllRoomsComponent implements OnInit{
 
   rooms:Room[] = [];
-  pageSize:number = 5;
+  pageSize:number = 2;
   page: number = 1;
  
   constructor(private roomService: RoomService, private router: Router,

@@ -2,19 +2,36 @@ th{
     background-color: #9E2222;
 }
 
-table{
+.table {
     width: 98%;
-}
-
-.pagination{
-    padding: 20px 16px;
-    text-align: right;
-}
-
-.pagination ::ng-deep.ngx-pagination {
-    text-align: right; /* add this to align the pagination controls to the right */
   }
 
-  .pagination ::ng-deep.ngx-pagination.current {
-    background: #9E2222;
+.pagination{
+    display: flex; 
+    justify-content: flex-end; 
+    margin-right: 16px;
+}
+
+.pagination-right{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-controls {
+    display: inline-block;
+    margin-top: 10px;
+  }
+
+  .pagination-right .ngx-pagination {
+    display: flex;
+    gap: 5px;
+  }
+
+  ::ng-deep .pagination-controls a{
+    color: purple;
+    background-color: white;
+  }
+  
+  .pagination-right .pagination-button:hover {
+    background-color: purple; /* Example: change background color on hover */
   }

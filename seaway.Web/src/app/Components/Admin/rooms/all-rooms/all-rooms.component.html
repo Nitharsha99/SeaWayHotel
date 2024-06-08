@@ -53,20 +53,19 @@
                         </button>
                     </td>
                 </tr>
-            </tbody>
-
-            <div style="display: flex; justify-content: flex-end;">
-                <div class="pagination" style="display: inline-block;">
-                    <pagination-controls
-                        (pageChange)="onPageChange($event)"
-                        (totalItems)="rooms.length"
-                        (itemsPerPage)="pageSize"
-                    >
-                    </pagination-controls>
-                </div>
-            </div>
-
+            </tbody>    
         </table>
+
+        <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
+            <pagination-controls
+                class="pagination-right"
+                (pageChange)="onPageChange($event)"
+                (totalItems)="rooms.length"
+                (itemsPerPage)="pageSize"
+            >
+            </pagination-controls>
+        </div>
+
     </div>
 
 </div>
