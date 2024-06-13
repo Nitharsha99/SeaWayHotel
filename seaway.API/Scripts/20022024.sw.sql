@@ -88,6 +88,6 @@ CREATE TABLE PicDocuments(
 	Value VARBINARY(MAX) NOT NULL,
 	IsActive BIT NOT NULL,
 	InsertedTime DATETIME NOT NULL
-)
+);
 GO
 

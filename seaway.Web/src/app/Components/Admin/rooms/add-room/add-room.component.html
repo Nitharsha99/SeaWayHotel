@@ -1,92 +1,124 @@
 <div>
-    <div class="mx-6 mt-2">
-        <h3>{{ updateMode ? 'Update Room' : 'Add Room'}}</h3>
-    </div>
-
-    <form [formGroup]="roomForm" (ngSubmit)="addRoom()">
-        <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
-            <div class="mb-3 row">
-                <label class="col-sm-2 col-form-label">Name<span>*</span></label>
-                <div class="col-sm-9">
-                  <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+    
+        <form [formGroup]="roomForm" (ngSubmit)="addRoom()" class="row g-3">
+            <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
+                <div>
+                    <h1>{{ updateMode ? 'Update Room' : 'Create Room'}}</h1>
                 </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="guestCountMax" class="col-sm-2 col-form-label">Guest Count(Max)<span>*</span></label>
-                <div class="col-sm-9">
-                  <input type="number" class="form-control" id="guestCountMax" required placeholder="Maximum Guest Count" formControlName="guestCountMax" min="0">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="price" class="col-sm-2 col-form-label">Price<span>*</span></label>
-                <div class="col-sm-9">
-                  <input type="text" class="form-control" id="price" required placeholder="Price Per Room" formControlName="price">
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="discountPercentage" class="col-sm-2 col-form-label">Discount(%)</label>
-                <div class="col-sm-9">
-                  <input type="text" class="form-control" id="discountPercentage" placeholder="Discount" formControlName="discountPercentage">
-                </div>
-            </div>
-
-            <div class="mb-3 row" *ngIf="updateMode">
-                <label class="col-sm-2 col-form-label" for="selectedImages">Room Images</label>
-
-                <div class="col-sm-9">
-                    <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 3px; display: flex;">
-                        <div *ngIf="pictures.length === 0" class="mx-2">
-                            <p style="color: #6c757d;"> There is no any Pictures</p>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="roomName"  class="form-label">Name<span>*</span></label>
+                        <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
+                        <div *ngIf="roomForm.controls['roomName'].invalid && (roomForm.controls['roomName'].dirty || roomForm.controls['roomName'].touched)" class="alert p-0 mb-0" >
+                          <div *ngIf="roomForm.controls['roomName']?.errors?.['required']">
+                            Please enter room name
+                          </div>
                         </div>
-                        <div class="shadow p-1 mb-2 bg-white rounded" style="background-color: aqua; margin-right: 15px;" *ngFor="let pic of pictures">
-                            <label>
-                                <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="guestCountMax" class="form-label">Guest Count(Max)<span>*</span></label>
+                        <input type="number" class="form-control" id="guestCountMax" required placeholder="Maximum Guest Count" formControlName="guestCountMax" min="0">
+                        <div *ngIf="roomForm.controls['guestCountMax'].invalid && (roomForm.controls['guestCountMax'].dirty || roomForm.controls['guestCountMax'].touched)" class="alert p-0 mb-0" >
+                            <div *ngIf="roomForm.controls['guestCountMax']?.errors?.['required']">
+                              Please enter maximum count of guest for the room
+                            </div>
+                        </div>
+                    </div>
+
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">Price<span>*</span></label>
+                        <input type="text" class="form-control" id="price" required placeholder="Price Per Room" formControlName="price">
+                        <div *ngIf="roomForm.controls['price'].invalid && (roomForm.controls['price'].dirty || roomForm.controls['price'].touched)" class="alert p-0 mb-0" >
+                            <div *ngIf="roomForm.controls['price']?.errors?.['required']">
+                              Please enter price 
+                            </div>
+                          </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="discountPercentage" class="form-label">Discount(%)</label>
+                        <input type="text" class="form-control" id="discountPercentage" placeholder="Discount" formControlName="discountPercentage" min="0" max="100">
+                    </div>
+
+                  </div>
+    
+                <div class="mb-3 row" *ngIf="updateMode">
+                    <label class="col-12 form-label" for="selectedImages">Room Images</label>
+    
+                    <div class="col-sm-12">
+                        <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 3px; display: flex; background-color: #F5F6FA;">
+                            <div *ngIf="pictures.length === 0" class="mx-2 mt-2">
+                                <p style="color: #6c757d;"> There is no any Pictures</p>
+                            </div>
+                            <div class="shadow p-1 mb-2 bg-white rounded" style="background-color: aqua; margin-right: 15px;" *ngFor="let pic of pictures">
+                                <label>
+                                    <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
+                                    <div>
+                                        <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px;" [title]="pic.picName"
+                                             [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
+                                        <p class="text-center">{{pic.picName}}</p>
+                                    </div>
+                                </label>
+                            </div>
+    
+                            <span class="input-group-btn mx-2" style="margin-right: 100px;" *ngIf="pictures.length > 0 && selectedPictures.length > 0">
+                                <button class="btn btn-outline-danger" type="button" (click)="deleteImages()">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+    
+                </div>
+        
+                <div class="mb-3 row">
+                    <label class="col-12 form-label" for="selectImages">Upload Images</label>
+        
+                    <div class="col-sm-12">
+                        <ngx-dropzone (change)="onSelect($event)" class="upload-field">
+                
+                            <ngx-dropzone-label>
                                 <div>
-                                    <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px;" [title]="pic.picName"
-                                         [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
-                                    <p class="text-center">{{pic.picName}}</p>
-                                </div>
-                            </label>
-                        </div>
-
-                        <span class="input-group-btn mx-2" style="margin-right: 100px;" *ngIf="pictures.length > 0 && selectedPictures.length > 0">
-                            <button class="btn btn-outline-danger" type="button" (click)="deleteImages()">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </span>
+                                    <div><i class="bi bi-camera" style="font-size: 28px;"></i></div>
+                                    <div>
+                                        Drag & Drop Images here
+                                    </div>
+                                    <div style="font-size: 11px;">
+                                        Or Browse here
+                                    </div>
+                                </div> 
+                            </ngx-dropzone-label>
+                    
+                            <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
+                                <div>{{file.name}}</div>
+                                <div>{{file.type}}</div>
+                                <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
+                            </ngx-dropzone-preview>
+                    
+                        </ngx-dropzone>
+                    </div>
+    
+                </div>
+        
+                <div class="row mt-3">
+                    <div class="col-2">
+                        <button type="button" class="btn" (click)="redirectToBack()" style="background-color: #570254; color: #FFFFFF;">
+                            <i class="bi bi-arrow-left-short"></i>
+                            Back</button> 
+                    </div>
+                    <div class="col-10" style="text-align: right;">
+                        <button *ngIf="updateMode == false" type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+                        <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addRoom()">
+                            {{updateMode ? 'Update' : 'Create'}}
+                        </button>
                     </div>
                 </div>
-
             </div>
-    
-            <div class="mb-3 row">
-                <label class="col-sm-2 col-form-label" for="selectImages">Upload Images</label>
-    
-                <div class="col-sm-9">
-                    <ngx-dropzone (change)="onSelect($event)" class="upload-field">
-            
-                        <ngx-dropzone-label>Drag and Drop Images</ngx-dropzone-label>
-                
-                        <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
-                            <div>{{file.name}}</div>
-                            <div>{{file.type}}</div>
-                            <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
-                        </ngx-dropzone-preview>
-                
-                    </ngx-dropzone>
-                </div>
-
-            </div>
-    
-            <div class="row">
-                <div class="col-2">
-                    <button style="margin-right: 15px;" type="button" class="btn btn-primary" (click)="addRoom()">{{updateMode ? 'Update' : 'Add'}}</button>
-                    <button *ngIf="updateMode == false" type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
-                </div>
-                <div class="col-9" style="text-align: right;">
-                    <button type="button" class="btn btn-dark" (click)="redirectToBack()">Back</button>
-                </div>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>

@@ -31,9 +31,9 @@ imageHeight: number = 110;
 
   roomForm: FormGroup = this.builder.group({
     roomName: ['', Validators.required],
-    guestCountMax: [''],
-    price: [''],
-    discountPercentage: [''],
+    guestCountMax: ['', Validators.required],
+    price: ['', Validators.required],
+    discountPercentage: [0],
     roomPics: this.builder.array([
       this.builder.group({
         picName: [null],
