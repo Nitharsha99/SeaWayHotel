@@ -130,9 +130,10 @@ namespace seaway.API.Controllers
         }
 
         [HttpPut]
+        [Route("{roomId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateRoom([FromForm]RoomWithPicModel room, int roomId)
+        public IActionResult UpdateRoom(RoomWithPicModel room, [FromRoute]int roomId)
         {
             try
             {

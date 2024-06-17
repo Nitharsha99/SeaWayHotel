@@ -136,15 +136,6 @@ imageHeight: number = 110;
 
 /****************Click Add or Update Button *********** */
  addRoom(){
-  if(this.updateMode == false){
-    this.newRoom();
-  }
-  else{
-    this.updateRoom();
-  }
- }
-
- async newRoom(){
   const formValue = this.roomForm.value;
 
   if(formValue.discount == ""){
@@ -167,8 +158,6 @@ imageHeight: number = 110;
         this.callRoomService();
     }
   }
-    
-
  }
 
  callRoomService(){
@@ -192,12 +181,31 @@ imageHeight: number = 110;
      }
     )
   }else{
-    alert("no update");
+    if(this.roomId != null){
+      this.roomService.UpdateRoom(formValue, this.roomId).subscribe((res) => {
+        console.log('edit result', res);
+        Swal.fire({
+          title: "Room Updated Successfully!!",
+          icon: "success"
+        }).then(() =>{
+          this.files = [];
+          setTimeout(() => {
+            window.location.reload();
+          });
+        });
+       },
+       (error) =>{
+        Swal.fire({
+          title: "Error!",
+          text: error.message ,
+          icon: "error"
+        });
+       }
+      )
+    }
   }
 
  }
-
- updateRoom(){}
 
  resetForm(){
   this.roomForm.reset();
@@ -206,7 +214,8 @@ imageHeight: number = 110;
  }
 
  redirectToBack(){
-   this.location.back();
+   //this.location.back();
+   this.router.navigate(['../Rooms']);
  }
 
  showLoadingNotification() {
@@ -220,9 +229,37 @@ imageHeight: number = 110;
 }
 
 deleteImages(){
-  this.roomService.DeleteImages(this.selectedPictures).subscribe((res) =>{
-    console.log("res");
-  });
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You won\'t be able to revert this!',
+    icon: 'warning',
+    showCancelButton: true,
+    cancelButtonText: 'No, keep it',
+    confirmButtonText: 'Yes, delete it!',
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    iconColor: "#d33"
+}).then((result) => {
+  if(result.isConfirmed){
+    this.roomService.DeleteImages(this.selectedPictures).subscribe((res) =>{
+      if(res.includes("Deleted")){
+        Swal.fire({
+          icon: "success",
+          title: "Successfully Deleted Images!!! ",
+          showConfirmButton: true
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          });
+        });
+      }
+
+    });
+  }
+  else if (result.dismiss === Swal.DismissReason.cancel) {
+    Swal.fire('Process Cancelled', 'Your Record is safe now !!');
+ }
+});
 }
 
 convertBase64ToString(base64: string){
