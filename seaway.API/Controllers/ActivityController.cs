@@ -148,7 +148,7 @@ namespace seaway.API.Controllers
 
                 activity = _activityManager.GetActivityById(Id);
 
-                if (activity.ActivityId != null)
+                if (activity?.ActivityId != null)
                 {
 
                     isActivityRemove = _activityManager.DeleteActivity(Id);
