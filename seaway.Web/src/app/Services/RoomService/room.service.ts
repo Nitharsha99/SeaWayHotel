@@ -25,14 +25,15 @@ export class RoomService {
     return this.http.post<any>(this.baseUrl, data);
   }
 
-  UpdateRoom(data: any): Observable<any>{
-    return this.http.put<any>(this.baseUrl, data);
+  UpdateRoom(data: any, id: number): Observable<any>{
+    return this.http.put<any>(this.baseUrl+ "/" + id, data);
   }
 
   DeleteImages(ids: string[]){
     console.log("Deleting images:", ids);
-    const params = new HttpParams().set('ids', ids.join(','));
-    return this.http.delete(`${this.baseUrl}/image`, { params });
+    let params = new HttpParams();
+    ids.forEach((id) => params = params.append('ids', id));
+    return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
   }
 
   DeleteRoom(id: number): Observable<any>{

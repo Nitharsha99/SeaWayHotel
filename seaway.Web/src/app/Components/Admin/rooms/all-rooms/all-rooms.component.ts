@@ -52,7 +52,6 @@ export class AllRoomsComponent implements OnInit{
   }).then((result) => {
     console.log(result, "jsasjasojaia");
       if (result.isConfirmed) {
-        console.log("jhjhhhhhhhhhhhhh");
        this.roomService.DeleteRoom(id).subscribe(res => {
         Swal.fire({
           icon: "success",

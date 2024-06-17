@@ -55,11 +55,11 @@
                             <div *ngIf="pictures.length === 0" class="mx-2 mt-2">
                                 <p style="color: #6c757d;"> There is no any Pictures</p>
                             </div>
-                            <div class="shadow p-1 mb-2 bg-white rounded" style="background-color: aqua; margin-right: 15px;" *ngFor="let pic of pictures">
+                            <div class="shadow p-1 mb-2 bg-white rounded" style="margin-right: 15px;" *ngFor="let pic of pictures">
                                 <label>
                                     <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
                                     <div>
-                                        <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px;" [title]="pic.picName"
+                                        <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; padding-right: 3px;" [title]="pic.picName"
                                              [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
                                         <p class="text-center">{{pic.picName}}</p>
                                     </div>
