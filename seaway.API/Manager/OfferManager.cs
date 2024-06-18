@@ -19,6 +19,59 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
+        public List<Offer> GetOffers()
+        {
+            try
+            {
+                List<Offer> offerList = new List<Offer>();
+
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    SqlCommand command = _con.CreateCommand();
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = "GetAllOffers";               
+
+                    _con.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+
+                                Offer offer = new Offer
+                                {
+                                    OfferId = (int)reader["OfferId"],
+                                    Name = reader["OfferName"].ToString(),
+                                    Description = reader["Description"].ToString(),
+                                    IsRoomOffer = (bool)reader["IsRoomOffer"],
+                                    IsActive = (bool)reader["IsActive"],
+                                    ValidFrom = Convert.ToDateTime(reader["ValidFrom"]),
+                                    ValidTo = Convert.ToDateTime(reader["ValidTo"]),
+                                    Price = Convert.ToDouble(reader["Price"]),
+                                    DiscountPercentage = reader["DiscountPercent"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercent"]),
+                                    DiscountAmount = reader["DiscountPrice"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPrice"]),
+                                };
+
+                                offerList.Add(offer);
+                            
+
+                        }
+                    }
+
+                    _con.Close();
+
+                    _logger.LogTrace("SuccessFully All Offer Data retrieved");
+
+                    return offerList;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(" Warning -- " + ex.Message);
+                throw;
+            }
+        }
+
         public Offer GetOfferById(int offerId)
         {
      

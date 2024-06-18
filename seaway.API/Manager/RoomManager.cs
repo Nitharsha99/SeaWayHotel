@@ -37,12 +37,7 @@ namespace seaway.API.Manager
                     {
                         while (reader.Read())
                         {
-                            var roomId = (int)reader["RoomId"];
-                            Room room = roomList.FirstOrDefault(r => r.RoomId == roomId) ?? new Room();
-
-                            if (room.RoomId == null)
-                            {
-                                room = new Room
+                                Room room = new Room
                                 {
                                     RoomId = (int)reader["RoomId"],
                                     RoomName = reader["RoomName"].ToString(),
@@ -53,29 +48,7 @@ namespace seaway.API.Manager
                                 };
 
                                 roomList.Add(room);
-                            }
-
-                            //if (room.RoomId == (int)reader["PicTypeId"] && reader["PicName"] != DBNull.Value)
-                            //{
-                            //    byte[] picValueInByte = (byte[])reader["PicValue"];
-                            //    string val = Convert.ToBase64String(picValueInByte);
-
-                            //    PicDocument document = new PicDocument
-                            //    {
-                            //        PicName = reader["PicName"].ToString(),
-                            //        PicType = reader["PicType"].ToString(),
-                            //        PicTypeId = (int)reader["PicTypeId"],
-                            //        CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
-                            //        PicValue = val
-                            //    };
-
-                            //    if (room.RoomPics == null)
-                            //    {
-                            //        room.RoomPics = new List<PicDocument>();
-                            //    }
-
-                            //    room.RoomPics.Add(document);
-                            //}
+                            
                         }
                     }
 
