@@ -27,6 +27,31 @@ namespace seaway.API.Controllers
             _documentManager = documentManager;
         }
 
+        [Route("")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetAllOffers()
+        {
+            try
+            {
+                List<Offer> offers = _offerManager.GetOffers();
+
+                string responseBody = JsonConvert.SerializeObject(offers);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                return Ok(offers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while get all offers data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
