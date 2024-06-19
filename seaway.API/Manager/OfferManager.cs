@@ -202,5 +202,39 @@ namespace seaway.API.Manager
                 return false;
             }
         }
+
+        public void UpdateOffer(Offer offer, int offerId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateOffer", con))
+                    {
+                        con.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@offerId", offerId);
+                        cmd.Parameters.AddWithValue("@offerName", offer?.Name);
+                        cmd.Parameters.AddWithValue("@description", offer?.Description);
+                        cmd.Parameters.AddWithValue("@validFrom", offer?.ValidFrom);
+                        cmd.Parameters.AddWithValue("@validTo", offer?.ValidTo);
+                        cmd.Parameters.AddWithValue("@price", offer?.Price);
+                        cmd.Parameters.AddWithValue("@discountPercent", offer?.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@isActive", offer?.IsActive);
+                        cmd.Parameters.AddWithValue("@isRoomOffer", offer?.IsRoomOffer);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                _logger.LogTrace("SuccessFully updated the offer");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning at Update the " + offer.Name + " : " + ex.Message);
+                throw;
+            }
+        }
     }
 }

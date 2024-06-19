@@ -175,5 +175,70 @@ namespace seaway.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateOffer(OfferWithPicModel offer, [FromRoute] int Id)
+        {
+            try
+            {
+                if (Id != 0)
+                {
+                    Offer oldOffer = _offerManager.GetOfferById(Id);
+                    if (oldOffer.Name != null)
+                    {
+                        Offer updatedOffer = new Offer
+                        {
+                            Name = offer.Name,
+                            Description = offer.Description,
+                            ValidFrom = offer.ValidFrom,
+                            ValidTo = offer.ValidTo,
+                            Price = offer.Price,
+                            DiscountPercentage = offer.DiscountPercentage,
+                            IsActive = offer.IsActive,
+                            IsRoomOffer = offer.IsRoomOffer
+                        };
+                        _offerManager.UpdateOffer(updatedOffer, Id);
+
+                        PicDocument pic = new PicDocument
+                        {
+                            PicType = "Offer",
+                            PicTypeId = Id
+                        };
+
+                        if (offer?.offerPics?.Length > 0)
+                        {
+                            foreach (var item in offer.offerPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                _documentManager.UploadImage(pic);
+                            }
+                        }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(offer);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid OfferId");
+                    }
+                }
+
+                return Ok(offer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while updating offer data : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
