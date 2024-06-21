@@ -240,5 +240,96 @@ namespace seaway.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteOffer([FromRoute] int Id)
+        {
+            try
+            {
+                bool isOfferRemove = false;
+                List<string> publicIds = new List<string>();
+                bool IsRemoveFromCLoudinary = false;
+
+                Offer offer = _offerManager.GetOfferById(Id);
+
+                if (offer.Name != null)
+                {
+                    if (offer?.OfferPics?.Count > 0)
+                    {
+                        foreach (var pic in offer.OfferPics)
+                        {
+                            publicIds.Add(pic.CloudinaryPublicId ?? "");
+                        }
+                        IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(publicIds).Result;
+
+                        if (IsRemoveFromCLoudinary)
+                        {
+                            isOfferRemove = _offerManager.DeleteOffer(Id);
+                        }
+                    }
+                    isOfferRemove = _offerManager.DeleteOffer(Id);
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(offer);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    if (isOfferRemove)
+                    {
+                        return Ok(offer);
+                    }
+                    else
+                    {
+                        return BadRequest("Issue in deleting process");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Offer is not exist for this Id");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting offer : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("image")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteAsset([FromQuery] string ids)
+        {
+            try
+            {
+                List<string> idArray = new List<string>();
+                idArray = ids.Split(',').ToList();
+                bool IsRemoveFromCLoudinary = false;
+
+                IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
+
+                if (IsRemoveFromCLoudinary)
+                {
+                    string picType = "Offer";
+                    _documentManager.DeleteImageFromDB(idArray, picType);
+                }
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+                string responseBody = JsonConvert.SerializeObject(ids);
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                return Ok("Deleted " + responseBody);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An exception occurred while deleting offer pictures : " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

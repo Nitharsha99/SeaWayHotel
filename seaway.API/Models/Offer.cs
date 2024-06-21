@@ -12,5 +12,6 @@
         public DateTime? ValidTo { get; set;}
         public bool? IsActive { get; set; }
         public bool? IsRoomOffer { get; set;}
+        public List<PicDocument>? OfferPics { get; set; }
     }
 }
