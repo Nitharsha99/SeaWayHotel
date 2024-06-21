@@ -236,5 +236,34 @@ namespace seaway.API.Manager
                 throw;
             }
         }
+
+        public bool DeleteOffer(int offerId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("DeleteOfferWithPics", con))
+                    {
+                        con.Open();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@offerId", offerId);
+
+                        cmd.ExecuteNonQuery();
+
+                        _logger.LogTrace("Sucessfully Deleted Offers of Id --> " + offerId + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
     }
 }
