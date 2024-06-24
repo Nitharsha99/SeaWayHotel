@@ -215,7 +215,7 @@ imageHeight: number = 110;
 
  redirectToBack(){
    //this.location.back();
-   this.router.navigate(['../Rooms']);
+   this.router.navigate(['../../Rooms'], {relativeTo: this.route});
  }
 
  showLoadingNotification() {
