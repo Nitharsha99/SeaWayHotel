@@ -22,6 +22,8 @@ import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.com
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './Components/Admin/login/login.component';
+import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities/all-activities.component';
+import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities/add-activities.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { LoginComponent } from './Components/Admin/login/login.component';
     AdminMainComponent,
     AddRoomComponent,
     AllRoomsComponent,
-    LoginComponent
+    LoginComponent,
+    AllActivitiesComponent,
+    AddActivitiesComponent
   ],
   imports: [
     BrowserModule,

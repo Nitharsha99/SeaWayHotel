@@ -1,0 +1,71 @@
+<div style="width: 98%; border-radius: 15px; border: #4F4F4F;" class="mx-3 shadow-lg mb-5 bg-body"> 
+
+    <div class="mx-3 mt-4">
+        <div class="row">
+            <div class="col-3 mt-3">
+                <h2>Activity List</h2>
+            </div>
+            <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
+                <i class="bi bi-search"></i>
+                <input type="text" class="form-control" placeholder="Search Activities....">
+            </div>
+            <div class="col-3 mt-3" style="text-align: right;">
+                <button type="button" class="btn" (click)="navigateToAddActivity()" style="background-color: #570254; color: #FFFFFF;">+ New Activity</button>
+            </div>
+        </div>  
+    </div>
+
+    <div class="mt-4 mb-5" style="text-align: center;" *ngIf="activities.length == 0"> <h3>There is no any Activities here now !!</h3></div>
+
+    <div *ngIf="activities.length > 0">
+        <table class="table table-striped mx-3 my-3 mt-4">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-white">Id</th>
+                    <th scope="col" class="text-white">Activity Name</th>
+                    <th scope="col" class="text-white">Description</th>
+                    <th scope="col" class="text-white"></th>
+                    <th scope="col" class="text-white">Active</th>
+                    <th scope="col" class="text-white">Edit</th>
+                    <th scope="col" class="text-white">Delete</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>40</td>
+                    <td colspan="2">2</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn">
+                            <i class="bi bi-trash-fill" style="color: red;"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>    
+        </table>
+
+        <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
+            <pagination-controls
+                class="pagination-right"
+                (totalItems)="10"
+                (itemsPerPage)="pageSize"
+            >
+            </pagination-controls>
+        </div>
+
+    </div>
+
+
+</div>
+
