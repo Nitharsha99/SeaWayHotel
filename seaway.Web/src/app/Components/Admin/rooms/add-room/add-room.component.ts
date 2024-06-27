@@ -214,8 +214,13 @@ imageHeight: number = 110;
  }
 
  redirectToBack(){
-   //this.location.back();
-   this.router.navigate(['../../Rooms'], {relativeTo: this.route});
+  if(this.updateMode){
+    this.router.navigate(['../../../Rooms'], {relativeTo: this.route});
+  }
+  else{
+    this.router.navigate(['../../Rooms'], {relativeTo: this.route});
+  }
+
  }
 
  showLoadingNotification() {
