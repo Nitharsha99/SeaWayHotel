@@ -9,8 +9,8 @@ import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.com
 import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
 import { LoginComponent } from './Components/Admin/login/login.component';
-import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities/all-activities.component';
-import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities/add-activities.component';
+import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
+import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},

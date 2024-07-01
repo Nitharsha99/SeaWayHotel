@@ -70,3 +70,7 @@ a{
   :host ::ng-deep .pagination-right .pagination-button:hover {
     background-color:#4F4F4F; /* Example: change background color on hover */
   }
+
+  .delete-btn:hover{
+    border-color: #b92323;
+  }
