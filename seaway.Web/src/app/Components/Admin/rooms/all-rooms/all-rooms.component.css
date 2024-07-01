@@ -1,5 +1,38 @@
 th{
-    background-color: #9E2222;
+    background-color: #4F4F4F;
+}
+
+.form-inputs{
+  position:relative;
+}
+.form-inputs .form-control{
+  height:45px; 
+  border-radius: 25px;
+  box-shadow: inset 0 0 5px #4F4F4F;
+}
+
+.form-inputs .form-control:focus{
+  box-shadow: inset 0 0 5px #570254;
+  border: none;
+}
+
+.form-inputs i{
+  font-size: 18px;
+  position:absolute;
+  right:25px;
+  top:13px;
+}
+
+.form-select{
+  width: 85%;
+}
+
+a{
+  font-size: 16px;
+}
+
+.custom-btn:focus{
+  box-shadow: 0 8px 6px -6px #570254;
 }
 
 .table {
@@ -20,6 +53,8 @@ th{
 .pagination-controls {
     display: inline-block;
     margin-top: 10px;
+    background-color: #570254;
+    color: #4F4F4F;
   }
 
   .pagination-right .ngx-pagination {
@@ -27,11 +62,12 @@ th{
     gap: 5px;
   }
 
-  ::ng-deep .pagination-controls a{
-    color: purple;
-    background-color: white;
+  :host ::ng-deep .ngx-pagination .current{
+    color: #fefefe;
+    background: #570254;
   }
   
   .pagination-right .pagination-button:hover {
-    background-color: purple; /* Example: change background color on hover */
+    background-color:#4F4F4F; /* Example: change background color on hover */
+    color: #4F4F4F;
   }
