@@ -62,7 +62,7 @@ a{
     gap: 5px;
   }
 
-  .pagination-right .ngx-pagination .current{
+  :host ::ng-deep .ngx-pagination .current{
     color: #fefefe;
     background: #570254;
   }
