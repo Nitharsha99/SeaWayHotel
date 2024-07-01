@@ -1,7 +1,7 @@
 import { PicDocument } from "./picDocument";
 
 export interface Activity{
-    id: number;
+    activityId: number;
     activityName: string;
     description: string;
     isActive: boolean;
