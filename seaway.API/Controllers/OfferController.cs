@@ -47,7 +47,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get all offers data : " + ex.Message);
+                _logger.LogError(LogMessages.GetOfferDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -107,7 +107,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while inserting offer data : " + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -147,7 +147,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while changing Active status of Offer : " + ex.Message);
+                _logger.LogError(LogMessages.StatusChangeError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -171,7 +171,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get offer data with Id = " + Id + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindOfferByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -236,7 +236,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while updating offer data : " + ex.Message);
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -294,7 +294,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting offer : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteOfferError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -327,7 +327,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting offer pictures : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteImageError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }

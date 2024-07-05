@@ -54,7 +54,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get all activities data : " + ex.Message);
+                _logger.LogError(LogMessages.GetActivityDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -78,7 +78,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get activity data with Id = " + Id + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindActivityByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -128,7 +128,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while inserting activity data : " + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
 
@@ -175,7 +175,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting Activity : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteActivityError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -235,7 +235,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while updating Activity data : " + ex.Message);
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -275,7 +275,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while changing Active status of Activity : " + ex.Message);
+                _logger.LogError(LogMessages.StatusChangeError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -308,7 +308,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting room pictures : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteImageError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }

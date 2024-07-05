@@ -139,7 +139,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogMessages.InsertRoomError + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -205,7 +205,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogMessages.UpdateRoomError + ex.Message);
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -247,7 +247,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogMessages.RoomImageDeleteError + ex.Message);
+                _logger.LogError(LogMessages.DeleteImageError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -299,6 +299,10 @@ namespace seaway.API.Controllers
                         {
                             return BadRequest("Issue in deleting process");
                         }
+                    }
+                    else
+                    {
+                        return NotFound("Invalid Id");
                     }
                 }
                 else
