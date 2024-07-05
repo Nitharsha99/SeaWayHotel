@@ -1,1 +1,115 @@
-<p>add-activities works!</p>
+<div>
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+    
+        <form [formGroup]="activityForm" (ngSubmit)="addActivity()" class="row g-3">
+            <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
+                <div>
+                    <h1>{{ updateMode ? 'Update Activity' : 'Create Activity'}}</h1>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="activityName"  class="form-label">Name<span>*</span></label>
+                        <input type="text" class="form-control" id="activityName" placeholder="Activity Name" required formControlName="activityName">
+                        <div 
+                        *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
+                        class="alert p-0 mb-0" >
+                          <div *ngIf="activityForm.controls['activityName']?.errors?.['required']">
+                            Please enter activity name
+                          </div>
+                        </div>
+                    </div>
+
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="description"  class="form-label">Description<span>*</span></label>
+                        <textarea class="form-control" id="description" placeholder="Description" required formControlName="description">
+                        </textarea>
+                    <div 
+                        *ngIf="activityForm.controls['description'].invalid && (activityForm.controls['description'].dirty || activityForm.controls['description'].touched)" 
+                        class="alert p-0 mb-0" >
+                          <div *ngIf="activityForm.controls['description']?.errors?.['required']">
+                            Please enter the description
+                          </div>
+                        </div>
+                    </div>
+
+                  </div>
+    
+                <div class="mb-3 row" *ngIf="updateMode">
+                    <label class="col-12 form-label" for="selectedImages">Activity Images</label>
+    
+                    <div class="col-sm-12">
+                        <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 3px; display: flex; background-color: #F5F6FA;">
+                            <div *ngIf="pictures.length === 0" class="mx-2 mt-2">
+                                <p style="color: #6c757d; font-size: 16px;" > There is no any Pictures</p>
+                            </div>
+                            <div class="shadow p-1 mb-2 bg-white rounded" style="margin-right: 15px;" *ngFor="let pic of pictures">
+                                <label>
+                                    <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
+                                    <div>
+                                        <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; padding-right: 3px;" [title]="pic.picName"
+                                             [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
+                                        <p class="text-center">{{pic.picName}}</p>
+                                    </div>
+                                </label>
+                            </div>
+    
+                            <span class="input-group-btn mx-2" style="margin-right: 100px;" *ngIf="pictures.length > 0 && selectedPictures.length > 0">
+                                <button class="btn btn-outline-danger" type="button" (click)="deleteImages()">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+    
+                </div>
+        
+                <div class="mb-3 row">
+                    <label class="col-12 form-label" for="selectImages">Upload Images</label>
+        
+                    <div class="col-sm-12">
+                        <ngx-dropzone (change)="onSelect($event)" class="upload-field">
+                
+                            <ngx-dropzone-label>
+                                <div>
+                                    <div><i class="bi bi-camera" style="font-size: 28px;"></i></div>
+                                    <div>
+                                        Drag & Drop Images here
+                                    </div>
+                                    <div style="font-size: 11px;">
+                                        Or Browse here
+                                    </div>
+                                </div> 
+                            </ngx-dropzone-label>
+                    
+                            <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
+                                <div>{{file.name}}</div>
+                                <div>{{file.type}}</div>
+                                <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
+                            </ngx-dropzone-preview>
+                    
+                        </ngx-dropzone>
+                    </div>
+    
+                </div>
+        
+                <div class="row mt-3">
+                    <div class="col-2">
+                        <button type="button" class="btn" (click)="redirectToBack()" style="background-color: #570254; color: #FFFFFF;">
+                            <i class="bi bi-arrow-left-short"></i>
+                            Back</button> 
+                    </div>
+                    <div class="col-10" style="text-align: right;">
+                        <button *ngIf="updateMode == false" type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+                        <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addActivity()">
+                            {{updateMode ? 'Update' : 'Create'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
