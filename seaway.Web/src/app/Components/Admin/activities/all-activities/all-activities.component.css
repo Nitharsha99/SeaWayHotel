@@ -64,10 +64,13 @@ a{
 
   :host ::ng-deep .ngx-pagination .current{
     color: #fefefe;
-    background: #570254;
+    background: #570254 !important; 
   }
   
-  .pagination-right .pagination-button:hover {
+  :host ::ng-deep .pagination-right .pagination-button:hover {
     background-color:#4F4F4F; /* Example: change background color on hover */
-    color: #4F4F4F;
+  }
+
+  .delete-btn:hover{
+    border-color: #b92323;
   }
