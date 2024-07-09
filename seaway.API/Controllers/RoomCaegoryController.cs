@@ -9,22 +9,22 @@ using System.Diagnostics;
 
 namespace seaway.API.Controllers
 {
-    [Route("api/Room")]
+    [Route("api/RoomCategory")]
     [ApiController]
-    public class RoomController : ControllerBase
+    public class RoomCaegoryController : ControllerBase
     {
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         LogHandler _log;
-        RoomManager _roomManager;
+        RoomCategoryManager _roomCategoryManager;
         PicDocumentManager _docManager;
 
-        public RoomController(ILogger<LogHandler> logger, IConfiguration configuration, LogHandler log, RoomManager roomManager, PicDocumentManager docManager)
+        public RoomCaegoryController(ILogger<LogHandler> logger, IConfiguration configuration, LogHandler log, RoomCategoryManager roomCategoyManager, PicDocumentManager docManager)
         {
             _logger = logger;
             _configuration = configuration;
             _log = log;
-            _roomManager = roomManager;
+            _roomCategoryManager = roomCategoyManager;
             _docManager = docManager;
         }
 
@@ -32,19 +32,19 @@ namespace seaway.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllRooms()
+        public IActionResult GetAllRoomCategories()
         {
             try
             {
-                List<Room> rooms = _roomManager.GetRooms();
+                List<RoomCategory> categories = _roomCategoryManager.GetRooms();
 
-                string responseBody = JsonConvert.SerializeObject(rooms);
+                string responseBody = JsonConvert.SerializeObject(categories);
 
                 string requestUrl = HttpContext.Request.Path.ToString();
 
                 _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
 
-                return Ok(rooms);
+                return Ok(categories);
             }
             catch (Exception ex)
             {
@@ -54,34 +54,34 @@ namespace seaway.API.Controllers
         }
 
         [HttpGet]
-        [Route("{roomId}")]
+        [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindRoomById([FromRoute] int roomId)
+        public IActionResult FindCategoryById([FromRoute] int Id)
         {
             try
             {
-                if(roomId > 0)
+                if(Id > 0)
                 {
-                    Room room = _roomManager.GetRoomById(roomId);
+                    RoomCategory Category = _roomCategoryManager.GetRoomById(Id);
 
-                    string responseBody = JsonConvert.SerializeObject(room);
+                    string responseBody = JsonConvert.SerializeObject(Category);
 
                     string requestUrl = HttpContext.Request.Path.ToString();
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-                    return Ok(room);
+                    return Ok(Category);
                 }
                 else
                 {
                     _logger.LogError(LogMessages.InvalidIdError);
-                    return BadRequest(0);
+                    return BadRequest(DisplayMessages.InvalidId);
                 }
 
             }
             catch(Exception ex)
             {
-                _logger.LogError(LogMessages.FindRoomByIdError + roomId + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindRoomByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -90,20 +90,20 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostNewRoom(RoomWithPicModel room)
+        public IActionResult PostNewCategory(RoomWithPicModel Category)
         {
             try
             {
-                if(room != null)
+                if(Category != null)
                 {
-                    Room r = new Room
+                    RoomCategory r = new RoomCategory
                     {
-                        RoomName = room.RoomName,
-                        GuestCountMax = room.GuestCountMax,
-                        Price = room.Price,
-                        DiscountPercentage = room.DiscountPercentage
+                        RoomName = Category.RoomName,
+                        GuestCountMax = Category.GuestCountMax,
+                        Price = Category.Price,
+                        DiscountPercentage = Category.DiscountPercentage
                     };
-                    int roomId = _roomManager.NewRoom(room);
+                    int roomId = _roomCategoryManager.NewRoom(Category);
 
                     PicDocument pic = new PicDocument
                     {
@@ -111,9 +111,9 @@ namespace seaway.API.Controllers
                         PicTypeId = roomId
                     };
 
-                    if(room?.roomPics?.Length > 0)
+                    if(Category?.roomPics?.Length > 0)
                     {
-                        foreach(var item in room.roomPics)
+                        foreach(var item in Category.roomPics)
                         {
                             pic.PicValue = item.PicValue;
                             pic.PicName = item.PicName;
@@ -124,11 +124,11 @@ namespace seaway.API.Controllers
                     }
 
                     string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(room);
+                    string responseBody = JsonConvert.SerializeObject(Category);
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
-                    return Ok(room);
+                    return Ok(Category);
                 }
                 else
                 {
@@ -145,36 +145,36 @@ namespace seaway.API.Controllers
         }
 
         [HttpPut]
-        [Route("{roomId}")]
+        [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateRoom(RoomWithPicModel room, [FromRoute]int roomId)
+        public IActionResult UpdateRoomCategory(RoomWithPicModel category, [FromRoute]int Id)
         {
             try
             {
-                if (roomId > 0)
+                if (Id > 0)
                 {
-                    Room oldRoom = _roomManager.GetRoomById(roomId);
+                    RoomCategory oldRoom = _roomCategoryManager.GetRoomById(Id);
                     if (oldRoom.RoomName != null)
                     {
-                        Room updateRoom = new Room
+                        RoomCategory updateCategory = new RoomCategory
                         {
-                            RoomName = room.RoomName,
-                            GuestCountMax = room.GuestCountMax,
-                            Price = room.Price,
-                            DiscountPercentage = room.DiscountPercentage,
+                            RoomName = category.RoomName,
+                            GuestCountMax = category.GuestCountMax,
+                            Price = category.Price,
+                            DiscountPercentage = category.DiscountPercentage,
                         };
-                        _roomManager.UpdateRoom(updateRoom, roomId);
+                        _roomCategoryManager.UpdateRoom(updateCategory, Id);
 
                         PicDocument pic = new PicDocument
                         {
                             PicType = "Room",
-                            PicTypeId = roomId
+                            PicTypeId = Id
                         };
 
-                        if (room?.roomPics?.Length > 0)
+                        if (category?.roomPics?.Length > 0)
                         {
-                            foreach (var item in room.roomPics)
+                            foreach (var item in category.roomPics)
                             {
                                 pic.PicValue = item.PicValue;
                                 pic.PicName = item.PicName;
@@ -185,7 +185,7 @@ namespace seaway.API.Controllers
                         }
 
                         string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(room);
+                        string responseBody = JsonConvert.SerializeObject(category);
 
                         _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
@@ -195,7 +195,7 @@ namespace seaway.API.Controllers
                         return BadRequest();
                     }
 
-                    return Ok(room);
+                    return Ok(category);
                 }
                 else
                 {
@@ -262,18 +262,18 @@ namespace seaway.API.Controllers
             {
                 if(Id > 0)
                 {
-                    Room room = new Room();
+                    RoomCategory Category = new RoomCategory();
                     bool isRoomRemove = false;
                     List<string> publicIds = new List<string>();
                     bool IsRemoveFromCLoudinary = false;
 
-                    room = _roomManager.GetRoomById(Id);
+                    Category = _roomCategoryManager.GetRoomById(Id);
 
-                    if (room.RoomId != null)
+                    if (Category.RoomCategoryId != null)
                     {
-                        if (room?.RoomPics?.Count > 0)
+                        if (Category?.RoomPics?.Count > 0)
                         {
-                            foreach (var pic in room.RoomPics)
+                            foreach (var pic in Category.RoomPics)
                             {
                                 publicIds.Add(pic.CloudinaryPublicId ?? "");
                             }
@@ -281,19 +281,19 @@ namespace seaway.API.Controllers
 
                             if (IsRemoveFromCLoudinary)
                             {
-                                isRoomRemove = _roomManager.DeleteRoom(Id);
+                                isRoomRemove = _roomCategoryManager.DeleteRoom(Id);
                             }
                         }
-                        isRoomRemove = _roomManager.DeleteRoom(Id);
+                        isRoomRemove = _roomCategoryManager.DeleteRoom(Id);
 
                         string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(room);
+                        string responseBody = JsonConvert.SerializeObject(Category);
 
                         _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
                         if (isRoomRemove)
                         {
-                            return Ok(room);
+                            return Ok(Category);
                         }
                         else
                         {

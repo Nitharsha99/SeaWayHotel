@@ -6,24 +6,24 @@ using System.Data.SqlClient;
 
 namespace seaway.API.Manager
 {
-    public class RoomManager
+    public class RoomCategoryManager
     {
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         string _conString;
 
-        public RoomManager(IConfiguration configuration, ILogger<LogHandler> logger)
+        public RoomCategoryManager(IConfiguration configuration, ILogger<LogHandler> logger)
         {
             _configuration = configuration;
             _logger = logger;
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Room> GetRooms()
+        public List<RoomCategory> GetRooms()
         {
             try
             {
-                List<Room> roomList = new List<Room>();
+                List<RoomCategory> roomList = new List<RoomCategory>();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
@@ -37,7 +37,7 @@ namespace seaway.API.Manager
                     {
                         while (reader.Read())
                         {
-                                Room room = new Room
+                                RoomCategory room = new RoomCategory
                                 {
                                     RoomId = (int)reader["RoomId"],
                                     RoomName = reader["RoomName"].ToString(),
@@ -98,12 +98,12 @@ namespace seaway.API.Manager
             }
         }
 
-        public Room GetRoomById(int roomId)
+        public RoomCategory GetRoomById(int roomId)
         {
             try
             {
-                List<Room> roomList = new List<Room>();
-                Room mainRoom = new Room();
+                List<RoomCategory> roomList = new List<RoomCategory>();
+                RoomCategory mainRoom = new RoomCategory();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
@@ -119,11 +119,11 @@ namespace seaway.API.Manager
                             while (reader.Read())
                             {
                                 var Id = (int)reader["RoomId"];
-                                Room room = roomList.FirstOrDefault(r => r.RoomId == Id) ?? new Room();
+                                RoomCategory room = roomList.FirstOrDefault(r => r.RoomId == Id) ?? new RoomCategory();
 
                                 if (room.RoomId == null)
                                 {
-                                    room = new Room
+                                    room = new RoomCategory
                                     {
                                         RoomId = (int)reader["RoomId"],
                                         RoomName = reader["RoomName"].ToString(),
@@ -163,7 +163,7 @@ namespace seaway.API.Manager
 
                     _con.Close();
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
-                    mainRoom = roomList.FirstOrDefault() ?? new Room();
+                    mainRoom = roomList.FirstOrDefault() ?? new RoomCategory();
 
                 }
                 return mainRoom;
@@ -175,7 +175,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateRoom(Room room, int roomId)
+        public void UpdateRoom(RoomCategory room, int roomId)
         {
             try
             {

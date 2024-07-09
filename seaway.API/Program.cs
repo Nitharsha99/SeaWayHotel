@@ -29,7 +29,7 @@ try
     builder.Services.AddScoped<LoginManager>();
     builder.Services.AddScoped<LogHandler>();
     builder.Services.AddScoped<CustomerManager>();
-    builder.Services.AddScoped<RoomManager>();
+    builder.Services.AddScoped<RoomCategoryManager>();
     builder.Services.AddScoped<OfferManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
