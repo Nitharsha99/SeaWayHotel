@@ -63,18 +63,33 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindRoomById([FromRoute] int Id)
+        public IActionResult FindActivityById([FromRoute] int Id)
         {
             try
             {
-                Activity activity = _activityManager.GetActivityById(Id);
+                if(Id > 0)
+                {
+                    Activity activity = _activityManager.GetActivityById(Id);
 
-                string responseBody = JsonConvert.SerializeObject(activity);
+                    string responseBody = JsonConvert.SerializeObject(activity);
 
-                string requestUrl = HttpContext.Request.Path.ToString();
+                    string requestUrl = HttpContext.Request.Path.ToString();
 
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-                return Ok(activity);
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                    if(activity.ActivityName != null)
+                    {
+                        return Ok(activity);
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
             }
             catch (Exception ex)
             {
@@ -91,7 +106,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if (activity != null)
+                if (activity.ActivityName != null && activity.Description != null)
                 {
                     Activity act = new Activity();
                     act.ActivityName = activity.ActivityName;
@@ -120,10 +135,13 @@ namespace seaway.API.Controllers
                     string responseBody = JsonConvert.SerializeObject(activity);
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                    return Ok(activity);
 
                 }
-
-                return Ok(activity);
+                else
+                {
+                    return BadRequest(DisplayMessages.NullInput);
+                }
 
             }
             catch (Exception ex)
@@ -143,35 +161,41 @@ namespace seaway.API.Controllers
         {
             try
             {
-                Activity activity = new Activity();
-                bool isActivityRemove = false;
-
-                activity = _activityManager.GetActivityById(Id);
-
-                if (activity?.ActivityId != null)
+                if(Id > 0)
                 {
+                    Activity activity = new Activity();
+                    bool isActivityRemove = false;
 
-                    isActivityRemove = _activityManager.DeleteActivity(Id);
+                    activity = _activityManager.GetActivityById(Id);
 
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(activity);
-
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-
-                    if (isActivityRemove)
+                    if (activity?.ActivityId != null)
                     {
-                        return Ok(activity);
+
+                        isActivityRemove = _activityManager.DeleteActivity(Id);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(activity);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        if (isActivityRemove)
+                        {
+                            return Ok(activity);
+                        }
+                        else
+                        {
+                            return BadRequest(DisplayMessages.DeletingError);
+                        }
                     }
                     else
                     {
-                        return BadRequest("Issue in deleting process");
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
                     }
                 }
                 else
                 {
-                    return BadRequest("No Activity exist for this Id");
+                    return BadRequest(DisplayMessages.InvalidId);
                 }
-
             }
             catch (Exception ex)
             {
@@ -224,14 +248,19 @@ namespace seaway.API.Controllers
 
                         _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
+                        return Ok(activity);
+
                     }
                     else
                     {
-                        return BadRequest("Invalid ActivityId");
+                        return NotFound(DisplayMessages.EmptyExistData + activityId);
                     }
                 }
+                else
+                {
+                    return BadRequest(DisplayMessages.NullInput);
+                }
 
-                return Ok(activity);
             }
             catch (Exception ex)
             {
@@ -248,7 +277,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if (id != 0)
+                if (id > 0)
                 {
                     bool isStatusChanged = false;
                     Activity activity = _activityManager.GetActivityById(id);
@@ -263,15 +292,18 @@ namespace seaway.API.Controllers
                         }
                         else
                         {
-                            return BadRequest("Error on changing activity status");
+                            return BadRequest(DisplayMessages.StatusChangeError);
                         }
                     }
                     else
                     {
-                        return BadRequest("There is no any activity with this Id --> " + id);
+                        return NotFound(DisplayMessages.EmptyExistData + id);
                     }
                 }
-                return BadRequest("Id is not Supplied");
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
             }
             catch (Exception ex)
             {
@@ -288,23 +320,35 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<string> idArray = new List<string>();
-                idArray = ids.Split(',').ToList();
-                bool IsRemoveFromCLoudinary = false;
-
-                IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
-
-                if (IsRemoveFromCLoudinary)
+                if (!string.IsNullOrEmpty(ids))
                 {
-                    string picType = "Activity";
-                    _documentManager.DeleteImageFromDB(idArray, picType);
+                    List<string> idArray = new List<string>();
+                    idArray = ids.Split(',').ToList();
+                    bool IsRemoveFromCLoudinary = false;
+
+                    IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
+
+                    if (IsRemoveFromCLoudinary)
+                    {
+                        string picType = "Activity";
+                        _documentManager.DeleteImageFromDB(idArray, picType);
+
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(ids);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                        return Ok("Deleted " + responseBody);
+                    }
+                    else
+                    {
+                        return BadRequest(DisplayMessages.CloudinaryError);
+                    }
                 }
-
-                string requestUrl = HttpContext.Request.Path.ToString();
-                string responseBody = JsonConvert.SerializeObject(ids);
-
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                return Ok("Deleted " + responseBody);
+                else
+                {
+                    return BadRequest(DisplayMessages.NullInput);
+                }
             }
             catch (Exception ex)
             {

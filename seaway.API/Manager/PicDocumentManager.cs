@@ -82,16 +82,19 @@ namespace seaway.API.Manager
                     }
                 }
                 
-                var deleteParams = new DelResParams()
+                if(deleteAsset.Count > 0)
                 {
-                    PublicIds = deleteAsset.ToList(),
-                    Type = "upload",
-                    ResourceType = ResourceType.Image
-                };
+                    var deleteParams = new DelResParams()
+                    {
+                        PublicIds = deleteAsset.ToList(),
+                        Type = "upload",
+                        ResourceType = ResourceType.Image
+                    };
 
-                var result = await this._cloudinary.DeleteResourcesAsync(deleteParams);
-
-                _logger.LogTrace("Sucessfully Deleted PicPublic -- " + result );
+                    var result = await this._cloudinary.DeleteResourcesAsync(deleteParams);
+                    _logger.LogTrace("Sucessfully Deleted PicPublic -- " + result);
+                }
+               
                 return true;
             }
             catch(Exception ex)
