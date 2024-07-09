@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -7,8 +8,6 @@ using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
 using System;
-using System.Data.SqlClient;
-using System.IO;
 
 namespace seaway.API.Controllers
 {
