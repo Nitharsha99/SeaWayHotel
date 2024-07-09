@@ -48,7 +48,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get all room data : " + ex.Message);
+                _logger.LogError(LogMessages.GetRoomDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -61,18 +61,27 @@ namespace seaway.API.Controllers
         {
             try
             {
-                Room room = _roomManager.GetRoomById(roomId);
+                if(roomId > 0)
+                {
+                    Room room = _roomManager.GetRoomById(roomId);
 
-                string responseBody = JsonConvert.SerializeObject(room);
+                    string responseBody = JsonConvert.SerializeObject(room);
 
-                string requestUrl = HttpContext.Request.Path.ToString();
+                    string requestUrl = HttpContext.Request.Path.ToString();
 
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-                return Ok(room);
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+                    return Ok(room);
+                }
+                else
+                {
+                    _logger.LogError(LogMessages.InvalidIdError);
+                    return BadRequest(0);
+                }
+
             }
             catch(Exception ex)
             {
-                _logger.LogError("An exception occurred while get room data with Id = " + roomId + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindRoomByIdError + roomId + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -118,13 +127,19 @@ namespace seaway.API.Controllers
                     string responseBody = JsonConvert.SerializeObject(room);
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                    return Ok(room);
+                }
+                else
+                {
+                    _logger.LogError(LogMessages.EmptyDataSetError);
+                    return BadRequest();
                 }
 
-                return Ok(room);
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while inserting room data : " + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -137,7 +152,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if (roomId != 0)
+                if (roomId > 0)
                 {
                     Room oldRoom = _roomManager.GetRoomById(roomId);
                     if (oldRoom.RoomName != null)
@@ -177,15 +192,20 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        return BadRequest("Invalid RoomId");
+                        return BadRequest();
                     }
-                }
 
-                return Ok(room);
+                    return Ok(room);
+                }
+                else
+                {
+                    _logger.LogError(LogMessages.InvalidIdError);
+                    return BadRequest();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while updating room data : " + ex.Message);
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -199,27 +219,35 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<string> idArray = new List<string>();
-                idArray = ids.Split(',').ToList();
-                bool IsRemoveFromCLoudinary = false;
-
-                IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(idArray).Result;
-
-                if (IsRemoveFromCLoudinary)
+                if(ids == null)
                 {
-                    string picType = "Room";
-                    _docManager.DeleteImageFromDB(idArray, picType);
+                    return NotFound();
+                }
+                else
+                {
+                    List<string> idArray = new List<string>();
+                    idArray = ids.Split(',').ToList();
+                    bool IsRemoveFromCLoudinary = false;
+
+                    IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(idArray).Result;
+
+                    if (IsRemoveFromCLoudinary)
+                    {
+                        string picType = "Room";
+                        _docManager.DeleteImageFromDB(idArray, picType);
+                    }
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+                    string responseBody = JsonConvert.SerializeObject(ids);
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                    return Ok("Deleted : " + responseBody);
                 }
 
-                string requestUrl = HttpContext.Request.Path.ToString();
-                string responseBody = JsonConvert.SerializeObject(ids);
-
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                return Ok("Deleted " + responseBody);
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting room pictures : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteImageError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -232,53 +260,61 @@ namespace seaway.API.Controllers
         {
             try
             {
-                Room room = new Room();
-                bool isRoomRemove = false;
-                List<string> publicIds = new List<string>();
-                bool IsRemoveFromCLoudinary = false;
-
-                room = _roomManager.GetRoomById(Id);
-
-                if (room.RoomId != null)
+                if(Id > 0)
                 {
-                    if(room?.RoomPics?.Count > 0)
+                    Room room = new Room();
+                    bool isRoomRemove = false;
+                    List<string> publicIds = new List<string>();
+                    bool IsRemoveFromCLoudinary = false;
+
+                    room = _roomManager.GetRoomById(Id);
+
+                    if (room.RoomId != null)
                     {
-                        foreach(var pic in room.RoomPics)
+                        if (room?.RoomPics?.Count > 0)
                         {
-                            publicIds.Add(pic.CloudinaryPublicId ?? "");
-                        }
-                       IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(publicIds).Result;
+                            foreach (var pic in room.RoomPics)
+                            {
+                                publicIds.Add(pic.CloudinaryPublicId ?? "");
+                            }
+                            IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(publicIds).Result;
 
-                        if (IsRemoveFromCLoudinary)
+                            if (IsRemoveFromCLoudinary)
+                            {
+                                isRoomRemove = _roomManager.DeleteRoom(Id);
+                            }
+                        }
+                        isRoomRemove = _roomManager.DeleteRoom(Id);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(room);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        if (isRoomRemove)
                         {
-                            isRoomRemove = _roomManager.DeleteRoom(Id);
+                            return Ok(room);
                         }
-                    }
-                    isRoomRemove = _roomManager.DeleteRoom(Id);
-
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(room);
-
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-
-                    if (isRoomRemove)
-                    {
-                        return Ok(room);
+                        else
+                        {
+                            return BadRequest("Issue in deleting process");
+                        }
                     }
                     else
                     {
-                        return BadRequest("Issue in deleting process");
+                        return NotFound("Invalid Id");
                     }
                 }
                 else
                 {
+                    _logger.LogError(LogMessages.InvalidIdError);
                     return BadRequest("Room is not exist for this Id");
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting room : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteRoomError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
