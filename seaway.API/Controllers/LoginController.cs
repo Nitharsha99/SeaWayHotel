@@ -1,22 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
 using seaway.API.Models;
-using System.ComponentModel;
-using System.Data.SqlClient;
-using System.Data;
-using Newtonsoft.Json.Linq;
-using System.Net;
 using seaway.API.Manager;
-using Newtonsoft.Json;
 using seaway.API.Configurations;
-using System.Net.Http;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace seaway.API.Controllers
 {
