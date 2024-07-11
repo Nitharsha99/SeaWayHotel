@@ -24,6 +24,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './Components/Admin/login/login.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
 import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
+import { CommonFunctionComponent } from './commonFunction';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,7 @@ import { AllActivitiesComponent } from './Components/Admin/activities/all-activi
     NgxPaginationModule,
     FormsModule
   ],
-  providers: [],
+  providers: [CommonFunctionComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

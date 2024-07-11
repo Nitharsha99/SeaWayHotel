@@ -7,6 +7,7 @@ import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.s
 import Swal from 'sweetalert2';
 import { RoomCategory } from 'src/app/Models/roomCategory';
 import { PicDocument } from 'src/app/Models/picDocument';
+import { CommonFunctionComponent } from 'src/app/commonFunction';
 
 @Component({
   selector: 'app-add-room',
@@ -25,9 +26,10 @@ imageWidth: number = 170;
 imageMargin: number = 2;
 imageHeight: number = 110;
 
-  constructor(private cloudinaryService: CloudinaryService, private location: Location, 
+  constructor(private cloudinaryService: CloudinaryService, 
               private router: Router, private builder: FormBuilder,
-              private roomCategoryService: RoomCategoryService, private route: ActivatedRoute){}
+              private roomCategoryService: RoomCategoryService, private route: ActivatedRoute,
+              private commonFunction: CommonFunctionComponent){}
 
   roomForm: FormGroup = this.builder.group({
     roomName: ['', Validators.required],
@@ -55,7 +57,7 @@ imageHeight: number = 110;
             if(res.roomPics != null && res.roomPics.length > 0){
               this.pictures = res.roomPics;
               this.pictures.forEach(element => {
-                const urlLink = this.convertBase64ToString(element.picValue);
+                const urlLink = this.commonFunction.convertBase64ToString(element.picValue);
                 element.picValue = urlLink;
               });
             }
@@ -129,7 +131,7 @@ imageHeight: number = 110;
           this.callRoomCategoryService();
         }
       })
-       this.showLoadingNotification();
+       this.commonFunction.showLoadingNotification();
     }
 
   }
@@ -223,15 +225,6 @@ imageHeight: number = 110;
 
  }
 
- showLoadingNotification() {
-  Swal.fire({
-    title: 'Loading...',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
-}
 
 deleteImages(){
   Swal.fire({
@@ -265,12 +258,6 @@ deleteImages(){
     Swal.fire('Process Cancelled', 'Your Record is safe now !!');
  }
 });
-}
-
-convertBase64ToString(base64: string){
-  const decodedString = atob(base64);
-
-  return decodedString;
 }
 
 }
