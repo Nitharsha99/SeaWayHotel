@@ -39,7 +39,7 @@ namespace seaway.API.Manager
                         {
                                 RoomCategory category = new RoomCategory
                                 {
-                                    RoomCategoryId = (int)reader["CategoryId"],
+                                    CategoryId = (int)reader["CategoryId"],
                                     RoomName = reader["RoomName"].ToString(),
                                     GuestCountMax = (int)reader["CountOfMaxGuest"],
                                     Price = Convert.ToDouble(reader["Price"]),
@@ -124,13 +124,13 @@ namespace seaway.API.Manager
                             while (reader.Read())
                             {
                                 var Id = (int)reader["CategoryId"];
-                                RoomCategory category = categoryList.FirstOrDefault(r => r.RoomCategoryId == Id) ?? new RoomCategory();
+                                RoomCategory category = categoryList.FirstOrDefault(r => r.CategoryId == Id) ?? new RoomCategory();
 
-                                if (category.RoomCategoryId == null)
+                                if (category.CategoryId == null)
                                 {
                                     category = new RoomCategory
                                     {
-                                        RoomCategoryId = (int)reader["CategoryId"],
+                                        CategoryId = (int)reader["CategoryId"],
                                         RoomName = reader["RoomName"].ToString(),
                                         GuestCountMax = (int)reader["CountOfMaxGuest"],
                                         Price = Convert.ToDouble(reader["Price"]),

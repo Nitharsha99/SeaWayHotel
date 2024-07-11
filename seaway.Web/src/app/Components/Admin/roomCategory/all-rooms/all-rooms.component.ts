@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Room } from 'src/app/Models/room';
-import { RoomService } from 'src/app/Services/RoomService/room.service';
+import { RoomCategory } from 'src/app/Models/roomCategory';
+import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class AllRoomsComponent implements OnInit{
 
-  rooms:Room[] = [];
+  roomCategory:RoomCategory[] = [];
   pageSize:number = 2;
   page: number = 1;
   totalItems: number = 0;
@@ -23,30 +23,30 @@ export class AllRoomsComponent implements OnInit{
     discount: ''
   }
 
-  filteredRooms: Room[] = [];
-  displayedRooms: Room[] = [];
+  filteredCategory: RoomCategory[] = [];
 
-  dummyRoom: Room[] = [
-    {roomId: 1, roomName: 'room1', guestCountMax: 2, price: 4000, discountAmount: 0, discountPercentage: 0, roomPics: []},
-    {roomId: 2, roomName: 'room2', guestCountMax: 3, price: 5000, discountAmount: 0, discountPercentage: 0, roomPics: []},
-    {roomId: 3, roomName: 'room3', guestCountMax: 3, price: 8000, discountAmount: 400, discountPercentage: 5, roomPics: []},
-    {roomId: 4, roomName: 'room4', guestCountMax: 4, price: 12000, discountAmount: 1200, discountPercentage: 10, roomPics: []}
+  dummyRoom: RoomCategory[] = [
+    {categoryId: 1, roomName: 'room1', guestCountMax: 2, price: 4000, discountAmount: 0, discountPercentage: 0, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
+    {categoryId: 2, roomName: 'room2', guestCountMax: 3, price: 5000, discountAmount: 0, discountPercentage: 0, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
+    {categoryId: 3, roomName: 'room3', guestCountMax: 3, price: 8000, discountAmount: 400, discountPercentage: 5, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
+    {categoryId: 4, roomName: 'room4', guestCountMax: 4, price: 12000, discountAmount: 1200, discountPercentage: 10, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'}
   ]
  
-  constructor(private roomService: RoomService, private router: Router,
+  constructor(private roomCategoryService: RoomCategoryService, private router: Router,
               private route: ActivatedRoute){}
 
   ngOnInit(): void {
-    this.rooms = this.dummyRoom;
-    this.filteredRooms = this.rooms;
-    this.totalItems = this.filteredRooms.length;
+    // this.roomCategory = this.dummyRoom;
+    // this.filteredCategory = this.roomCategory;
+    // this.totalItems = this.filteredCategory.length;
+
+    this.roomCategoryService.GetAllRoomCategories().subscribe(res => {
+      this.roomCategory = res;
+      this.filteredCategory = this.roomCategory;
+      this.totalItems = this.filteredCategory.length;
+    });
 
     this.updateDisplayedRooms();
-    // this.roomService.GetAllRooms().subscribe(res => {
-    //   this.rooms = res;
-    // this.filteredRooms = this.rooms;
-    // this.totalItems = this.filteredRooms.length;
-    // });
   }
 
   onPageChange(event: number) {
@@ -56,7 +56,7 @@ export class AllRoomsComponent implements OnInit{
 
   onFilterChange(): void{
     console.log(this.filters.count)
-    this.filteredRooms = this.rooms.filter(room => {
+    this.filteredCategory = this.roomCategory.filter(room => {
       return(
         (this.filters.search === '' || room.roomName.toLowerCase().includes(this.filters.search.toLowerCase())) &&
         (this.filters.count === '' || room.guestCountMax === +this.filters.count) &&
@@ -120,7 +120,7 @@ export class AllRoomsComponent implements OnInit{
   }).then((result) => {
     console.log(result, "jsasjasojaia");
       if (result.isConfirmed) {
-       this.roomService.DeleteRoom(id).subscribe(res => {
+       this.roomCategoryService.DeleteRoomCategory(id).subscribe(res => {
         Swal.fire({
           icon: "success",
           title: "Successfully Deleted " + res.roomName + " !!! ",
@@ -150,7 +150,7 @@ export class AllRoomsComponent implements OnInit{
   updateDisplayedRooms(): void {
     this.page =1;
     this.pageSize = 2;
-    this.totalItems = this.filteredRooms.length;
+    this.totalItems = this.filteredCategory.length;
   }
 
 }
