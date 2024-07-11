@@ -7,6 +7,7 @@
         public double? Price { get; set; }
         public double? DiscountPercentage { get; set; }
         public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
         public RoomPic[]? roomPics { get; set; }
     }
 

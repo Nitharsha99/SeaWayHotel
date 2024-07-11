@@ -163,6 +163,7 @@ namespace seaway.API.Controllers
                             GuestCountMax = category.GuestCountMax,
                             Price = category.Price,
                             DiscountPercentage = category.DiscountPercentage,
+                            UpdatedBy = category.UpdatedBy
                         };
                         _roomCategoryManager.UpdateRoomCategory(updateCategory, Id);
 
