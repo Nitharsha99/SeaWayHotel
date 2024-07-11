@@ -5,9 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using seaway.API.Configurations;
-using Microsoft.Extensions.Options;
-using seaway.API.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -29,7 +26,7 @@ try
     builder.Services.AddScoped<LoginManager>();
     builder.Services.AddScoped<LogHandler>();
     builder.Services.AddScoped<CustomerManager>();
-    builder.Services.AddScoped<RoomManager>();
+    builder.Services.AddScoped<RoomCategoryManager>();
     builder.Services.AddScoped<OfferManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

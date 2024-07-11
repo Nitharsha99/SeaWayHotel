@@ -6,30 +6,30 @@ using System.Data.SqlClient;
 
 namespace seaway.API.Manager
 {
-    public class RoomManager
+    public class RoomCategoryManager
     {
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         string _conString;
 
-        public RoomManager(IConfiguration configuration, ILogger<LogHandler> logger)
+        public RoomCategoryManager(IConfiguration configuration, ILogger<LogHandler> logger)
         {
             _configuration = configuration;
             _logger = logger;
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Room> GetRooms()
+        public List<RoomCategory> GetRoomCategories()
         {
             try
             {
-                List<Room> roomList = new List<Room>();
+                List<RoomCategory> categoryList = new List<RoomCategory>();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
                     SqlCommand command = _con.CreateCommand();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "GetAllRooms";                
+                    command.CommandText = "GetAllRoomCategories";                
 
                     _con.Open();
 
@@ -37,17 +37,21 @@ namespace seaway.API.Manager
                     {
                         while (reader.Read())
                         {
-                                Room room = new Room
+                                RoomCategory category = new RoomCategory
                                 {
-                                    RoomId = (int)reader["RoomId"],
+                                    RoomCategoryId = (int)reader["CategoryId"],
                                     RoomName = reader["RoomName"].ToString(),
                                     GuestCountMax = (int)reader["CountOfMaxGuest"],
                                     Price = Convert.ToDouble(reader["Price"]),
                                     DiscountPercentage = reader["DiscountPercent"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercent"]),
                                     DiscountAmount = reader["DiscountPrice"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPrice"]),
+                                    Created = Convert.ToDateTime(reader["Created"]),
+                                    CreatedBy = reader["CreatedBy"].ToString(),
+                                    Updated = Convert.ToDateTime(reader["Updated"]),
+                                    UpdatedBy = reader["UpdatedBy"].ToString()
                                 };
 
-                                roomList.Add(room);
+                            categoryList.Add(category);
                             
                         }
                     }
@@ -56,7 +60,7 @@ namespace seaway.API.Manager
 
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
 
-                    return roomList;
+                    return categoryList;
                 }
             }
             catch (Exception ex)
@@ -66,30 +70,31 @@ namespace seaway.API.Manager
             }
         }
 
-        public int NewRoom(RoomWithPicModel room)
+        public int NewRoomCategory(RoomCategoryWithPicModel category)
         {
             try
             {
-                int roomId = 0;
+                int categoryId = 0;
                 using(SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using(SqlCommand cmd = new SqlCommand("InsertNewRoom", con))
+                    using(SqlCommand cmd = new SqlCommand("InsertNewRoomCategory", con))
                     {
                         con.Open();
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.AddWithValue("@roomName", room.RoomName);
-                        cmd.Parameters.AddWithValue("@guestCountMax", room.GuestCountMax);
-                        cmd.Parameters.AddWithValue("@price", room.Price);
-                        cmd.Parameters.AddWithValue("@discountPercentage", room.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@roomName", category.RoomName);
+                        cmd.Parameters.AddWithValue("@guestCountMax", category.GuestCountMax);
+                        cmd.Parameters.AddWithValue("@price", category.Price);
+                        cmd.Parameters.AddWithValue("@discountPercentage", category.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@createdBy", category.CreatedBy);
 
-                        roomId = (int)cmd.ExecuteScalar();
+                        categoryId = (int)cmd.ExecuteScalar();
                     }
                 }
 
                 _logger.LogTrace("SuccessFully created new room");
 
-                return roomId;
+                return categoryId;
             }
             catch(Exception ex)
             {
@@ -98,42 +103,46 @@ namespace seaway.API.Manager
             }
         }
 
-        public Room GetRoomById(int roomId)
+        public RoomCategory GetRoomCategoryById(int categoryId)
         {
             try
             {
-                List<Room> roomList = new List<Room>();
-                Room mainRoom = new Room();
+                List<RoomCategory> categoryList = new List<RoomCategory>();
+                RoomCategory maincategory = new RoomCategory();
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
                     _con.Open();
-                    using(var cmd = new SqlCommand("GetAllRoomsWithPicDetails", _con))
+                    using(var cmd = new SqlCommand("GetAllRoomCategoryWithPicDetails", _con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.AddWithValue("@roomId", roomId);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
 
                         using(var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                var Id = (int)reader["RoomId"];
-                                Room room = roomList.FirstOrDefault(r => r.RoomId == Id) ?? new Room();
+                                var Id = (int)reader["CategoryId"];
+                                RoomCategory category = categoryList.FirstOrDefault(r => r.RoomCategoryId == Id) ?? new RoomCategory();
 
-                                if (room.RoomId == null)
+                                if (category.RoomCategoryId == null)
                                 {
-                                    room = new Room
+                                    category = new RoomCategory
                                     {
-                                        RoomId = (int)reader["RoomId"],
+                                        RoomCategoryId = (int)reader["CategoryId"],
                                         RoomName = reader["RoomName"].ToString(),
                                         GuestCountMax = (int)reader["CountOfMaxGuest"],
                                         Price = Convert.ToDouble(reader["Price"]),
                                         DiscountPercentage = reader["DiscountPercent"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercent"]),
                                         DiscountAmount = reader["DiscountPrice"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPrice"]),
+                                        Created = Convert.ToDateTime(reader["Created"]),
+                                        CreatedBy = reader["CreatedBy"].ToString(),
+                                        Updated = Convert.ToDateTime(reader["Updated"]),
+                                        UpdatedBy = reader["UpdatedBy"].ToString()
                                     };
 
-                                    roomList.Add(room);
+                                    categoryList.Add(category);
                                 }
 
                                 if (reader["PicName"] != DBNull.Value)
@@ -150,12 +159,12 @@ namespace seaway.API.Manager
                                         PicValue = val
                                     };
 
-                                    if (room.RoomPics == null)
+                                    if (category.RoomPics == null)
                                     {
-                                        room.RoomPics = new List<PicDocument>();
+                                        category.RoomPics = new List<PicDocument>();
                                     }
 
-                                    room.RoomPics.Add(document);
+                                    category.RoomPics.Add(document);
                                 }
                             }
                         }
@@ -163,10 +172,10 @@ namespace seaway.API.Manager
 
                     _con.Close();
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
-                    mainRoom = roomList.FirstOrDefault() ?? new Room();
+                    maincategory = categoryList.FirstOrDefault() ?? new RoomCategory();
 
                 }
-                return mainRoom;
+                return maincategory;
             }
             catch(Exception e)
             {
@@ -175,22 +184,23 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateRoom(Room room, int roomId)
+        public void UpdateRoomCategory(RoomCategory category, int categoryId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("UpdateRoom", con))
+                    using (SqlCommand cmd = new SqlCommand("UpdateRoomCategory", con))
                     {
                         con.Open();
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.AddWithValue("@roomId", roomId);
-                        cmd.Parameters.AddWithValue("@roomName", room.RoomName);
-                        cmd.Parameters.AddWithValue("@guestCount", room.GuestCountMax);
-                        cmd.Parameters.AddWithValue("@price", room.Price);
-                        cmd.Parameters.AddWithValue("@discountPercent", room.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+                        cmd.Parameters.AddWithValue("@roomName", category.RoomName);
+                        cmd.Parameters.AddWithValue("@guestCount", category.GuestCountMax);
+                        cmd.Parameters.AddWithValue("@price", category.Price);
+                        cmd.Parameters.AddWithValue("@discountPercent", category.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@updatedBy", category.UpdatedBy);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -200,27 +210,27 @@ namespace seaway.API.Manager
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Warning at Update the " + room.RoomName + " : " + ex.Message);
+                _logger.LogWarning("Warning at Update the " + category.RoomName + " : " + ex.Message);
                 throw;
             }
         }
 
-        public bool DeleteRoom(int roomId)
+        public bool DeleteRoomCategory(int categoryId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("DeleteRoomWithPics", con))
+                    using (SqlCommand cmd = new SqlCommand("DeleteRoomCategoryWithPics", con))
                     {
                         con.Open();
 
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@roomId", roomId);
+                        cmd.Parameters.AddWithValue("@categoryId", categoryId);
 
                         cmd.ExecuteNonQuery();
 
-                        _logger.LogTrace("Sucessfully Deleted Room of Id --> " + roomId + "From Database");
+                        _logger.LogTrace("Sucessfully Deleted Room of Id --> " + categoryId + "From Database");
 
                         return true;
 
