@@ -15,11 +15,11 @@ import { NewActivityComponent } from './Components/new-activity/new-activity.com
 import { RoomListComponent } from './Components/room-list/room-list.component';
 import { RoomViewComponent } from './Components/room-view/room-view.component';
 import { MainAdminPageComponent } from './Components/Admin/main-admin-page/main-admin-page.component';
-import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
+import { RoomsComponent } from './Components/Admin/roomCategory/rooms.component';
 import { ActivitiesComponent } from './Components/Admin/activities/activities.component';
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
-import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
-import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { AddRoomComponent } from './Components/Admin/roomCategory/add-room/add-room.component';
+import { AllRoomsComponent } from './Components/Admin/roomCategory/all-rooms/all-rooms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './Components/Admin/login/login.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';

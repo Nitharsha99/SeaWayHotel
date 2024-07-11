@@ -3,9 +3,9 @@ import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RoomService } from 'src/app/Services/RoomService/room.service';
+import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.service';
 import Swal from 'sweetalert2';
-import { Room } from 'src/app/Models/room';
+import { RoomCategory } from 'src/app/Models/roomCategory';
 import { PicDocument } from 'src/app/Models/picDocument';
 
 @Component({
@@ -18,7 +18,7 @@ export class AddRoomComponent implements OnInit{
 updateMode: boolean = false;
 files: File[] = [];
 picArrayLength: number = 0;
-roomId!: number;
+categoryId!: number;
 pictures: PicDocument[] = [];
 selectedPictures: string[] = [];
 imageWidth: number = 170;
@@ -27,7 +27,7 @@ imageHeight: number = 110;
 
   constructor(private cloudinaryService: CloudinaryService, private location: Location, 
               private router: Router, private builder: FormBuilder,
-              private roomService: RoomService, private route: ActivatedRoute){}
+              private roomCategoryService: RoomCategoryService, private route: ActivatedRoute){}
 
   roomForm: FormGroup = this.builder.group({
     roomName: ['', Validators.required],
@@ -46,9 +46,9 @@ imageHeight: number = 110;
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       if(params['id']){
-        this.roomId = params['id'];
+        this.categoryId = params['id'];
         this.updateMode = true;
-        this.roomService.FindRoomById(this.roomId).subscribe(res => {
+        this.roomCategoryService.FindRoomCategoryById(this.categoryId).subscribe(res => {
           if(res != null){
             this.roomForm.patchValue(res);
             console.log('Form Value:', this.roomForm.value);
@@ -126,7 +126,7 @@ imageHeight: number = 110;
         if(count === this.picArrayLength){
           console.log("auifhcyieaufajka", count, this.picArrayLength);
           Swal.close();
-          this.callRoomService();
+          this.callRoomCategoryService();
         }
       })
        this.showLoadingNotification();
@@ -144,7 +144,7 @@ imageHeight: number = 110;
 
   if(!formValue.roomName || !formValue.guestCountMax || !formValue.price){
     Swal.fire({
-      title: "Failed to save room!",
+      title: "Failed to save room category!",
       text: "Please fill all mandatory fields...",
       icon: "error"
     });
@@ -155,18 +155,18 @@ imageHeight: number = 110;
     }
     else{
       formValue.roomPics = null;
-        this.callRoomService();
+        this.callRoomCategoryService();
     }
   }
  }
 
- callRoomService(){
+ callRoomCategoryService(){
   const formValue = this.roomForm.value;
   if(this.updateMode === false){
-    this.roomService.PostRoom(formValue).subscribe((res) => {
+    this.roomCategoryService.PostRoomCategory(formValue).subscribe((res) => {
       console.log('post result', res);
       Swal.fire({
-        title: "Room Saved Successfully!!",
+        title: "Room Category Saved Successfully!!",
         icon: "success"
       });
       this.files = [];
@@ -181,11 +181,11 @@ imageHeight: number = 110;
      }
     )
   }else{
-    if(this.roomId != null){
-      this.roomService.UpdateRoom(formValue, this.roomId).subscribe((res) => {
+    if(this.categoryId != null){
+      this.roomCategoryService.UpdateRoomCategory(formValue, this.categoryId).subscribe((res) => {
         console.log('edit result', res);
         Swal.fire({
-          title: "Room Updated Successfully!!",
+          title: "Room Category Updated Successfully!!",
           icon: "success"
         }).then(() =>{
           this.files = [];
@@ -246,7 +246,7 @@ deleteImages(){
     iconColor: "#d33"
 }).then((result) => {
   if(result.isConfirmed){
-    this.roomService.DeleteImages(this.selectedPictures).subscribe((res) =>{
+    this.roomCategoryService.DeleteImages(this.selectedPictures).subscribe((res) =>{
       if(res.includes("Deleted")){
         Swal.fire({
           icon: "success",

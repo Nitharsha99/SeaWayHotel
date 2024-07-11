@@ -2,7 +2,7 @@
 {
     public class RoomCategory
     {
-        public int? RoomCategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public string? RoomName { get; set; }
         public int? GuestCountMax { get; set; }
         public double? Price { get; set; }
