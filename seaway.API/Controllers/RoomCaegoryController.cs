@@ -36,7 +36,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<RoomCategory> categories = _roomCategoryManager.GetRooms();
+                List<RoomCategory> categories = _roomCategoryManager.GetRoomCategories();
 
                 string responseBody = JsonConvert.SerializeObject(categories);
 
@@ -48,7 +48,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogMessages.GetRoomDataError + ex.Message);
+                _logger.LogError(LogMessages.GetRoomCategoryDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -63,7 +63,7 @@ namespace seaway.API.Controllers
             {
                 if(Id > 0)
                 {
-                    RoomCategory Category = _roomCategoryManager.GetRoomById(Id);
+                    RoomCategory Category = _roomCategoryManager.GetRoomCategoryById(Id);
 
                     string responseBody = JsonConvert.SerializeObject(Category);
 
@@ -81,7 +81,7 @@ namespace seaway.API.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError(LogMessages.FindRoomByIdError + Id + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindRoomCategoryByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -90,7 +90,7 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostNewCategory(RoomWithPicModel Category)
+        public IActionResult PostNewCategory(RoomCategoryWithPicModel Category)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace seaway.API.Controllers
                         Price = Category.Price,
                         DiscountPercentage = Category.DiscountPercentage
                     };
-                    int roomId = _roomCategoryManager.NewRoom(Category);
+                    int roomId = _roomCategoryManager.NewRoomCategory(Category);
 
                     PicDocument pic = new PicDocument
                     {
@@ -148,13 +148,13 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateRoomCategory(RoomWithPicModel category, [FromRoute]int Id)
+        public IActionResult UpdateRoomCategory(RoomCategoryWithPicModel category, [FromRoute]int Id)
         {
             try
             {
                 if (Id > 0)
                 {
-                    RoomCategory oldRoom = _roomCategoryManager.GetRoomById(Id);
+                    RoomCategory oldRoom = _roomCategoryManager.GetRoomCategoryById(Id);
                     if (oldRoom.RoomName != null)
                     {
                         RoomCategory updateCategory = new RoomCategory
@@ -164,7 +164,7 @@ namespace seaway.API.Controllers
                             Price = category.Price,
                             DiscountPercentage = category.DiscountPercentage,
                         };
-                        _roomCategoryManager.UpdateRoom(updateCategory, Id);
+                        _roomCategoryManager.UpdateRoomCategory(updateCategory, Id);
 
                         PicDocument pic = new PicDocument
                         {
@@ -263,11 +263,11 @@ namespace seaway.API.Controllers
                 if(Id > 0)
                 {
                     RoomCategory Category = new RoomCategory();
-                    bool isRoomRemove = false;
+                    bool isCategoryRemove = false;
                     List<string> publicIds = new List<string>();
                     bool IsRemoveFromCLoudinary = false;
 
-                    Category = _roomCategoryManager.GetRoomById(Id);
+                    Category = _roomCategoryManager.GetRoomCategoryById(Id);
 
                     if (Category.RoomCategoryId != null)
                     {
@@ -281,17 +281,17 @@ namespace seaway.API.Controllers
 
                             if (IsRemoveFromCLoudinary)
                             {
-                                isRoomRemove = _roomCategoryManager.DeleteRoom(Id);
+                                isCategoryRemove = _roomCategoryManager.DeleteRoomCategory(Id);
                             }
                         }
-                        isRoomRemove = _roomCategoryManager.DeleteRoom(Id);
+                        isCategoryRemove = _roomCategoryManager.DeleteRoomCategory(Id);
 
                         string requestUrl = HttpContext.Request.Path.ToString();
                         string responseBody = JsonConvert.SerializeObject(Category);
 
                         _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
-                        if (isRoomRemove)
+                        if (isCategoryRemove)
                         {
                             return Ok(Category);
                         }
@@ -314,7 +314,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogMessages.DeleteRoomError + ex.Message);
+                _logger.LogError(LogMessages.DeleteRoomCategoryError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
