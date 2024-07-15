@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonFunctionComponent } from 'src/app/commonFunction';
+import { DiscountRate, PriceRange } from 'src/app/Models/Enum/discount';
 import { RoomCategory } from 'src/app/Models/roomCategory';
 import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.service';
 import Swal from 'sweetalert2';
@@ -13,7 +14,7 @@ import Swal from 'sweetalert2';
 export class AllRoomsComponent implements OnInit{
 
   roomCategory:RoomCategory[] = [];
-  pageSize:number = 2;
+  pageSize:number = 5;
   page: number = 1;
   totalItems: number = 0;
   filters = {
@@ -24,78 +25,49 @@ export class AllRoomsComponent implements OnInit{
   }
 
   filteredCategory: RoomCategory[] = [];
-
-  dummyRoom: RoomCategory[] = [
-    {categoryId: 1, roomName: 'room1', guestCountMax: 2, price: 4000, discountAmount: 0, discountPercentage: 0, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
-    {categoryId: 2, roomName: 'room2', guestCountMax: 3, price: 5000, discountAmount: 0, discountPercentage: 0, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
-    {categoryId: 3, roomName: 'room3', guestCountMax: 3, price: 8000, discountAmount: 400, discountPercentage: 5, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'},
-    {categoryId: 4, roomName: 'room4', guestCountMax: 4, price: 12000, discountAmount: 1200, discountPercentage: 10, roomPics: [], created:'2024-07-11 16:22:31.507', createdBy:'Nitharsha', updated:'2024-07-11 16:22:31.507', updatedBy: 'Nitharsha'}
-  ]
+  DiscountRate = DiscountRate;
+  priceRange = PriceRange;
  
   constructor(private roomCategoryService: RoomCategoryService, private router: Router,
-              private route: ActivatedRoute){}
+              private route: ActivatedRoute, private commonFunction: CommonFunctionComponent){}
 
   ngOnInit(): void {
-    // this.roomCategory = this.dummyRoom;
-    // this.filteredCategory = this.roomCategory;
-    // this.totalItems = this.filteredCategory.length;
-
     this.roomCategoryService.GetAllRoomCategories().subscribe(res => {
+      console.log(res)
       this.roomCategory = res;
       this.filteredCategory = this.roomCategory;
       this.totalItems = this.filteredCategory.length;
+      console.log(this.totalItems)
     });
 
     this.updateDisplayedRooms();
   }
 
+  getDiscountRates(): DiscountRate[] {
+    return Object.values(this.DiscountRate);
+  }
+
+  getPriceRates(): PriceRange[] {
+    return Object.values(this.priceRange);
+  }
+
   onPageChange(event: number) {
     this.page = event;
-    this.updateDisplayedRooms();
   }
 
   onFilterChange(): void{
-    console.log(this.filters.count)
+    console.log(this.filters)
     this.filteredCategory = this.roomCategory.filter(room => {
       return(
         (this.filters.search === '' || room.roomName.toLowerCase().includes(this.filters.search.toLowerCase())) &&
         (this.filters.count === '' || room.guestCountMax === +this.filters.count) &&
-        this.filterByPriceRange(room.price) &&
-        this.filterByDincountPercentage(room.discountPercentage)
+        this.commonFunction.filterByPriceRange(room.price, this.filters.priceRange) &&
+        this.commonFunction.filterByDincountPercentage(room.discountPercentage, this.filters.discount)
       )
     });
     this.updateDisplayedRooms();
   }
 
-  filterByPriceRange(price: number): any{
-    switch(this.filters.priceRange){
-      case '1':
-        return price < 3000; 
-      case '2':
-        return price >= 3000 && price < 5000;
-      case '3':
-        return price >= 5000 && price < 10000;
-      case '4':
-        return price >= 10000;
-      default:
-        return true;
-    }
-  }
-
-  filterByDincountPercentage(discount: number): any{
-    switch(this.filters.discount){
-      case '1':
-        return discount < 5;
-      case '2':
-        return discount >= 5 && discount < 10;
-      case '3':
-        return discount >= 10 && discount < 20;
-      case '4':
-       return discount >= 20;
-      default:
-        return true;
-    }
-  }
 
   navigateToNewRoom(): void{
     this.router.navigate(['addRoom'], {relativeTo: this.route});
@@ -149,7 +121,7 @@ export class AllRoomsComponent implements OnInit{
 
   updateDisplayedRooms(): void {
     this.page =1;
-    this.pageSize = 2;
+    this.pageSize = 5;
     this.totalItems = this.filteredCategory.length;
   }
 

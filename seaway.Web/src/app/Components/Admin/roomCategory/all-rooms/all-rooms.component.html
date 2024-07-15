@@ -28,19 +28,13 @@
             <div class="col-sm-3">
                 <select class="form-select" [(ngModel)]="filters.priceRange" (change)="onFilterChange()">
                     <option value="">Price Range</option>
-                    <option value="1">Below 3000</option>
-                    <option value="2">3000 - 5000</option>
-                    <option value="3">5000 - 10000</option>
-                    <option value="4">Above 10000</option>
+                    <option *ngFor="let rate of getPriceRates()" [value]="rate">{{ rate }}</option>
                   </select>
             </div>
             <div class="col-sm-3">
                 <select class="form-select" [(ngModel)]="filters.discount" (change)="onFilterChange()">
                     <option value="">Discount</option>
-                    <option value="1">Below 5%</option>
-                    <option value="2">5% - 10%</option>
-                    <option value="3">10% - 20%</option>
-                    <option value="4">Above 20%</option>
+                    <option *ngFor="let rate of getDiscountRates()" [value]="rate">{{ rate }}</option>
                   </select>
             </div>
             <div class="col-sm-3">
@@ -51,7 +45,7 @@
 
         <div *ngIf="roomCategory.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Room Categories now !!</h3></div>
 
-        <div *ngIf="filteredCategory.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Room Category For this Serching !!</h3></div>
+        <div *ngIf="roomCategory.length > 0 && filteredCategory.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Room Category For this Serching !!</h3></div>
 
         <div *ngIf="filteredCategory.length > 0">
             <table class="table table-striped mx-3 my-3 mt-4">
