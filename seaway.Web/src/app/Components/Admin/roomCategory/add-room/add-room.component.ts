@@ -36,6 +36,7 @@ imageHeight: number = 110;
     guestCountMax: ['', Validators.required],
     price: ['', Validators.required],
     discountPercentage: [0],
+    createdBy: ['Nitharsha'],
     roomPics: this.builder.array([
       this.builder.group({
         picName: [null],
@@ -211,8 +212,9 @@ imageHeight: number = 110;
 
  resetForm(){
   this.roomForm.reset();
+  this.roomForm.value.createdBy = 'Nitharsha';
   this.files = [];
-  console.log("resert");
+  console.log("resert", this.roomForm.value);
  }
 
  redirectToBack(){

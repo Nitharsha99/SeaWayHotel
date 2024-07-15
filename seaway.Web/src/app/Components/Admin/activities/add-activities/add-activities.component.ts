@@ -32,6 +32,7 @@ export class AddActivitiesComponent implements OnInit{
   activityForm: FormGroup = this.builder.group({
     activityName:[''],
     description:[''],
+    createdBy: ['Nitharsha'],
     activityPics: this.builder.array([
       this.builder.group({
         picName: [null],
@@ -189,6 +190,7 @@ export class AddActivitiesComponent implements OnInit{
 
   resetForm(): void{
     this.activityForm.reset();
+    this.activityForm.value.createdBy = 'Nitharsha';
     this.files = [];
   }
 }
