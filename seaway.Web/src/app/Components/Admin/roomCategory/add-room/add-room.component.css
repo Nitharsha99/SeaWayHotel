@@ -27,3 +27,17 @@ span, .alert{
     border-radius: 5px; /* Optional: Rounded corners */
     padding: 10px; /* Optional: Add padding for better appearance */
 }
+
+.image-container{
+    width: 180px;
+    overflow-x: hidden; /* Hide overflow */
+}
+
+.image-container p {
+    display: inline-block; /* Make text fit container width */
+    vertical-align: middle; /* Align text vertically */
+  }
+
+img[title] {
+    cursor: pointer; /* Optional hover cursor */
+  }

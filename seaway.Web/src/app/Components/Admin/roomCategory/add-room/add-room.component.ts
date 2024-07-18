@@ -37,6 +37,7 @@ imageHeight: number = 110;
     price: ['', Validators.required],
     discountPercentage: [0],
     createdBy: ['Nitharsha'],
+    updatedBy: ['Nitharsha'],
     roomPics: this.builder.array([
       this.builder.group({
         picName: [null],
@@ -70,8 +71,21 @@ imageHeight: number = 110;
   }
 
   onSelect(event: any){
-    console.log(event);
-    this.files.push(...event.addedFiles);
+    console.log(event, 'event');
+    console.log(event.addedFiles[0].name.length);
+    event.addedFiles.forEach((file: File) => {
+      if(file.name.length <= 50){
+        this.files.push(file);
+      }
+      else{
+        Swal.fire({
+          title: file.name,
+          text: "File name legnth should not more than 50. Please reduce your image name length....",
+          icon: "info"
+        });
+      }
+    });
+    
   }
 
   onRemove(event: any){
