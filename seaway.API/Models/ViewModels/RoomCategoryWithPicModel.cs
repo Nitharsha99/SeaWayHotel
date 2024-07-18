@@ -9,6 +9,8 @@
         public string? CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
         public RoomPic[]? roomPics { get; set; }
+        public string? Created { get; set; }
+        public string? Updated { get; set; }
     }
 
     public class RoomPic
