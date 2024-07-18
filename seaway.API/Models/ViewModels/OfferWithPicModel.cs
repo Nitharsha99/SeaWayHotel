@@ -11,6 +11,8 @@
         public bool? IsRoomOffer { get; set; }
         public bool? IsActive { get; set; }
         public OfferPics[]? offerPics { get; set; }
+        public string? Created { get; set; }
+        public string? Updated { get; set; }
     }
 
     public class OfferPics

@@ -4,7 +4,9 @@
     {
         public string? ActivityName { get; set; }
         public string? Description { get; set; }
-        public bool ActivityIsActive { get; set; }
+        public bool IsActive { get; set; }
+        public string? Created {  get; set; }
+        public string? Updated { get; set; }
         public ActivityPic[]? ActivityPics { get; set; }
     }
 
