@@ -33,6 +33,7 @@ export class AddActivitiesComponent implements OnInit{
     activityName:[''],
     description:[''],
     createdBy: ['Nitharsha'],
+    updatedBy: [''],
     activityPics: this.builder.array([
       this.builder.group({
         picName: [null],
@@ -137,6 +138,7 @@ export class AddActivitiesComponent implements OnInit{
   callActivityService(): void{
     const formValue = this.activityForm.value;
     if(this.updateMode === false){
+      formValue.createdBy = 'Nitharsha';
       this.activityService.PostActivity(formValue).subscribe((res) => {
         console.log('post result', res);
         Swal.fire({
@@ -156,6 +158,7 @@ export class AddActivitiesComponent implements OnInit{
       )
     }
     else{
+      formValue.updatedBy = 'Nitharsha';
        //:: TODO :: UPDATE FUNC
     }
   }
@@ -192,5 +195,6 @@ export class AddActivitiesComponent implements OnInit{
     this.activityForm.reset();
     this.activityForm.value.createdBy = 'Nitharsha';
     this.files = [];
+    console.log("resert", this.activityForm.value);
   }
 }

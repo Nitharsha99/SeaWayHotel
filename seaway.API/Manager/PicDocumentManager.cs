@@ -48,6 +48,7 @@ namespace seaway.API.Manager
                             command.Parameters.AddWithValue("@PicName", pic.PicName);
                             command.Parameters.AddWithValue("@PicValue", picValueBytes);
                             command.Parameters.AddWithValue("@PublicId", pic.CloudinaryPublicId);
+                            command.Parameters.AddWithValue("@CreatedBy", pic.CreatedBy);
 
                             command.ExecuteNonQuery();
                         }
