@@ -159,7 +159,27 @@ export class AddActivitiesComponent implements OnInit{
     }
     else{
       formValue.updatedBy = 'Nitharsha';
-       //:: TODO :: UPDATE FUNC
+      if(this.activityId != null){
+        this.activityService.UpdateActivity(formValue, this.activityId).subscribe(res => {
+          Swal.fire({
+            title: "Activity Updated Successfully!!",
+            icon: "success"
+          }).then(() => {
+            this.files = [];
+            setTimeout(() => {
+            window.location.reload();
+          });
+          });
+        },
+        (error) =>{
+          Swal.fire({
+            title: "Error!",
+            text: error.message ,
+            icon: "error"
+          });
+         }
+      )
+      }
     }
   }
 
@@ -193,7 +213,6 @@ export class AddActivitiesComponent implements OnInit{
 
   resetForm(): void{
     this.activityForm.reset();
-    this.activityForm.value.createdBy = 'Nitharsha';
     this.files = [];
     console.log("resert", this.activityForm.value);
   }

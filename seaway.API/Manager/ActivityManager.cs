@@ -226,6 +226,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@Name", activity.ActivityName);
                         cmd.Parameters.AddWithValue("@Description", activity.Description);
                         cmd.Parameters.AddWithValue("@IsActive", activity.IsActive);
+                        cmd.Parameters.AddWithValue("@UpdatedBy", activity.UpdatedBy);
                      
 
                         cmd.ExecuteNonQuery();
