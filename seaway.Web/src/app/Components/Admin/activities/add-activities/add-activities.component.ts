@@ -188,8 +188,38 @@ export class AddActivitiesComponent implements OnInit{
     console.log("daaia", this.selectedPictures);
   }
 
-  deleteImages(): void{
-
+  deleteImages(){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'No, keep it',
+      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      iconColor: "#d33"
+  }).then((result) => {
+    if(result.isConfirmed){
+      this.activityService.DeleteImages(this.selectedPictures).subscribe((res) =>{
+        if(res.includes("Deleted")){
+          Swal.fire({
+            icon: "success",
+            title: "Successfully Deleted Images!!! ",
+            showConfirmButton: true
+          }).then(() => {
+            setTimeout(() => {
+              window.location.reload();
+            });
+          });
+        }
+  
+      });
+    }
+    else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire('Process Cancelled', 'Your Record is safe now !!');
+   }
+  });
   }
 
   onSelect(event: any): void{
