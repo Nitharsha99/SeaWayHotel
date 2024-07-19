@@ -109,14 +109,16 @@ namespace seaway.API.Controllers
                 {
                     Activity act = new Activity();
                     act.ActivityName = activity.ActivityName;
-                    act.IsActive = activity.ActivityIsActive;
+                    act.IsActive = activity.IsActive;
                     act.Description = activity.Description;
+                    act.CreatedBy = activity.CreatedBy;
 
                     int actId = _activityManager.PostActivity(act);
 
                     PicDocument pic = new PicDocument();
                     pic.PicType = "Activity";
                     pic.PicTypeId = actId;
+                    pic.CreatedBy = activity.CreatedBy;
 
                     if (activity?.ActivityPics?.Length > 0)
                     {
@@ -211,7 +213,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if ((activity.ActivityName != null || activity.Description != null|| activity?.ActivityIsActive != null) && (activityId != 0))
+                if ((activity.ActivityName != null || activity.Description != null|| activity?.IsActive != null) && (activityId != 0))
                 {
                     Activity oldActivity = _activityManager.GetActivityById(activityId);
                     if (oldActivity.ActivityName != null)
@@ -221,7 +223,7 @@ namespace seaway.API.Controllers
                         {
                             ActivityName = activity.ActivityName,
                             Description = activity.Description,
-                            IsActive = activity.ActivityIsActive,
+                            IsActive = activity.IsActive,
                  
                         };
                         _activityManager.UpdateActivity(updateActivity, activityId);
