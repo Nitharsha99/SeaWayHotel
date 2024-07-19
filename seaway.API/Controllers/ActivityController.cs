@@ -207,6 +207,7 @@ namespace seaway.API.Controllers
 
 
         [HttpPut]
+        [Route("{activityId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateActivity(ActivityWithPicModel activity, int activityId)
@@ -224,7 +225,7 @@ namespace seaway.API.Controllers
                             ActivityName = activity.ActivityName,
                             Description = activity.Description,
                             IsActive = activity.IsActive,
-                 
+                            UpdatedBy = activity.UpdatedBy,
                         };
                         _activityManager.UpdateActivity(updateActivity, activityId);
 
@@ -232,6 +233,7 @@ namespace seaway.API.Controllers
                         PicDocument pic = new PicDocument();
                         pic.PicType = "Activity";
                         pic.PicTypeId = activityId;
+                        pic.CreatedBy = activity.UpdatedBy;
                         if (activity?.ActivityPics?.Length > 0)
                         {
                             foreach (var item in activity.ActivityPics)

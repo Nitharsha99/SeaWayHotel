@@ -226,7 +226,6 @@ imageHeight: number = 110;
 
  resetForm(){
   this.roomForm.reset();
-  this.roomForm.value.createdBy = 'Nitharsha';
   this.files = [];
   console.log("resert", this.roomForm.value);
  }

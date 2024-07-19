@@ -119,5 +119,53 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT 1 FROM sysobjects WHERE id = object_id(N'[dbo].[UpdateActivity]') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+BEGIN
+	DROP PROCEDURE UpdateActivity
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateActivity]    Script Date: 19/07/2024 20:11:08 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Kavishan
+-- Create date: 25/05/2024
+-- Description:	Update Activity details
+-- =============================================
+
+/*
+	Modifications
+
+	001          19/07/2024         Nitharsha             add updated details
+
+*/
+
+
+CREATE PROCEDURE [dbo].[UpdateActivity] 
+	@ActivityId	INT,
+	@Name NVARCHAR(100) = NULL,
+	@Description NVARCHAR(1000) = NULL,
+	@IsActive BIT = NULL,
+	@UpdatedBy NVARCHAR(100)                         --001
+AS
+BEGIN
+	SET NOCOUNT ON;
+	IF EXISTS(SELECT 1 FROM Activities WHERE ActivityId = @ActivityId)
+	BEGIN
+		UPDATE Activities
+		SET Name = ISNULL(@Name, Name),
+            Description = ISNULL(@Description, Description),
+            IsActive = ISNULL(@IsActive, IsActive),
+			UpdatedBy = @UpdatedBy,                       --001
+			Updated = GETDATE()                          --001
+        WHERE ActivityId = @ActivityId
+	END
+END
+GO
+
+
 
 
