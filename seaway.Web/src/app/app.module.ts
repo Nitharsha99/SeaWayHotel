@@ -25,6 +25,8 @@ import { LoginComponent } from './Components/Admin/login/login.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
 import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
 import { CommonFunctionComponent } from './commonFunction';
+import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-offers.component';
+import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { CommonFunctionComponent } from './commonFunction';
     AllRoomsComponent,
     LoginComponent,
     AddActivitiesComponent,
-    AllActivitiesComponent
+    AllActivitiesComponent,
+    AllOffersComponent,
+    AddOffersComponent
   ],
   imports: [
     BrowserModule,
