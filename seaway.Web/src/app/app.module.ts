@@ -25,6 +25,7 @@ import { LoginComponent } from './Components/Admin/login/login.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
 import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
 import { CommonFunctionComponent } from './commonFunction';
+import { OffersComponent } from './Components/Admin/offers/offers.component';
 import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-offers.component';
 import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
 
@@ -48,7 +49,8 @@ import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-off
     AddActivitiesComponent,
     AllActivitiesComponent,
     AllOffersComponent,
-    AddOffersComponent
+    AddOffersComponent,
+    OffersComponent
   ],
   imports: [
     BrowserModule,

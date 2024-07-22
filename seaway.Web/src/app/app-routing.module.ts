@@ -11,6 +11,9 @@ import { AllRoomsComponent } from './Components/Admin/roomCategory/all-rooms/all
 import { LoginComponent } from './Components/Admin/login/login.component';
 import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
+import { OffersComponent } from './Components/Admin/offers/offers.component';
+import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-offers.component';
+import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -31,6 +34,13 @@ const routes: Routes = [
         {path: '', component: AllActivitiesComponent},
         {path: 'addActivity', component: AddActivitiesComponent},
         {path: 'editActivity/:id', component: AddActivitiesComponent}
+      ]
+    },
+    {path: 'Offers', component: OffersComponent,
+      children: [
+        {path: '', component: AllOffersComponent},
+        {path: 'addOffer', component: AddOffersComponent},
+        {path: 'editOffer/:id', component: AddOffersComponent}
       ]
     }
         
