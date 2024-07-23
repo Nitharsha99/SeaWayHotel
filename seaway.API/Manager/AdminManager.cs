@@ -26,7 +26,10 @@ namespace seaway.API.Manager
             var hashPassword = _passwordHelper.HashingPassword(admin.Password);
 
 
+
             return true;
         }
+
+
     }
 }
