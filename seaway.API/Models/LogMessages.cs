@@ -16,6 +16,10 @@ namespace seaway.API.Models
         public const string FindOfferByIdError = "An exception occurred while get activity data with Id = ";
         public const string DeleteOfferError = "An exception occurred while deleting activity --> ";
 
+        public const string GetRoomCategoryDataError = "An exception occurred while get all data from RoomCategory --> ";
+        public const string FindRoomCategoryByIdError = "An exception occurred while get room category data with Id = ";
+        public const string DeleteRoomCategoryError = "An exception occurred while deleting room category --> ";
+
         public const string InvalidIdError = "Invalid Id Passed";
         public const string EmptyDataSetError = "Empty data array passed";
         public const string DeleteImageError = "An exception occurred while deleting images --> ";

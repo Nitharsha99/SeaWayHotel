@@ -3,14 +3,14 @@
         <div class="mx-3 mt-4">
             <div class="row">
                 <div class="col-3 mt-3">
-                    <h2>Room List</h2>
+                    <h2>Room Category List</h2>
                 </div>
                 <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
                     <i class="bi bi-search"></i>
-                    <input type="text" [(ngModel)]="filters.search" class="form-control" placeholder="Search Rooms...." (input)="onFilterChange()">
+                    <input type="text" [(ngModel)]="filters.search" class="form-control" placeholder="Search Room Categories...." (input)="onFilterChange()">
                 </div>
                 <div class="col-3 mt-3" style="text-align: right;">
-                    <button type="button" class="btn" (click)="navigateToNewRoom()" style="background-color: #570254; color: #FFFFFF;">+ New</button>
+                    <button type="button" class="btn" (click)="navigateToNewRoom()" style="background-color: #570254; color: #FFFFFF;">+ New Category</button>
                 </div>
             </div>  
         </div>
@@ -28,19 +28,13 @@
             <div class="col-sm-3">
                 <select class="form-select" [(ngModel)]="filters.priceRange" (change)="onFilterChange()">
                     <option value="">Price Range</option>
-                    <option value="1">Below 3000</option>
-                    <option value="2">3000 - 5000</option>
-                    <option value="3">5000 - 10000</option>
-                    <option value="4">Above 10000</option>
+                    <option *ngFor="let rate of getPriceRates()" [value]="rate">{{ rate }}</option>
                   </select>
             </div>
             <div class="col-sm-3">
                 <select class="form-select" [(ngModel)]="filters.discount" (change)="onFilterChange()">
                     <option value="">Discount</option>
-                    <option value="1">Below 5%</option>
-                    <option value="2">5% - 10%</option>
-                    <option value="3">10% - 20%</option>
-                    <option value="4">Above 20%</option>
+                    <option *ngFor="let rate of getDiscountRates()" [value]="rate">{{ rate }}</option>
                   </select>
             </div>
             <div class="col-sm-3">
@@ -49,11 +43,11 @@
             
         </div>
 
-        <div *ngIf="rooms.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms now !!</h3></div>
+        <div *ngIf="roomCategory.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Room Categories now !!</h3></div>
 
-        <div *ngIf="filteredRooms.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms For this Serching !!</h3></div>
+        <div *ngIf="roomCategory.length > 0 && filteredCategory.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Room Category For this Serching !!</h3></div>
 
-        <div *ngIf="filteredRooms.length > 0">
+        <div *ngIf="filteredCategory.length > 0">
             <table class="table table-striped mx-3 my-3 mt-4">
                 <thead>
                     <tr>
@@ -69,20 +63,20 @@
                 </thead>
     
                 <tbody>
-                    <tr *ngFor="let room of filteredRooms | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
-                        <td>{{room.roomId}}</td>
+                    <tr *ngFor="let room of filteredCategory | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
+                        <td>{{room.categoryId}}</td>
                         <td>{{room.roomName}}</td>
                         <td style="justify-content: center;">{{room.guestCountMax}}</td>
                         <td>{{room.price | currency: 'LKR' : 'Rs '}}</td>
                         <td>{{room.discountPercentage}}</td>
                         <td>{{room.discountAmount | currency: 'LKR' : 'Rs '}}</td>
                         <td>
-                            <button type="button" class="btn" (click)="navigateToUpdate(room.roomId)">
+                            <button type="button" class="btn" (click)="navigateToUpdate(room.categoryId)">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn" (click)="deleteRoom(room.roomId)">
+                            <button type="button" class="btn" (click)="deleteRoom(room.categoryId)">
                                 <i class="bi bi-trash-fill" style="color: red;"></i>
                             </button>
                         </td>

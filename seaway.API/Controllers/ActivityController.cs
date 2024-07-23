@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -7,8 +8,6 @@ using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
 using System;
-using System.Data.SqlClient;
-using System.IO;
 
 namespace seaway.API.Controllers
 {
@@ -110,14 +109,16 @@ namespace seaway.API.Controllers
                 {
                     Activity act = new Activity();
                     act.ActivityName = activity.ActivityName;
-                    act.IsActive = activity.ActivityIsActive;
+                    act.IsActive = activity.IsActive;
                     act.Description = activity.Description;
+                    act.CreatedBy = activity.CreatedBy;
 
                     int actId = _activityManager.PostActivity(act);
 
                     PicDocument pic = new PicDocument();
                     pic.PicType = "Activity";
                     pic.PicTypeId = actId;
+                    pic.CreatedBy = activity.CreatedBy;
 
                     if (activity?.ActivityPics?.Length > 0)
                     {
@@ -206,13 +207,14 @@ namespace seaway.API.Controllers
 
 
         [HttpPut]
+        [Route("{activityId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateActivity(ActivityWithPicModel activity, int activityId)
         {
             try
             {
-                if ((activity.ActivityName != null || activity.Description != null|| activity?.ActivityIsActive != null) && (activityId != 0))
+                if ((activity.ActivityName != null || activity.Description != null|| activity?.IsActive != null) && (activityId != 0))
                 {
                     Activity oldActivity = _activityManager.GetActivityById(activityId);
                     if (oldActivity.ActivityName != null)
@@ -222,8 +224,8 @@ namespace seaway.API.Controllers
                         {
                             ActivityName = activity.ActivityName,
                             Description = activity.Description,
-                            IsActive = activity.ActivityIsActive,
-                 
+                            IsActive = activity.IsActive,
+                            UpdatedBy = activity.UpdatedBy,
                         };
                         _activityManager.UpdateActivity(updateActivity, activityId);
 
@@ -231,6 +233,7 @@ namespace seaway.API.Controllers
                         PicDocument pic = new PicDocument();
                         pic.PicType = "Activity";
                         pic.PicTypeId = activityId;
+                        pic.CreatedBy = activity.UpdatedBy;
                         if (activity?.ActivityPics?.Length > 0)
                         {
                             foreach (var item in activity.ActivityPics)
