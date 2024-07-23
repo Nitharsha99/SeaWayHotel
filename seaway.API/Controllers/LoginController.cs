@@ -14,7 +14,7 @@ using System.Net.Http;
 
 namespace seaway.API.Controllers
 {
-    [Route("api/admin")]
+    [Route("api/login")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -54,49 +54,6 @@ namespace seaway.API.Controllers
             {
                 _logger.LogError("An exception occurred while retrieving admins : " + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
-            }
-        }
-
-        [HttpPost]
-        [Route("")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult NewAdmin([FromForm]Admin admin)
-        {
-            try
-            {
-                if(admin == null)
-                {
-                    return BadRequest("Admin details are empty");
-                }
-                else
-                {
-                    if(admin.Password != null)
-                    {
-                        admin.Password = PasswordHelper.EncryptPassword(admin.Password);
-                    }
-
-                    var newAdmin = _logginManager.NewAdmin(admin);
-
-                    string responseBody = JsonConvert.SerializeObject(admin);
-                    string requestUrl = HttpContext.Request.Path.ToString();
-
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-
-                    if (newAdmin == null)
-                    {
-                        return BadRequest("Creation of new admin Failed");
-                    }
-                    else
-                    {
-                        return Ok(newAdmin);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("An exception occurred while creating new admin : " + ex.Message);
-                return BadRequest(ex.Message);
             }
         }
 
