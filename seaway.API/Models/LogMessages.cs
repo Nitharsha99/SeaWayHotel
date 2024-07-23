@@ -22,6 +22,9 @@ namespace seaway.API.Models
         public const string InsertDataError = "An exception occurred while inserting new data --> ";
         public const string UpdateDataError = "An exception occurred while updating exist data --> ";
         public const string StatusChangeError = "An exception occurred while changing Active status --> ";
+        public const string Warning = "Warning --> ";
+
+        public const string NewRecordCreated = "Successfully Created New Record";
     }
 
     public static class DisplayMessages
@@ -29,6 +32,7 @@ namespace seaway.API.Models
         public const string NullInput = "Nullable Input Data Provided";
         public const string InvalidId = "Invalid Id Provided";
         public const string EmptyExistData = "There is no any data with this Id --> ";
+        public const string InsertingError = "Issue in Inserting data";
 
         public const string StatusChangeError = "Error on changing active status";
         public const string DeletingError = "Issue While delete the data";

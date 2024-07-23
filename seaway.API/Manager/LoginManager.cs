@@ -20,47 +20,47 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Admin> GetAdmin()
-        {
-            try
-            {
-                List<Admin> resValue = new List<Admin>();
+        //public List<Admin> GetAdmin()
+        //{
+        //    try
+        //    {
+        //        List<Admin> resValue = new List<Admin>();
 
-                using (SqlConnection _con = new SqlConnection(this._conString))
-                {
-                    SqlCommand command = _con.CreateCommand();
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "AllAdmin";
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    DataTable dt = new DataTable();
+        //        using (SqlConnection _con = new SqlConnection(this._conString))
+        //        {
+        //            SqlCommand command = _con.CreateCommand();
+        //            command.CommandType = CommandType.StoredProcedure;
+        //            command.CommandText = "AllAdmin";
+        //            SqlDataAdapter adapter = new SqlDataAdapter(command);
+        //            DataTable dt = new DataTable();
 
-                    _con.Open();
-                    adapter.Fill(dt);
-                    _con.Close();
+        //            _con.Open();
+        //            adapter.Fill(dt);
+        //            _con.Close();
 
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        var encryptPassword = row["Password"].ToString() ?? "";
-                        resValue.Add(new Admin
-                        {
-                            AdminId = (int)row["AdminId"],
-                            Username = row["Username"].ToString(),
-                            Password = PasswordHelper.DecryptPassword(encryptPassword)
-                        });
-                    }
-                }
+        //            foreach (DataRow row in dt.Rows)
+        //            {
+        //                var encryptPassword = row["Password"].ToString() ?? "";
+        //                resValue.Add(new Admin
+        //                {
+        //                    AdminId = (int)row["AdminId"],
+        //                    Username = row["Username"].ToString(),
+        //                    Password = PasswordHelper.DecryptPassword(encryptPassword)
+        //                });
+        //            }
+        //        }
 
-                _logger.LogTrace("SuccessFully Admin Data retrieved");
+        //        _logger.LogTrace("SuccessFully Admin Data retrieved");
 
-                return resValue;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogWarning("Warning -- " + ex.Message);
-                throw;
-            }
+        //        return resValue;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        _logger.LogWarning("Warning -- " + ex.Message);
+        //        throw;
+        //    }
 
-        }
+        //}
 
         public Admin NewAdmin(Admin admin)
         {
@@ -87,35 +87,35 @@ namespace seaway.API.Manager
             return admin;
         }
 
-        public bool CheckUserValid(Admin login)
-        {
-            if (string.IsNullOrEmpty(login.Password))
-            {
-                return false;
-            }
-            else
-            {
-                List<Admin> admins = GetAdmin();
-                bool validUser = false;
+        //public bool CheckUserValid(Admin login)
+        //{
+        //    if (string.IsNullOrEmpty(login.Password))
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        List<Admin> admins = GetAdmin();
+        //        bool validUser = false;
 
-                foreach (Admin admin in admins)
-                {
-                    if(admin.Password != null)
-                    {
-                        if (admin.Password == login.Password)
-                        {
-                            if (admin.Username == login.Username)
-                            {
-                                validUser = true;
-                                // AddLoginTime(admin);
-                            }
-                        }
-                    }
-                }
+        //        foreach (Admin admin in admins)
+        //        {
+        //            if(admin.Password != null)
+        //            {
+        //                if (admin.Password == login.Password)
+        //                {
+        //                    if (admin.Username == login.Username)
+        //                    {
+        //                        validUser = true;
+        //                        // AddLoginTime(admin);
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                return validUser;
-            }
-        }
+        //        return validUser;
+        //    }
+        //}
 
         public void AddLoginTime(Admin login)
         {

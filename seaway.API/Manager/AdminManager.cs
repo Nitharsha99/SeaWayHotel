@@ -1,5 +1,9 @@
 ﻿using seaway.API.Configurations;
 using seaway.API.Models;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
 
 namespace seaway.API.Manager
 {
@@ -21,13 +25,43 @@ namespace seaway.API.Manager
 
         public bool NewAdmin(Admin admin)
         {
-            if(admin.Password == null) return false;
+            try
+            {
+                if (admin.Password == null) return false;
 
-            var hashPassword = _passwordHelper.HashingPassword(admin.Password);
+                var hashPassword = _passwordHelper.HashingPassword(admin.Password);
+                byte[]? picPathBytes = null;
 
+                if (admin.ProfilePicPath != null)
+                {
+                   picPathBytes = Encoding.UTF8.GetBytes(admin.ProfilePicPath);
+                }
 
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("NewAdmin", con))
+                    {
+                        con.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-            return true;
+                        cmd.Parameters.AddWithValue("@username", admin.Username);
+                        cmd.Parameters.AddWithValue("@password", hashPassword);
+                        cmd.Parameters.AddWithValue("@isAdmin", admin.IsAdmin);
+                        cmd.Parameters.AddWithValue("@profilePic", picPathBytes);
+                        cmd.Parameters.AddWithValue("@created", admin.CreatedBy);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                _logger.LogTrace(LogMessages.NewRecordCreated);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(LogMessages.Warning + ex.Message);
+                return false;
+            }
         }
 
 

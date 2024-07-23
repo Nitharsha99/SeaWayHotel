@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using seaway.API.Models.ViewModels;
 
 namespace seaway.API.Controllers
 {
@@ -28,31 +29,51 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult NewAdmin(Admin admin)
+        public async Task<IActionResult> NewAdmin([FromForm]AdminWithProfilePic admin)
         {
             try
             {
+                string filePath = null;
                 if (admin == null)
                 {
-                    return BadRequest("Admin details are empty");
+                    return BadRequest(DisplayMessages.NullInput);
                 }
                 else
                 {
-                    if (admin.Password != null)
+                    if(admin.ProfilePic != null)
                     {
-                        admin.Password = PasswordHelper.EncryptPassword(admin.Password);
+                        var folder = Path.Combine("wwwroot", "Uploads");
+                        if (!Directory.Exists(folder))
+                        {
+                            Directory.CreateDirectory(folder);
+                        }
+                        filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
+
+                        using(var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await admin.ProfilePic.CopyToAsync(stream);
+                        }
                     }
 
-                    var newAdmin = _logginManager.NewAdmin(admin);
+                    var newAdmin = new Admin
+                    {
+                        Username = admin.Username,
+                        Password = admin.Password,
+                        IsAdmin = admin.IsAdmin,
+                        ProfilePicPath = filePath,
+                        CreatedBy = admin.CreatedBy
+                    };
+
+                    bool isCreated = _adminManager.NewAdmin(newAdmin);
 
                     string responseBody = JsonConvert.SerializeObject(admin);
                     string requestUrl = HttpContext.Request.Path.ToString();
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
 
-                    if (newAdmin == null)
+                    if (!isCreated)
                     {
-                        return BadRequest("Creation of new admin Failed");
+                        return BadRequest(DisplayMessages.InsertingError);
                     }
                     else
                     {
@@ -62,7 +83,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while creating new admin : " + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
