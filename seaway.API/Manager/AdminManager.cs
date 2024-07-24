@@ -59,8 +59,84 @@ namespace seaway.API.Manager
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(LogMessages.Warning + ex.Message);
+                _logger.LogWarning(" Warning -- " + ex.Message);
                 return false;
+            }
+        }
+
+        public List<Admin> GetAllAdmins()
+        {
+            try
+            {
+                List<Admin> adminList = new List<Admin>();
+
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    SqlCommand command = _con.CreateCommand();
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = "AllAdmin";
+
+                    _con.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            byte[] filePathInByte = (byte[])reader["ProfilePic"];
+                            string picFile = Convert.ToBase64String(filePathInByte);
+
+                            Admin admin = new Admin
+                            {
+                                AdminId = (int)reader["AdminId"],
+                                Username = reader["Username"].ToString(),
+                                Password = reader["Password"].ToString(),
+                                IsAdmin = (bool)reader["IsAdmin"],
+                                ProfilePicPath = picFile,
+                                Created = Convert.ToDateTime(reader["Created"]),
+                                CreatedBy = reader["CreatedBy"].ToString(),
+                                Updated = Convert.ToDateTime(reader["Updated"]),
+                                UpdatedBy = reader["UpdatedBy"].ToString()
+                            };
+
+                            adminList.Add(admin);
+
+                        }
+                    }
+
+                    _con.Close();
+
+                    _logger.LogTrace(LogMessages.AllAdminRetrieve);
+
+                    return adminList;
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning(" Warning -- " + ex.Message);
+                throw;
+            }
+        }
+
+        public bool IsUsernameExist(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+            else
+            {
+                var result = GetAllAdmins()
+                    .Where(a => a.Username.Trim().ToLower() == username.Trim().ToLower())
+                    .ToList();
+
+                if(result.Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

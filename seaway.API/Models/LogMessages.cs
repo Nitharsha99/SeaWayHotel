@@ -12,9 +12,12 @@ namespace seaway.API.Models
         public const string FindActivityByIdError = "An exception occurred while get activity data with Id = ";
         public const string DeleteActivityError = "An exception occurred while deleting activity --> ";
 
-        public const string GetOfferDataError = "An exception occurred while get all data from Activity --> ";
-        public const string FindOfferByIdError = "An exception occurred while get activity data with Id = ";
-        public const string DeleteOfferError = "An exception occurred while deleting activity --> ";
+        public const string GetOfferDataError = "An exception occurred while get all data from Offers --> ";
+        public const string FindOfferByIdError = "An exception occurred while get offer data with Id = ";
+        public const string DeleteOfferError = "An exception occurred while deleting offer --> ";
+
+        public const string GetAdminDataError = "An exception occurred while get all data from Admin --> ";
+        public const string FindAdminByIdError = "An exception occurred while get admin data with Id = ";
 
         public const string GetRoomCategoryDataError = "An exception occurred while get all data from RoomCategory --> ";
         public const string FindRoomCategoryByIdError = "An exception occurred while get room category data with Id = ";
@@ -26,9 +29,11 @@ namespace seaway.API.Models
         public const string InsertDataError = "An exception occurred while inserting new data --> ";
         public const string UpdateDataError = "An exception occurred while updating exist data --> ";
         public const string StatusChangeError = "An exception occurred while changing Active status --> ";
-        public const string Warning = "Warning --> ";
 
         public const string NewRecordCreated = "Successfully Created New Record";
+
+        public const string AllAdminRetrieve = "SuccessFully All Admin Data retrieved";
+        public const string AllOfferRetrieve = "SuccessFully All Offer Data retrieved";
     }
 
     public static class DisplayMessages
@@ -37,6 +42,8 @@ namespace seaway.API.Models
         public const string InvalidId = "Invalid Id Provided";
         public const string EmptyExistData = "There is no any data with this Id --> ";
         public const string InsertingError = "Issue in Inserting data";
+
+        public const string ExistNameError = "This name already exists";
 
         public const string StatusChangeError = "Error on changing active status";
         public const string DeletingError = "Issue While delete the data";
