@@ -124,7 +124,7 @@ namespace seaway.API.Manager
                     }
 
                     _con.Close();
-                    _logger.LogTrace("SuccessFully All Offer Data retrieved");
+                    _logger.LogTrace(LogMessages.AllOfferRetrieve);
                     mainoffer = offerList.FirstOrDefault() ?? new Offer();
                 }
                 return mainoffer;
@@ -167,7 +167,7 @@ namespace seaway.API.Manager
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(LogMessages.Warning + ex.Message);
+                _logger.LogWarning(" Warning -- " + ex.Message);
                 throw;
             }
         }

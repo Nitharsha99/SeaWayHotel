@@ -87,5 +87,30 @@ namespace seaway.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            try
+            {
+                List<Admin> admins = _adminManager.GetAllAdmins();
+
+                string responseBody = JsonConvert.SerializeObject(admins);
+
+                string requestUrl = HttpContext.Request.Path.ToString();
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                return Ok(admins);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(LogMessages.GetAdminDataError + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
