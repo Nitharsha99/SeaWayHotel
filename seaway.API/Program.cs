@@ -25,9 +25,11 @@ try
     builder.Services.AddScoped<ActivityManager>();
     builder.Services.AddScoped<LoginManager>();
     builder.Services.AddScoped<LogHandler>();
+    builder.Services.AddScoped<PasswordHelper>();
     builder.Services.AddScoped<CustomerManager>();
     builder.Services.AddScoped<RoomCategoryManager>();
     builder.Services.AddScoped<OfferManager>();
+    builder.Services.AddScoped<AdminManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>

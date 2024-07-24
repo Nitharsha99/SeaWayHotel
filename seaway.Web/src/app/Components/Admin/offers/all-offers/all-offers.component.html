@@ -3,28 +3,30 @@
     <div class="mx-3 mt-4">
         <div class="row">
             <div class="col-3 mt-3">
-                <h1>Activity List</h1>
+                <h1>Offer List</h1>
             </div>
             <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
                 <i class="bi bi-search"></i>
-                <input type="text" [(ngModel)]="search" class="form-control" (input)="onSearch()" placeholder="Search Activities....">
+                <input type="text" class="form-control" (input)="onSearch()" placeholder="Search Offers....">
             </div>
             <div class="col-3 mt-3" style="text-align: right;">
-                <button type="button" class="btn" (click)="navigateToAddActivity()" style="background-color: #570254; color: #FFFFFF;">+ New Activity</button>
+                <button type="button" class="btn" (click)="navigateToAddOffer()" style="background-color: #570254; color: #FFFFFF;">+ New Offer</button>
             </div>
         </div>  
     </div>
 
-    <div class="mt-4 mb-5" style="text-align: center;" *ngIf="activities.length == 0"> <h3>There is no any Activities here now !!</h3></div>
+    <div class="mt-4 mb-5" style="text-align: center;"> <h3>There is no any Offers here now !!</h3></div>
 
-    <div *ngIf="filteredActivities.length > 0">
+    <div>
         <table class="table table-striped mx-3 my-3 mt-4">
             <thead>
                 <tr>
                     <th scope="col" class="text-white">Id</th>
-                    <th scope="col" class="text-white">Activity Name</th>
-                    <th scope="col" class="text-white">Description</th>
-                    <th scope="col" class="text-white"></th>
+                    <th scope="col" class="text-white">Offer Name</th>
+                    <th scope="col" class="text-white">ValidFrom</th>
+                    <th scope="col" class="text-white">ValidTo</th>
+                    <th scope="col" class="text-white">Price</th>
+                    <th scope="col" class="text-white">RoomOffer</th>
                     <th scope="col" class="text-white">Active</th>
                     <th scope="col" class="text-white">Edit</th>
                     <th scope="col" class="text-white">Delete</th>
@@ -32,22 +34,29 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let act of filteredActivities | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: activities.length }">
-                    <td>{{act.activityId}}</td>
-                    <td>{{act.activityName}}</td>
-                    <td colspan="2">{{act.description}}</td>
+                <tr>
+                    <td>1</td>
+                    <td>Offer1</td>
+                    <td>20/06/2024</td>
+                    <td>20/08/2024</td>
+                    <td>Rs 5000.00</td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="act.isActive">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="btn" (click)="navigateToUpdatePage(act.activityId)">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn delete-btn" (click)="deleteActivity(act.activityId)">
+                        <button type="button" class="btn delete-btn">
                             <i class="bi bi-trash-fill" style="color: #b92323"></i>
                         </button>
                     </td>
@@ -58,8 +67,8 @@
         <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
             <pagination-controls
                 class="pagination-right"
-                (pageChange)="onPageChange($event)"
-                (totalItems)="activities.length"
+                
+                (totalItems)="10"
                 (itemsPerPage)="pageSize"
             >
             </pagination-controls>
@@ -69,4 +78,5 @@
 
 
 </div>
+
 

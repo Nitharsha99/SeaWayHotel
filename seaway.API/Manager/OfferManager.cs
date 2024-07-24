@@ -161,13 +161,13 @@ namespace seaway.API.Manager
                     }
                 }
 
-                _logger.LogTrace("SuccessFully created new room");
+                _logger.LogTrace(LogMessages.NewRecordCreated);
 
                 return offerId;
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Warning at Insert New Room : " + ex.Message);
+                _logger.LogWarning(LogMessages.Warning + ex.Message);
                 throw;
             }
         }
