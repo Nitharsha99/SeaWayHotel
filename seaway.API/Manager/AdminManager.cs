@@ -117,6 +117,29 @@ namespace seaway.API.Manager
             }
         }
 
+        public bool IsUsernameExist(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+            else
+            {
+                var result = GetAllAdmins()
+                    .Where(a => a.Username.Trim().ToLower() == username.Trim().ToLower())
+                    .ToList();
+
+                if(result.Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
 
     }
 }

@@ -43,6 +43,8 @@ namespace seaway.API.Models
         public const string EmptyExistData = "There is no any data with this Id --> ";
         public const string InsertingError = "Issue in Inserting data";
 
+        public const string ExistNameError = "This name already exists";
+
         public const string StatusChangeError = "Error on changing active status";
         public const string DeletingError = "Issue While delete the data";
         public const string CloudinaryError = "Issue in Cloudinary asset deleting";
