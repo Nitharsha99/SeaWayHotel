@@ -47,7 +47,7 @@ namespace seaway.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get all offers data : " + ex.Message);
+                _logger.LogError(LogMessages.GetOfferDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -62,7 +62,7 @@ namespace seaway.API.Controllers
             {
                 if(offer.Name == null || offer.ValidFrom == null || offer.Price == null)
                 {
-                    return BadRequest("There is no any new data of Offer");
+                    return BadRequest(DisplayMessages.NullInput);
                 }
                 else
                 {
@@ -101,13 +101,13 @@ namespace seaway.API.Controllers
                     string responseBody = JsonConvert.SerializeObject(offer);
 
                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                    return Ok(offer);
                 }
 
-                return Ok(offer);
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while inserting offer data : " + ex.Message);
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -135,19 +135,22 @@ namespace seaway.API.Controllers
                         }
                         else
                         {
-                            return BadRequest("Error on changing offer status");
+                            return BadRequest(DisplayMessages.StatusChangeError);
                         }
                     }
                     else
                     {
-                        return BadRequest("There is no any offer with this Id --> " + id);
+                        return BadRequest(DisplayMessages.EmptyExistData + id);
                     }
                 }
-                return BadRequest("Id is not Supplied");
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while changing Active status of Offer : " + ex.Message);
+                _logger.LogError(LogMessages.StatusChangeError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -160,18 +163,34 @@ namespace seaway.API.Controllers
         {
             try
             {
-                Offer offer = _offerManager.GetOfferById(Id);
+                if(Id != 0)
+                {
+                    Offer offer = _offerManager.GetOfferById(Id);
 
-                string responseBody = JsonConvert.SerializeObject(offer);
+                    string responseBody = JsonConvert.SerializeObject(offer);
 
-                string requestUrl = HttpContext.Request.Path.ToString();
+                    string requestUrl = HttpContext.Request.Path.ToString();
 
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
-                return Ok(offer);
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                    if(offer.Name != null)
+                    {
+                        return Ok(offer);
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return NotFound(DisplayMessages.InvalidId);
+                }
+
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while get offer data with Id = " + Id + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindOfferByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -224,19 +243,21 @@ namespace seaway.API.Controllers
                         string responseBody = JsonConvert.SerializeObject(offer);
 
                         _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-
+                        return Ok(offer);
                     }
                     else
                     {
-                        return BadRequest("Invalid OfferId");
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
                     }
                 }
-
-                return Ok(offer);
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while updating offer data : " + ex.Message);
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -249,52 +270,59 @@ namespace seaway.API.Controllers
         {
             try
             {
-                bool isOfferRemove = false;
-                List<string> publicIds = new List<string>();
-                bool IsRemoveFromCLoudinary = false;
-
-                Offer offer = _offerManager.GetOfferById(Id);
-
-                if (offer.Name != null)
+                if(Id > 0)
                 {
-                    if (offer?.OfferPics?.Count > 0)
+                    bool isOfferRemove = false;
+                    List<string> publicIds = new List<string>();
+                    bool IsRemoveFromCLoudinary = false;
+
+                    Offer offer = _offerManager.GetOfferById(Id);
+
+                    if (offer.Name != null)
                     {
-                        foreach (var pic in offer.OfferPics)
+                        if (offer?.OfferPics?.Count > 0)
                         {
-                            publicIds.Add(pic.CloudinaryPublicId ?? "");
-                        }
-                        IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(publicIds).Result;
+                            foreach (var pic in offer.OfferPics)
+                            {
+                                publicIds.Add(pic.CloudinaryPublicId ?? "");
+                            }
+                            IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(publicIds).Result;
 
-                        if (IsRemoveFromCLoudinary)
+                            if (IsRemoveFromCLoudinary)
+                            {
+                                isOfferRemove = _offerManager.DeleteOffer(Id);
+                            }
+                        }
+                        isOfferRemove = _offerManager.DeleteOffer(Id);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(offer);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        if (isOfferRemove)
                         {
-                            isOfferRemove = _offerManager.DeleteOffer(Id);
+                            return Ok(offer);
                         }
-                    }
-                    isOfferRemove = _offerManager.DeleteOffer(Id);
-
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(offer);
-
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-
-                    if (isOfferRemove)
-                    {
-                        return Ok(offer);
+                        else
+                        {
+                            return BadRequest(DisplayMessages.DeletingError);
+                        }
                     }
                     else
                     {
-                        return BadRequest("Issue in deleting process");
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
                     }
                 }
                 else
                 {
-                    return BadRequest("Offer is not exist for this Id");
+                    return BadRequest(DisplayMessages.InvalidId);
                 }
-
+ 
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting offer : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteOfferError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -307,27 +335,38 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<string> idArray = new List<string>();
-                idArray = ids.Split(',').ToList();
-                bool IsRemoveFromCLoudinary = false;
-
-                IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
-
-                if (IsRemoveFromCLoudinary)
+                if(ids == null)
                 {
-                    string picType = "Offer";
-                    _documentManager.DeleteImageFromDB(idArray, picType);
+                    return BadRequest(DisplayMessages.NullInput);
                 }
+                else
+                {
+                    List<string> idArray = new List<string>();
+                    idArray = ids.Split(',').ToList();
+                    bool IsRemoveFromCLoudinary = false;
 
-                string requestUrl = HttpContext.Request.Path.ToString();
-                string responseBody = JsonConvert.SerializeObject(ids);
+                    IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(idArray).Result;
 
-                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                return Ok("Deleted " + responseBody);
+                    if (IsRemoveFromCLoudinary)
+                    {
+                        string picType = "Offer";
+                        _documentManager.DeleteImageFromDB(idArray, picType);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(ids);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                        return Ok("Deleted " + responseBody);
+                    }
+                    else
+                    {
+                        return BadRequest(DisplayMessages.CloudinaryError);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError("An exception occurred while deleting offer pictures : " + ex.Message);
+                _logger.LogError(LogMessages.DeleteImageError + ex.Message);
                 return BadRequest(ex.Message);
             }
         }

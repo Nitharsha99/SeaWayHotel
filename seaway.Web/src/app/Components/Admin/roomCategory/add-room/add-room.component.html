@@ -4,7 +4,7 @@
         <form [formGroup]="roomForm" (ngSubmit)="addRoom()" class="row g-3">
             <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
                 <div>
-                    <h1>{{ updateMode ? 'Update Room' : 'Create Room'}}</h1>
+                    <h1>{{ updateMode ? 'Update Category' : 'Create Category'}}</h1>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -53,15 +53,17 @@
                     <div class="col-sm-12">
                         <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 3px; display: flex; background-color: #F5F6FA;">
                             <div *ngIf="pictures.length === 0" class="mx-2 mt-2">
-                                <p style="color: #6c757d;"> There is no any Pictures</p>
+                                <p style="color: #6c757d; font-size: 16px;"> There is no any Pictures</p>
                             </div>
                             <div class="shadow p-1 mb-2 bg-white rounded" style="margin-right: 15px;" *ngFor="let pic of pictures">
                                 <label>
                                     <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId)"> 
-                                    <div>
+                                    <div class="image-container">
                                         <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; padding-right: 3px;" [title]="pic.picName"
                                              [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">
-                                        <p class="text-center">{{pic.picName}}</p>
+
+                                        <p>{{pic.picName}}</p>
+                                        
                                     </div>
                                 </label>
                             </div>
@@ -97,7 +99,7 @@
                             <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
                                 <div>{{file.name}}</div>
                                 <div>{{file.type}}</div>
-                                <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
+                                <ngx-dropzone-label style="width: 120px;"> {{file.name}} {{file.type}} </ngx-dropzone-label>
                             </ngx-dropzone-preview>
                     
                         </ngx-dropzone>

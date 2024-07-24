@@ -1,31 +1,31 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Room } from 'src/app/Models/room';
+import { RoomCategory } from 'src/app/Models/roomCategory';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoomService {
+export class RoomCategoryService {
 
   constructor(private http: HttpClient) { }
 
-  baseUrl = "https://localhost:44353/api/Room";
+  baseUrl = "https://localhost:44353/api/RoomCategory";
 
-  GetAllRooms(): Observable<Room[]>{
-    return this.http.get<Room[]>(this.baseUrl);
+  GetAllRoomCategories(): Observable<RoomCategory[]>{
+    return this.http.get<RoomCategory[]>(this.baseUrl);
   }
 
-  FindRoomById(id: number): Observable<Room>{
-    return this.http.get<Room>(this.baseUrl + "/" + id);
+  FindRoomCategoryById(id: number): Observable<RoomCategory>{
+    return this.http.get<RoomCategory>(this.baseUrl + "/" + id);
   }
 
-  PostRoom(data: any): Observable<any>{
+  PostRoomCategory(data: any): Observable<any>{
     console.log("save data", data);
     return this.http.post<any>(this.baseUrl, data);
   }
 
-  UpdateRoom(data: any, id: number): Observable<any>{
+  UpdateRoomCategory(data: any, id: number): Observable<any>{
     return this.http.put<any>(this.baseUrl+ "/" + id, data);
   }
 
@@ -36,7 +36,7 @@ export class RoomService {
     return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
   }
 
-  DeleteRoom(id: number): Observable<any>{
+  DeleteRoomCategory(id: number): Observable<any>{
     return this.http.delete<any>(this.baseUrl + "/" + id);
   }
 }

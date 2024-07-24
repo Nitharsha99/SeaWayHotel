@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,13 +15,16 @@ import { NewActivityComponent } from './Components/new-activity/new-activity.com
 import { RoomListComponent } from './Components/room-list/room-list.component';
 import { RoomViewComponent } from './Components/room-view/room-view.component';
 import { MainAdminPageComponent } from './Components/Admin/main-admin-page/main-admin-page.component';
-import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
+import { RoomsComponent } from './Components/Admin/roomCategory/rooms.component';
 import { ActivitiesComponent } from './Components/Admin/activities/activities.component';
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
-import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
-import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { AddRoomComponent } from './Components/Admin/roomCategory/add-room/add-room.component';
+import { AllRoomsComponent } from './Components/Admin/roomCategory/all-rooms/all-rooms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './Components/Admin/login/login.component';
+import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
+import { AllActivitiesComponent } from './Components/Admin/activities/all-activities/all-activities.component';
+import { CommonFunctionComponent } from './commonFunction';
 
 @NgModule({
   declarations: [
@@ -39,7 +42,9 @@ import { LoginComponent } from './Components/Admin/login/login.component';
     AdminMainComponent,
     AddRoomComponent,
     AllRoomsComponent,
-    LoginComponent
+    LoginComponent,
+    AddActivitiesComponent,
+    AllActivitiesComponent
   ],
   imports: [
     BrowserModule,
@@ -48,9 +53,10 @@ import { LoginComponent } from './Components/Admin/login/login.component';
     NgxDropzoneModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [CommonFunctionComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

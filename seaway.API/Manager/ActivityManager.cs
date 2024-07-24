@@ -160,6 +160,7 @@ namespace seaway.API.Manager
                         command.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
                         command.Parameters.AddWithValue("@ActivityDescription", activity.Description);
                         command.Parameters.AddWithValue("@IsActive", active);
+                        command.Parameters.AddWithValue("@createdBy", activity.CreatedBy);
 
                         activityId = (int)command.ExecuteScalar();
                         
@@ -225,6 +226,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@Name", activity.ActivityName);
                         cmd.Parameters.AddWithValue("@Description", activity.Description);
                         cmd.Parameters.AddWithValue("@IsActive", activity.IsActive);
+                        cmd.Parameters.AddWithValue("@UpdatedBy", activity.UpdatedBy);
                      
 
                         cmd.ExecuteNonQuery();
