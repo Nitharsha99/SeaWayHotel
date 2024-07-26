@@ -114,7 +114,7 @@
                             Back</button> 
                     </div>
                     <div class="col-10" style="text-align: right;">
-                        <button *ngIf="updateMode == false" type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+                        <button *ngIf="updateMode == false" type="button" class="btn btn-reset" (click)="resetForm()">Reset</button>
                         <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addRoom()">
                             {{updateMode ? 'Update' : 'Create'}}
                         </button>

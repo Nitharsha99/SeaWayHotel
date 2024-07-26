@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.service';
 import Swal from 'sweetalert2';
-import { RoomCategory } from 'src/app/Models/roomCategory';
 import { PicDocument } from 'src/app/Models/picDocument';
 import { CommonFunctionComponent } from 'src/app/commonFunction';
 
@@ -81,7 +79,8 @@ imageHeight: number = 110;
         Swal.fire({
           title: file.name,
           text: "File name legnth should not more than 50. Please reduce your image name length....",
-          icon: "info"
+          icon: "info",
+          iconColor: '#570254'
         });
       }
     });
@@ -167,11 +166,7 @@ imageHeight: number = 110;
   }
 
   if(!formValue.roomName || !formValue.guestCountMax || !formValue.price){
-    Swal.fire({
-      title: "Failed to save room category!",
-      text: "Please fill all mandatory fields...",
-      icon: "error"
-    });
+    this.commonFunction.showMandoryFieldPopup();
   }
   else{
     if(this.files.length > 0){
@@ -191,17 +186,16 @@ imageHeight: number = 110;
       console.log('post result', res);
       Swal.fire({
         title: "Room Category Saved Successfully!!",
-        icon: "success"
+        icon: "success",
+        iconColor: '#570254',
+        showConfirmButton: true,
+        confirmButtonColor: '#570254'
       });
       this.files = [];
       this.resetForm();
      },
      (error) =>{
-      Swal.fire({
-        title: "Error!",
-        text: error.message ,
-        icon: "error"
-      });
+      this.commonFunction.ShowErrorPopup(error);
      }
     )
   }else{
@@ -210,7 +204,10 @@ imageHeight: number = 110;
         console.log('edit result', res);
         Swal.fire({
           title: "Room Category Updated Successfully!!",
-          icon: "success"
+          icon: "success",
+          iconColor: '#570254',
+          showConfirmButton: true,
+          confirmButtonColor: '#570254'
         }).then(() =>{
           this.files = [];
           setTimeout(() => {
@@ -219,11 +216,7 @@ imageHeight: number = 110;
         });
        },
        (error) =>{
-        Swal.fire({
-          title: "Error!",
-          text: error.message ,
-          icon: "error"
-        });
+        this.commonFunction.ShowErrorPopup(error);
        }
       )
     }
@@ -234,7 +227,6 @@ imageHeight: number = 110;
  resetForm(){
   this.roomForm.reset();
   this.files = [];
-  console.log("resert", this.roomForm.value);
  }
 
  redirectToBack(){
@@ -249,24 +241,16 @@ imageHeight: number = 110;
 
 
 deleteImages(){
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'You won\'t be able to revert this!',
-    icon: 'warning',
-    showCancelButton: true,
-    cancelButtonText: 'No, keep it',
-    confirmButtonText: 'Yes, delete it!',
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    iconColor: "#d33"
-}).then((result) => {
+  this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
   if(result.isConfirmed){
     this.roomCategoryService.DeleteImages(this.selectedPictures).subscribe((res) =>{
       if(res.includes("Deleted")){
         Swal.fire({
           icon: "success",
           title: "Successfully Deleted Images!!! ",
-          showConfirmButton: true
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
         }).then(() => {
           setTimeout(() => {
             window.location.reload();
@@ -277,7 +261,9 @@ deleteImages(){
     });
   }
   else if (result.dismiss === Swal.DismissReason.cancel) {
-    Swal.fire('Process Cancelled', 'Your Record is safe now !!');
+    setTimeout(() => {
+      window.location.reload();
+    });
  }
 });
 }

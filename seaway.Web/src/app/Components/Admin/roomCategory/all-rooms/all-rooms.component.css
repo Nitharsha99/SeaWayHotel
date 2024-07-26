@@ -1,5 +1,12 @@
 th{
     background-color: #4F4F4F;
+    font-weight: 500;
+    font-size: 17px;
+}
+
+h1{
+  font-weight: 500;
+  font-size: 26px;
 }
 
 .form-inputs{
@@ -31,8 +38,10 @@ a{
   font-size: 16px;
 }
 
-.custom-btn:focus{
-  box-shadow: 0 8px 6px -6px #570254;
+.custom-btn:hover{
+  border-color: #570254;
+  background-color: #f8edf7;
+  cursor: pointer;
 }
 
 .table {
@@ -70,4 +79,12 @@ a{
   .pagination-right .pagination-button:hover {
     background-color:#4F4F4F; /* Example: change background color on hover */
     color: #4F4F4F;
+  }
+
+  .delete-btn:hover{
+    border-color: #EE0004;
+  }
+
+  .edit-btn:hover{
+    border-color: black;
   }

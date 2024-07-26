@@ -68,11 +68,7 @@ export class AddActivitiesComponent implements OnInit{
     const formValue = this.activityForm.value;
 
     if(!formValue.activityName || !formValue.description){
-      Swal.fire({
-        title: "Failed to save Activity!",
-        text: "Please fill all mandatory fields...",
-        icon: "error"
-      });
+      this.commonFunction.showMandoryFieldPopup();
     }
     else{
       if(this.files.length > 0){
@@ -143,17 +139,16 @@ export class AddActivitiesComponent implements OnInit{
         console.log('post result', res);
         Swal.fire({
           title: "Activity Saved Successfully!!",
-          icon: "success"
+          icon: "success",
+          iconColor: '#570254',
+          showConfirmButton: true,
+          confirmButtonColor: '#570254'
         });
         this.files = [];
         this.resetForm();
        },
        (error) =>{
-        Swal.fire({
-          title: "Error!",
-          text: error.message ,
-          icon: "error"
-        });
+        this.commonFunction.ShowErrorPopup(error);
        }
       )
     }
@@ -163,7 +158,10 @@ export class AddActivitiesComponent implements OnInit{
         this.activityService.UpdateActivity(formValue, this.activityId).subscribe(res => {
           Swal.fire({
             title: "Activity Updated Successfully!!",
-            icon: "success"
+            icon: "success",
+            iconColor: '#570254',
+            showConfirmButton: true,
+            confirmButtonColor: '#570254'
           }).then(() => {
             this.files = [];
             setTimeout(() => {
@@ -172,11 +170,7 @@ export class AddActivitiesComponent implements OnInit{
           });
         },
         (error) =>{
-          Swal.fire({
-            title: "Error!",
-            text: error.message ,
-            icon: "error"
-          });
+          this.commonFunction.ShowErrorPopup(error);
          }
       )
       }
@@ -196,24 +190,16 @@ export class AddActivitiesComponent implements OnInit{
   }
 
   deleteImages(){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
-      icon: 'warning',
-      showCancelButton: true,
-      cancelButtonText: 'No, keep it',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      iconColor: "#d33"
-  }).then((result) => {
+    this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
     if(result.isConfirmed){
       this.activityService.DeleteImages(this.selectedPictures).subscribe((res) =>{
         if(res.includes("Deleted")){
           Swal.fire({
             icon: "success",
             title: "Successfully Deleted Images!!! ",
-            showConfirmButton: true
+            showConfirmButton: true,
+            iconColor: '#570254',
+            confirmButtonColor: '#570254'
           }).then(() => {
             setTimeout(() => {
               window.location.reload();
@@ -224,7 +210,9 @@ export class AddActivitiesComponent implements OnInit{
       });
     }
     else if (result.dismiss === Swal.DismissReason.cancel) {
-      Swal.fire('Process Cancelled', 'Your Record is safe now !!');
+      setTimeout(() => {
+        window.location.reload();
+      });
    }
   });
   }
@@ -251,6 +239,5 @@ export class AddActivitiesComponent implements OnInit{
   resetForm(): void{
     this.activityForm.reset();
     this.files = [];
-    console.log("resert", this.activityForm.value);
   }
 }
