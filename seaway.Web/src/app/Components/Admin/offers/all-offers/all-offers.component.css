@@ -1,5 +1,12 @@
 th{
     background-color: #4F4F4F;
+    font-weight: 500;
+    font-size: 17px;
+}
+
+h1{
+  font-weight: 500;
+  font-size: 26px;
 }
 
 .form-inputs{
@@ -72,5 +79,9 @@ a{
   }
 
   .delete-btn:hover{
-    border-color: #b92323;
+    border-color: #EE0004;
+  }
+
+  .edit-btn:hover{
+    border-color: black;
   }

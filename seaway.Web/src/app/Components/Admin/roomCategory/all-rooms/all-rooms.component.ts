@@ -79,24 +79,15 @@ export class AllRoomsComponent implements OnInit{
   }
 
   deleteRoom(id: number){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
-      icon: 'warning',
-      showCancelButton: true,
-      cancelButtonText: 'No, keep it',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      iconColor: "#d33"
-  }).then((result) => {
-    console.log(result, "jsasjasojaia");
+   this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
       if (result.isConfirmed) {
        this.roomCategoryService.DeleteRoomCategory(id).subscribe(res => {
         Swal.fire({
           icon: "success",
           title: "Successfully Deleted " + res.roomName + " !!! ",
-          showConfirmButton: true
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
         }).then(() => {
           setTimeout(() => {
             window.location.reload();
@@ -104,7 +95,9 @@ export class AllRoomsComponent implements OnInit{
         });
        });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-          Swal.fire('Process Cancelled', 'Your Record is safe now !!');
+        setTimeout(() => {
+          window.location.reload();
+        });
       }
   });
   }

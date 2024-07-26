@@ -71,13 +71,13 @@
                         <td>{{room.discountPercentage}}</td>
                         <td>{{room.discountAmount | currency: 'LKR' : 'Rs '}}</td>
                         <td>
-                            <button type="button" class="btn" (click)="navigateToUpdate(room.categoryId)">
+                            <button type="button" class="btn edit-btn" (click)="navigateToUpdate(room.categoryId)">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn" (click)="deleteRoom(room.categoryId)">
-                                <i class="bi bi-trash-fill" style="color: red;"></i>
+                            <button type="button" class="btn delete-btn" (click)="deleteRoom(room.categoryId)">
+                                <i class="bi bi-trash-fill" style="color: #EE0004"></i>
                             </button>
                         </td>
                     </tr>
