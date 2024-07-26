@@ -92,8 +92,16 @@ imageHeight: number = 110;
     console.log(this.files);
   }
 
-  updateSelectedPics(picId: string){
-    this.selectedPictures.push(picId);
+  updateSelectedPics(id: string, event: any){
+    if(event.target.checked){
+      this.selectedPictures.push(id);
+    }
+    else{
+      const index = this.selectedPictures.indexOf(id);
+      if (index !== -1) {
+        this.selectedPictures.splice(index, 1);
+      }
+    }
   }
 
  async uploadImage(){
