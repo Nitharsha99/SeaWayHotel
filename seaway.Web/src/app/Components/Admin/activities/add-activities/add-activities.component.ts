@@ -183,9 +183,16 @@ export class AddActivitiesComponent implements OnInit{
     }
   }
 
-  updateSelectedPics(id: string): void{
-    this.selectedPictures.push(id);
-    console.log("daaia", this.selectedPictures);
+  updateSelectedPics(id: string, event: any): void{
+    if(event.target.checked){
+      this.selectedPictures.push(id);
+    }
+    else{
+      const index = this.selectedPictures.indexOf(id);
+      if (index !== -1) {
+        this.selectedPictures.splice(index, 1);
+      }
+    }
   }
 
   deleteImages(){
