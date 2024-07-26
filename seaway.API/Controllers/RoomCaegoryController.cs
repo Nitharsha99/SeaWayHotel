@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using seaway.API.Models.Enum;
 using seaway.API.Models.ViewModels;
 using System.Diagnostics;
 
@@ -107,7 +108,7 @@ namespace seaway.API.Controllers
 
                     PicDocument pic = new PicDocument
                     {
-                        PicType = "Room",
+                        PicType = PicType.Room,
                         PicTypeId = roomId
                     };
 
@@ -169,7 +170,7 @@ namespace seaway.API.Controllers
 
                         PicDocument pic = new PicDocument
                         {
-                            PicType = "Room",
+                            PicType = PicType.Room,
                             PicTypeId = Id
                         };
 

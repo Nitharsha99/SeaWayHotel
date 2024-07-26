@@ -5,6 +5,7 @@ using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
+using seaway.API.Models.Enum;
 
 namespace seaway.API.Controllers
 {
@@ -81,7 +82,7 @@ namespace seaway.API.Controllers
 
                     PicDocument pic = new PicDocument
                     {
-                        PicType = "Offer",
+                        PicType = PicType.Offer,
                         PicTypeId = offerId
                     };
 
@@ -223,7 +224,7 @@ namespace seaway.API.Controllers
 
                         PicDocument pic = new PicDocument
                         {
-                            PicType = "Offer",
+                            PicType = PicType.Offer,
                             PicTypeId = Id
                         };
 

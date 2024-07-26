@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using seaway.API.Models.Enum;
 using seaway.API.Models.ViewModels;
 using System;
 
@@ -116,7 +117,7 @@ namespace seaway.API.Controllers
                     int actId = _activityManager.PostActivity(act);
 
                     PicDocument pic = new PicDocument();
-                    pic.PicType = "Activity";
+                    pic.PicType = PicType.Activity;
                     pic.PicTypeId = actId;
                     pic.CreatedBy = activity.CreatedBy;
 
@@ -231,7 +232,7 @@ namespace seaway.API.Controllers
 
 
                         PicDocument pic = new PicDocument();
-                        pic.PicType = "Activity";
+                        pic.PicType = PicType.Activity;
                         pic.PicTypeId = activityId;
                         pic.CreatedBy = activity.UpdatedBy;
                         if (activity?.ActivityPics?.Length > 0)
