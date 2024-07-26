@@ -6,12 +6,13 @@
 }
 
 h1{
-    background-color: #656464;
+    background-color: #4F4F4F;
     color: #FFFFFF;
     padding-left: 5px;
     padding-top: 4px;
     padding-bottom: 4px;
     border-radius: 5px;
+    font-size: 26px;
 }
 
 input, ngx-dropzone, textarea{
@@ -19,7 +20,7 @@ input, ngx-dropzone, textarea{
 }
 
 span, .alert{
-    color: red;
+    color: #EE0004;
 }
 
 .upload-field {
