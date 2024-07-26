@@ -1,5 +1,6 @@
 ﻿using seaway.API.Configurations;
 using seaway.API.Models;
+using seaway.API.Models.Enum;
 using seaway.API.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
@@ -153,7 +154,7 @@ namespace seaway.API.Manager
                                     PicDocument document = new PicDocument
                                     {
                                         PicName = reader["PicName"].ToString(),
-                                        PicType = reader["PicType"].ToString(),
+                                        PicType = (PicType)reader["PicType"],
                                         PicTypeId = (int)reader["PicTypeId"],
                                         CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
                                         PicValue = val

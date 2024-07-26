@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using seaway.API.Models.Enum;
 
 namespace seaway.API.Manager
 {
@@ -111,7 +112,7 @@ namespace seaway.API.Manager
                                     PicDocument document = new PicDocument
                                     {
                                         PicName = reader["PicName"].ToString(),
-                                        PicType = reader["PicType"].ToString(),
+                                        PicType = (PicType)reader["PicType"],
                                         PicTypeId = (int)reader["PicTypeId"],
                                         CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
                                         PicValue = val
