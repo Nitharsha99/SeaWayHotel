@@ -12,7 +12,6 @@ export class CommonFunctionComponent{
   //Convert the base64 to String
   convertBase64ToString(base64: string){
       const decodedString = atob(base64);
-    
       return decodedString;
     }
 
@@ -55,6 +54,25 @@ export class CommonFunctionComponent{
       });
       }
   });
+  }
+
+  ShowErrorPopup(error: any){
+    Swal.fire({
+      title: "Error!",
+      text: error.message ,
+      icon: "error",
+      iconColor: '#EE0004'
+    });
+  }
+
+  showMandoryFieldPopup(){
+    Swal.fire({
+      text: "Please fill all mandatory fields...",
+      icon: "error",
+      iconColor: '#EE0004',
+      showConfirmButton: true,
+      confirmButtonColor: '#570254'
+    });
   }
 
   //Price range switch function for filter

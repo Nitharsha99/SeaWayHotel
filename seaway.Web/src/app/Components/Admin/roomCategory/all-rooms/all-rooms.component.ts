@@ -85,7 +85,9 @@ export class AllRoomsComponent implements OnInit{
         Swal.fire({
           icon: "success",
           title: "Successfully Deleted " + res.roomName + " !!! ",
-          showConfirmButton: true
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
         }).then(() => {
           setTimeout(() => {
             window.location.reload();
