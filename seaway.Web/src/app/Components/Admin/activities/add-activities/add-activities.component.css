@@ -31,3 +31,7 @@ span, .alert{
 textarea::placeholder{
     padding-top: 1%;
 }
+
+.btn-reset{
+    background-color: #FCBE2D;
+}

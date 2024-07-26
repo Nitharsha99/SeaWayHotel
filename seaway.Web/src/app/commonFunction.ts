@@ -27,6 +27,36 @@ export class CommonFunctionComponent{
     });
   }
 
+  showDeleteNotification(): any{
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t to delete this item',
+      showCancelButton: true,
+      padding: 'none',
+      cancelButtonText: 'No, keep it',
+      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: "#570254",
+      didOpen: () => {
+        const cancelButton = document.querySelectorAll('.swal2-cancel')[0] as HTMLElement;
+        cancelButton.style.backgroundColor = '#fff';
+        cancelButton.style.border = '1px solid #570254';
+        cancelButton.style.color = '#570254';
+
+         // Add hover style
+      cancelButton.addEventListener('mouseover', () => {
+        cancelButton.style.backgroundColor = '#f8edf7'; // Change background color on hover
+        cancelButton.style.borderColor = '#570254'; // Change border color on hover
+        cancelButton.style.cursor = 'pointer'; // Change cursor on hover
+      });
+
+      cancelButton.addEventListener('mouseout', () => {
+        cancelButton.style.backgroundColor = '#fff'; // Reset background color on mouse out
+        cancelButton.style.borderColor = '#570254'; // Reset border color on mouse out
+      });
+      }
+  });
+  }
+
   //Price range switch function for filter
   filterByPriceRange(price: number, priceRange: any): any{
     switch(priceRange){
