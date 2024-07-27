@@ -25,7 +25,7 @@ namespace seaway.API.Controllers
         }
 
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Login(LoginModel login)
