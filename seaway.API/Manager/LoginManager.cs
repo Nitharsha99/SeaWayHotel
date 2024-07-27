@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
-using System.Data;
-using seaway.API.Controllers;
+﻿using System.Data.SqlClient;
 using seaway.API.Models;
 using seaway.API.Configurations;
-using System.Text;
-using System.Security.Cryptography;
+using seaway.API.Models.ViewModels;
+using System.Data;
 
 namespace seaway.API.Manager
 {
@@ -13,109 +10,45 @@ namespace seaway.API.Manager
     { 
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
+        private readonly PasswordHelper _passwordHelper;
+        private readonly AdminManager _adminManager;
         string _conString;
-        public LoginManager(ILogger<LogHandler> logger, IConfiguration configuration) { 
+
+        public LoginManager(ILogger<LogHandler> logger, IConfiguration configuration, PasswordHelper passwordHelper, AdminManager adminManager) { 
             _logger = logger;
             _configuration = configuration;
+            _passwordHelper = passwordHelper;
+            _adminManager = adminManager;
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        //public List<Admin> GetAdmin()
-        //{
-        //    try
-        //    {
-        //        List<Admin> resValue = new List<Admin>();
-
-        //        using (SqlConnection _con = new SqlConnection(this._conString))
-        //        {
-        //            SqlCommand command = _con.CreateCommand();
-        //            command.CommandType = CommandType.StoredProcedure;
-        //            command.CommandText = "AllAdmin";
-        //            SqlDataAdapter adapter = new SqlDataAdapter(command);
-        //            DataTable dt = new DataTable();
-
-        //            _con.Open();
-        //            adapter.Fill(dt);
-        //            _con.Close();
-
-        //            foreach (DataRow row in dt.Rows)
-        //            {
-        //                var encryptPassword = row["Password"].ToString() ?? "";
-        //                resValue.Add(new Admin
-        //                {
-        //                    AdminId = (int)row["AdminId"],
-        //                    Username = row["Username"].ToString(),
-        //                    Password = PasswordHelper.DecryptPassword(encryptPassword)
-        //                });
-        //            }
-        //        }
-
-        //        _logger.LogTrace("SuccessFully Admin Data retrieved");
-
-        //        return resValue;
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        _logger.LogWarning("Warning -- " + ex.Message);
-        //        throw;
-        //    }
-
-        //}
-
-        public Admin NewAdmin(Admin admin)
+        public bool CheckUserValid(LoginModel login)
         {
-            using(SqlConnection con = new SqlConnection(this._conString))
+            if (string.IsNullOrEmpty(login.Password))
             {
-                using(SqlCommand cmd = new SqlCommand("NewAdmin", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    con.Open();
-                    var username = admin.Username;
-                    var password = admin.Password;
-
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-
-                    cmd.ExecuteNonQuery();
-                    _logger.LogTrace("new admin -- " + admin.Username);
-                }
+                return false;
             }
+            else
+            {
+                 Admin admin = _adminManager.GetAllAdmins()
+                                 .FirstOrDefault(a => a.Username.Trim().ToLower() == login.Username.Trim().ToLower() 
+                                 && a.IsAdmin == login.IsAdmin) ?? new Admin();
+                
+                bool validUser = false;
 
-            _logger.LogTrace("SuccessFully created new admin");
+                if(admin.Password != null)
+                {
+                   validUser = _passwordHelper.Verification(admin.Password, login.Password);
 
-            return admin;
+                    if(validUser)
+                    {
+                        AddLoginTime(admin);
+                    }
+                }
+
+                return validUser;
+            }
         }
-
-        //public bool CheckUserValid(Admin login)
-        //{
-        //    if (string.IsNullOrEmpty(login.Password))
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        List<Admin> admins = GetAdmin();
-        //        bool validUser = false;
-
-        //        foreach (Admin admin in admins)
-        //        {
-        //            if(admin.Password != null)
-        //            {
-        //                if (admin.Password == login.Password)
-        //                {
-        //                    if (admin.Username == login.Username)
-        //                    {
-        //                        validUser = true;
-        //                        // AddLoginTime(admin);
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        return validUser;
-        //    }
-        //}
 
         public void AddLoginTime(Admin login)
         {
@@ -124,6 +57,7 @@ namespace seaway.API.Manager
                 using (SqlCommand cmd = new SqlCommand("LoginLogoutTime", con))         
                 {
                     con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@username", login.Username);
                     cmd.Parameters.AddWithValue("@adminId", login.AdminId);
@@ -132,7 +66,7 @@ namespace seaway.API.Manager
                 }
             }
 
-            _logger.LogTrace("SuccessFully created new adminLogin");
+            _logger.LogTrace(LogMessages.NewRecordCreated);
         }
 
 

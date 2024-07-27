@@ -29,6 +29,7 @@ namespace seaway.API.Models
         public const string InsertDataError = "An exception occurred while inserting new data --> ";
         public const string UpdateDataError = "An exception occurred while updating exist data --> ";
         public const string StatusChangeError = "An exception occurred while changing Active status --> ";
+        public const string LoginError = "An exception occurred while login --> ";
 
         public const string NewRecordCreated = "Successfully Created New Record";
 

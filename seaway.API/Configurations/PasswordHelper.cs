@@ -22,5 +22,16 @@ namespace seaway.API.Configurations
 
         }
 
+        public bool Verification(string hashPassword, string inputPassword)
+        {
+            var elements = hashPassword.Split(_delimiter);
+            var salt = Convert.FromBase64String(elements[0]);
+            var hash = Convert.FromBase64String(elements[1]);
+
+            var hashInput = Rfc2898DeriveBytes.Pbkdf2(inputPassword, salt, _iteration, _hashAlgorithmName, _keySize);
+
+            return CryptographicOperations.FixedTimeEquals(hash, hashInput);
+        }
+
     }
 }
