@@ -82,8 +82,12 @@ namespace seaway.API.Manager
                     {
                         while (reader.Read())
                         {
-                            byte[] filePathInByte = (byte[])reader["ProfilePic"];
-                            string picFile = Convert.ToBase64String(filePathInByte);
+                            string? picFile = null;
+                            if(reader["ProfilePic"] != DBNull.Value)
+                            {
+                                byte[] filePathInByte = (byte[])reader["ProfilePic"];
+                                picFile = Convert.ToBase64String(filePathInByte);
+                            }
 
                             Admin admin = new Admin
                             {
