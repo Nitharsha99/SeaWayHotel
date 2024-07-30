@@ -95,41 +95,53 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if(Category != null)
+                bool isNameExist = false;
+                if (Category.RoomName != null)
                 {
-                    RoomCategory r = new RoomCategory
-                    {
-                        RoomName = Category.RoomName,
-                        GuestCountMax = Category.GuestCountMax,
-                        Price = Category.Price,
-                        DiscountPercentage = Category.DiscountPercentage
-                    };
-                    int roomId = _roomCategoryManager.NewRoomCategory(Category);
+                    isNameExist = _roomCategoryManager.IsUsernameExist(Category.RoomName);
 
-                    PicDocument pic = new PicDocument
+                    if (isNameExist)
                     {
-                        PicType = PicType.Room,
-                        PicTypeId = roomId
-                    };
-
-                    if(Category?.roomPics?.Length > 0)
-                    {
-                        foreach(var item in Category.roomPics)
-                        {
-                            pic.PicValue = item.PicValue;
-                            pic.PicName = item.PicName;
-                            pic.CloudinaryPublicId = item.CloudinaryPublicId;
-
-                            _docManager.UploadImage(pic);
-                        }
+                        return BadRequest(DisplayMessages.ExistNameError);
                     }
+                    else
+                    {
+                        RoomCategory r = new RoomCategory
+                        {
+                            RoomName = Category.RoomName,
+                            GuestCountMax = Category.GuestCountMax,
+                            Price = Category.Price,
+                            DiscountPercentage = Category.DiscountPercentage
+                        };
+                        int roomId = _roomCategoryManager.NewRoomCategory(Category);
 
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(Category);
+                        PicDocument pic = new PicDocument
+                        {
+                            PicType = PicType.Room,
+                            PicTypeId = roomId
+                        };
 
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
-                    return Ok(Category);
+                        if (Category?.roomPics?.Length > 0)
+                        {
+                            foreach (var item in Category.roomPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                _docManager.UploadImage(pic);
+                            }
+                        }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(Category);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        return Ok(Category);
+                    }
+  
                 }
                 else
                 {
@@ -155,54 +167,76 @@ namespace seaway.API.Controllers
             {
                 if (Id > 0)
                 {
+                    bool isNameExist = false;
+                    bool isNameChange = false;
+
                     RoomCategory oldRoom = _roomCategoryManager.GetRoomCategoryById(Id);
+
                     if (oldRoom.RoomName != null)
                     {
-                        RoomCategory updateCategory = new RoomCategory
+                        if(category.RoomName != null)
                         {
-                            RoomName = category.RoomName,
-                            GuestCountMax = category.GuestCountMax,
-                            Price = category.Price,
-                            DiscountPercentage = category.DiscountPercentage,
-                            UpdatedBy = category.UpdatedBy
-                        };
-                        _roomCategoryManager.UpdateRoomCategory(updateCategory, Id);
+                            isNameChange = _roomCategoryManager.IsNameChange(category.RoomName, oldRoom.RoomName);
 
-                        PicDocument pic = new PicDocument
-                        {
-                            PicType = PicType.Room,
-                            PicTypeId = Id
-                        };
-
-                        if (category?.roomPics?.Length > 0)
-                        {
-                            foreach (var item in category.roomPics)
+                            if (isNameChange)
                             {
-                                pic.PicValue = item.PicValue;
-                                pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
-
-                                _docManager.UploadImage(pic);
+                                isNameExist = _roomCategoryManager.IsUsernameExist(category.RoomName);
                             }
                         }
 
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(category);
+                        if(isNameExist)
+                        {
+                            return BadRequest(DisplayMessages.ExistNameError);
+                        }
+                        else
+                        {
+                            RoomCategory updateCategory = new RoomCategory
+                            {
+                                RoomName = category.RoomName,
+                                GuestCountMax = category.GuestCountMax,
+                                Price = category.Price,
+                                DiscountPercentage = category.DiscountPercentage,
+                                UpdatedBy = category.UpdatedBy
+                            };
+                            _roomCategoryManager.UpdateRoomCategory(updateCategory, Id);
 
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                            PicDocument pic = new PicDocument
+                            {
+                                PicType = PicType.Room,
+                                PicTypeId = Id
+                            };
+
+                            if (category?.roomPics?.Length > 0)
+                            {
+                                foreach (var item in category.roomPics)
+                                {
+                                    pic.PicValue = item.PicValue;
+                                    pic.PicName = item.PicName;
+                                    pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                    _docManager.UploadImage(pic);
+                                }
+                            }
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(category);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                            return Ok(category);
+                        }
 
                     }
                     else
                     {
-                        return BadRequest();
+                        return BadRequest(DisplayMessages.EmptyExistData + Id);
                     }
 
-                    return Ok(category);
                 }
                 else
                 {
                     _logger.LogError(LogMessages.InvalidIdError);
-                    return BadRequest();
+                    return BadRequest(DisplayMessages.InvalidId);
                 }
             }
             catch (Exception ex)
