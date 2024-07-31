@@ -106,39 +106,53 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if (activity.ActivityName != null && activity.Description != null)
+                bool isNameExist = false;
+                if (activity.ActivityName != null)
                 {
-                    Activity act = new Activity();
-                    act.ActivityName = activity.ActivityName;
-                    act.IsActive = activity.IsActive;
-                    act.Description = activity.Description;
-                    act.CreatedBy = activity.CreatedBy;
+                    isNameExist = _activityManager.IsUsernameExist(activity.ActivityName);
 
-                    int actId = _activityManager.PostActivity(act);
-
-                    PicDocument pic = new PicDocument();
-                    pic.PicType = PicType.Activity;
-                    pic.PicTypeId = actId;
-                    pic.CreatedBy = activity.CreatedBy;
-
-                    if (activity?.ActivityPics?.Length > 0)
+                    if (isNameExist)
                     {
-                        foreach (var item in activity.ActivityPics)
-                        {
-                            pic.PicValue = item.PicValue;
-                            pic.PicName = item.PicName;
-                            pic.CloudinaryPublicId = item.CloudinaryPublicId;
-
-                            _documentManager.UploadImage(pic);
-                        }
+                        return BadRequest(DisplayMessages.ExistNameError);
                     }
+                    else
+                    {
+                        Activity act = new Activity
+                        {
+                            ActivityName = activity.ActivityName,
+                            IsActive = activity.IsActive,
+                            Description = activity.Description,
+                            CreatedBy = activity.CreatedBy
+                    };
+                       
+                        int actId = _activityManager.PostActivity(act);
 
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(activity);
+                        PicDocument pic = new PicDocument
+                        {
+                            PicType = PicType.Activity,
+                            PicTypeId = actId,
+                            CreatedBy = activity.CreatedBy
+                    };
 
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                    return Ok(activity);
+                        if (activity?.ActivityPics?.Length > 0)
+                        {
+                            foreach (var item in activity.ActivityPics)
+                            {
+                                pic.PicValue = item.PicValue;
+                                pic.PicName = item.PicName;
+                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
 
+                                _documentManager.UploadImage(pic);
+                            }
+                        }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(activity);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                        return Ok(activity);
+
+                    }
                 }
                 else
                 {
@@ -215,45 +229,66 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if ((activity.ActivityName != null || activity.Description != null|| activity?.IsActive != null) && (activityId != 0))
+                if ((activity.ActivityName != null || activity.Description != null|| activity?.IsActive != null) && (activityId > 0))
                 {
+                    bool isNameExist = false;
+                    bool isNameChange = false;
                     Activity oldActivity = _activityManager.GetActivityById(activityId);
                     if (oldActivity.ActivityName != null)
                     {
-
-                        Activity updateActivity = new Activity
+                        if (activity.ActivityName != null)
                         {
-                            ActivityName = activity.ActivityName,
-                            Description = activity.Description,
-                            IsActive = activity.IsActive,
-                            UpdatedBy = activity.UpdatedBy,
-                        };
-                        _activityManager.UpdateActivity(updateActivity, activityId);
+                            isNameChange = _activityManager.IsNameChange(activity.ActivityName, oldActivity.ActivityName);
 
-
-                        PicDocument pic = new PicDocument();
-                        pic.PicType = PicType.Activity;
-                        pic.PicTypeId = activityId;
-                        pic.CreatedBy = activity.UpdatedBy;
-                        if (activity?.ActivityPics?.Length > 0)
-                        {
-                            foreach (var item in activity.ActivityPics)
+                            if (isNameChange)
                             {
-                                pic.PicValue = item.PicValue;
-                                pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
-
-                                _documentManager.UploadImage(pic);
+                                isNameExist = _activityManager.IsUsernameExist(activity.ActivityName);
                             }
                         }
+                        if (isNameExist)
+                        {
+                            return BadRequest(DisplayMessages.ExistNameError);
+                        }
+                        else
+                        {
 
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(updateActivity);
+                            Activity updateActivity = new Activity
+                            {
+                                ActivityName = activity.ActivityName,
+                                Description = activity.Description,
+                                IsActive = activity.IsActive,
+                                UpdatedBy = activity.UpdatedBy,
+                            };
+                            _activityManager.UpdateActivity(updateActivity, activityId);
 
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
 
-                        return Ok(activity);
+                            PicDocument pic = new PicDocument()
+                            {
+                                PicType = PicType.Activity,
+                                PicTypeId = activityId,
+                                CreatedBy = activity.UpdatedBy,
+                        };
 
+                            if (activity?.ActivityPics?.Length > 0)
+                            {
+                                foreach (var item in activity.ActivityPics)
+                                {
+                                    pic.PicValue = item.PicValue;
+                                    pic.PicName = item.PicName;
+                                    pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                    _documentManager.UploadImage(pic);
+                                }
+                            }
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(updateActivity);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                            return Ok(activity);
+
+                        }
                     }
                     else
                     {
