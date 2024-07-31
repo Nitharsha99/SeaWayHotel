@@ -59,7 +59,7 @@ export class CommonFunctionComponent{
   ShowErrorPopup(error: any){
     Swal.fire({
       title: "Error!",
-      text: error.message ,
+      text: error ,
       icon: "error",
       iconColor: '#EE0004'
     });
