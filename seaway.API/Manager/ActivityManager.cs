@@ -283,7 +283,7 @@ namespace seaway.API.Manager
             else
             {
                 var result = GetActivities()
-                    .Where(a => a.ActivityName.Trim().ToLower() == name.Trim().ToLower() && a.IsActive)
+                    .Where(a => a.ActivityName.Trim().ToLower() == name.Trim().ToLower())
                     .ToList();
 
                 if (result.Count() > 0)

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Activity } from '../../Models/activity';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +22,19 @@ export class ActivityService {
   }
 
   PostActivity(data: any): Observable<any>{
-    console.log("save data", data);
-    return this.http.post<any>(this.baseUrl, data);
+    return this.http.post<any>(this.baseUrl, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 
   UpdateActivity(data: any, id: number): Observable<any>{
-    return this.http.put<any>(this.baseUrl+ "/" + id, data);
+    return this.http.put<any>(this.baseUrl+ "/" + id, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 
   DeleteImages(ids: string[]){
