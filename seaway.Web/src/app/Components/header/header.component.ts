@@ -8,6 +8,7 @@ import { RouterService } from 'src/app/Services/RouterService/router.service';
 })
 export class HeaderComponent implements OnInit{
   canDisplay: boolean = true;
+  adminHeaderFooter: boolean = false;
 
   constructor(private routerService: RouterService){
   }
@@ -15,8 +16,10 @@ export class HeaderComponent implements OnInit{
   ngOnInit(): void {
     this.routerService.showHeaderFooter$.subscribe(showHeaderFooter => {
       this.canDisplay = showHeaderFooter;
-      console.log('header', this.canDisplay);
     });
-    
+
+    this.routerService.adminHeaderFooter$.subscribe(adminHeaderFooter => {
+      this.adminHeaderFooter = adminHeaderFooter;
+    });
   }
 }
