@@ -26,8 +26,8 @@ export class CommonFunctionComponent{
     });
   }
 
-  showDeleteNotification(): any{
-    Swal.fire({
+  showDeleteNotification(): Promise<any>{
+   return Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t to delete this item',
       showCancelButton: true,
@@ -41,19 +41,19 @@ export class CommonFunctionComponent{
         cancelButton.style.border = '1px solid #570254';
         cancelButton.style.color = '#570254';
 
-         // Add hover style
-      cancelButton.addEventListener('mouseover', () => {
-        cancelButton.style.backgroundColor = '#f8edf7'; // Change background color on hover
-        cancelButton.style.borderColor = '#570254'; // Change border color on hover
-        cancelButton.style.cursor = 'pointer'; // Change cursor on hover
-      });
+        // Add hover style
+        cancelButton.addEventListener('mouseover', () => {
+          cancelButton.style.backgroundColor = '#f8edf7'; // Change background color on hover
+          cancelButton.style.borderColor = '#570254'; // Change border color on hover
+          cancelButton.style.cursor = 'pointer'; // Change cursor on hover
+        });
 
-      cancelButton.addEventListener('mouseout', () => {
-        cancelButton.style.backgroundColor = '#fff'; // Reset background color on mouse out
-        cancelButton.style.borderColor = '#570254'; // Reset border color on mouse out
-      });
+        cancelButton.addEventListener('mouseout', () => {
+          cancelButton.style.backgroundColor = '#fff'; // Reset background color on mouse out
+          cancelButton.style.borderColor = '#570254';
+        });
       }
-  });
+    });
   }
 
   ShowErrorPopup(error: any){

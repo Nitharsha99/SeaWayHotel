@@ -44,4 +44,9 @@ export class ActivityService {
     return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
   }
 
+  DeleteActivity(id: number): Observable<any>{
+    console.log('id', id)
+    return this.http.delete<any>(this.baseUrl + "/" + id);
+  }
+
 }
