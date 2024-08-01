@@ -1,37 +1,53 @@
 .container{
     height: 100%;
     width: 100%;
+    padding-top: 120px;
 }
 
-.input{
-    display: flex;
-    align-items: center;
-    border-radius: 5px;
-    margin-left: 8%;
-    margin-right: 8%;
-    margin-bottom: 5%;
-    background-color: antiquewhite;
-    font-size: 16px;
-    position: relative;
+h1{
+    font-weight: 500;
 }
 
-input {
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
+input{
+    background-color: #F5F6FA;
+}
+
+input::placeholder{
+    font-size: 14px;
+    color: lightslategray;
+}
+
+.custom-check{
+    width: 15px;
+    height: 15px;
+}
+
+.btn-login{
+    background-color: #570254; 
+    color: #FFFFFF;
     width: 100%;
-    height: 40px;
 }
-
-input:focus-within {
-    /* Target the entire input container when a child element is focused */
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 3px 3px rgba(0, 123, 255, 0.2);
-  }
 
 .input i{
     cursor: pointer;
     position:absolute;
-    right: 2%;
-    top: 28%;
+    right: 36%;
+    top: 65%;
+}
+
+.input input::placeholder{
+    font-size: 45px;
+    color:lightslategray;
+}
+
+.forgot-password{
+    text-align: right; 
+    text-decoration: none; 
+    color: black;
+    cursor: pointer;
+}
+
+.forgot-password:hover{
+    text-decoration: underline #570254;
+    color: #570254;
 }

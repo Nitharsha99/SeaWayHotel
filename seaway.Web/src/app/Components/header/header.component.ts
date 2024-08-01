@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit{
   ngOnInit(): void {
     this.routerService.showHeaderFooter$.subscribe(showHeaderFooter => {
       this.canDisplay = showHeaderFooter;
+      console.log('header', this.canDisplay);
     });
     
   }
