@@ -117,7 +117,6 @@ imageHeight: number = 110;
       data.append('cloud_name', 'dly7yjg1w');
 
       this.cloudinaryService.uploadImage(data).subscribe(res => {
-        console.log('i value', i);
         const roomPicsArray = this.roomForm.get('roomPics') as FormArray;
         while (roomPicsArray.length <= i) {
           roomPicsArray.push(this.builder.group({
@@ -134,7 +133,6 @@ imageHeight: number = 110;
           cloudinaryPublicId: res.public_id
         });
 
-        console.log("sajnjadjjjjjj", roomPicsArray);
         formValue.roomPics = roomPicsArray.controls.map((control: AbstractControl<any>) => {
           const formGroup = control as FormGroup;
           return {
@@ -147,7 +145,6 @@ imageHeight: number = 110;
         count++;
        
         if(count === this.picArrayLength){
-          console.log("auifhcyieaufajka", count, this.picArrayLength);
           Swal.close();
           this.callRoomCategoryService();
         }
@@ -182,6 +179,7 @@ imageHeight: number = 110;
  callRoomCategoryService(){
   const formValue = this.roomForm.value;
   if(this.updateMode === false){
+    formValue.createdBy ='Nitharsha';
     this.roomCategoryService.PostRoomCategory(formValue).subscribe((res) => {
       console.log('post result', res);
       Swal.fire({
@@ -199,7 +197,8 @@ imageHeight: number = 110;
      }
     )
   }else{
-    if(this.categoryId != null){
+    if(this.categoryId > 0){
+      formValue.updatedBy = 'Nitharsha';
       this.roomCategoryService.UpdateRoomCategory(formValue, this.categoryId).subscribe((res) => {
         console.log('edit result', res);
         Swal.fire({

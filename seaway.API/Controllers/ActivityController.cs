@@ -229,7 +229,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if ((activity.ActivityName != null || activity.Description != null|| activity?.IsActive != null) && (activityId > 0))
+                if ((activity.ActivityName != null || activity.Description != null) && (activityId > 0))
                 {
                     bool isNameExist = false;
                     bool isNameChange = false;

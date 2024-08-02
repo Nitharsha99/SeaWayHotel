@@ -118,7 +118,8 @@ namespace seaway.API.Controllers
                         PicDocument pic = new PicDocument
                         {
                             PicType = PicType.Room,
-                            PicTypeId = roomId
+                            PicTypeId = roomId,
+                            CreatedBy = Category.CreatedBy
                         };
 
 
@@ -203,7 +204,8 @@ namespace seaway.API.Controllers
                             PicDocument pic = new PicDocument
                             {
                                 PicType = PicType.Room,
-                                PicTypeId = Id
+                                PicTypeId = Id,
+                                CreatedBy = category.UpdatedBy
                             };
 
                             if (category?.roomPics?.Length > 0)
