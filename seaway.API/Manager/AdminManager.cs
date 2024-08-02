@@ -121,6 +121,23 @@ namespace seaway.API.Manager
             }
         }
 
+        public Admin GetAdminById(int id)
+        {
+            try
+            {
+
+                Admin admin = GetAllAdmins().FirstOrDefault(a => a.AdminId == id) ?? new Admin();
+
+                return admin;
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning(" Warning -- " + ex.Message);
+                throw;
+            }
+        }
+
         public bool IsUsernameExist(string username)
         {
             if (string.IsNullOrEmpty(username))

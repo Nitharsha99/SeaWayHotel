@@ -5,6 +5,7 @@ using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
+using System.Diagnostics;
 
 namespace seaway.API.Controllers
 {
@@ -119,6 +120,45 @@ namespace seaway.API.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(LogMessages.GetAdminDataError + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAdminById([FromRoute] int Id)
+        {
+            try
+            {
+                if(Id > 0)
+                {
+                    Admin admin = _adminManager.GetAdminById(Id);
+
+                    string responseBody = JsonConvert.SerializeObject(admin);
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                    if (admin.Username != null)
+                    {
+                        return Ok(admin);
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }

@@ -82,7 +82,7 @@ namespace seaway.API.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError(LogMessages.FindRoomCategoryByIdError + Id + " : " + ex.Message);
+                _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
