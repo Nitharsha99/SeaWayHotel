@@ -5,22 +5,17 @@ namespace seaway.API.Models
     public static class LogMessages
     {
         public const string GetRoomDataError = "An exception occurred while get all data from Room --> ";
-        public const string FindRoomByIdError = "An exception occurred while get room data with Id = ";
         public const string DeleteRoomError = "An exception occurred while deleting room --> ";
 
         public const string GetActivityDataError = "An exception occurred while get all data from Activity --> ";
-        public const string FindActivityByIdError = "An exception occurred while get activity data with Id = ";
         public const string DeleteActivityError = "An exception occurred while deleting activity --> ";
 
         public const string GetOfferDataError = "An exception occurred while get all data from Offers --> ";
-        public const string FindOfferByIdError = "An exception occurred while get offer data with Id = ";
         public const string DeleteOfferError = "An exception occurred while deleting offer --> ";
 
         public const string GetAdminDataError = "An exception occurred while get all data from Admin --> ";
-        public const string FindAdminByIdError = "An exception occurred while get admin data with Id = ";
 
         public const string GetRoomCategoryDataError = "An exception occurred while get all data from RoomCategory --> ";
-        public const string FindRoomCategoryByIdError = "An exception occurred while get room category data with Id = ";
         public const string DeleteRoomCategoryError = "An exception occurred while deleting room category --> ";
 
         public const string InvalidIdError = "Invalid Id Passed";
@@ -28,6 +23,7 @@ namespace seaway.API.Models
         public const string DeleteImageError = "An exception occurred while deleting images --> ";
         public const string InsertDataError = "An exception occurred while inserting new data --> ";
         public const string UpdateDataError = "An exception occurred while updating exist data --> ";
+        public const string FindDataByIdError = "An exception occurred while get data with Id = ";
         public const string StatusChangeError = "An exception occurred while changing Active status --> ";
         public const string LoginError = "An exception occurred while login --> ";
 
