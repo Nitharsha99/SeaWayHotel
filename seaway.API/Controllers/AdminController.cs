@@ -162,5 +162,87 @@ namespace seaway.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateAdmin([FromForm]AdminWithProfilePic admin, int Id)
+        {
+            try
+            {
+                if(Id > 0)
+                {
+                    bool isNameExist = false;
+                    bool isNameChange = false;
+                    string? filePath = null;
+
+                    Admin existAdmin = _adminManager.GetAdminById(Id);
+                    if (existAdmin.Username != null)
+                    {
+                        if (admin.Username != null)
+                        {
+                            isNameChange = _adminManager.IsNameChange(admin.Username, existAdmin.Username);
+
+                            if (isNameChange)
+                            {
+                                isNameExist = _adminManager.IsUsernameExist(admin.Username);
+                            }
+                        }
+                        if (isNameExist)
+                        {
+                            return BadRequest(DisplayMessages.ExistNameError);
+                        }
+                        else
+                        {
+                            if (admin.ProfilePic != null)
+                            {
+                                var folder = Path.Combine("wwwroot", "Uploads");
+                                if (!Directory.Exists(folder))
+                                {
+                                    Directory.CreateDirectory(folder);
+                                }
+                                filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
+
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await admin.ProfilePic.CopyToAsync(stream);
+                                }
+                            }
+                            Admin updateAdmin = new Admin
+                            {
+                                AdminId = Id,
+                                Username = admin.Username,
+                                IsAdmin = admin.IsAdmin,
+                                ProfilePicPath = filePath,
+                                UpdatedBy = admin.UpdatedBy
+                            };
+
+                            _adminManager.UpdateAdmin(updateAdmin);
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(updateAdmin);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                            return Ok(updateAdmin);
+                        }
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(LogMessages.UpdateDataError + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

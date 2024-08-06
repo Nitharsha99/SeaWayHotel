@@ -28,6 +28,7 @@ namespace seaway.API.Models
         public const string LoginError = "An exception occurred while login --> ";
 
         public const string NewRecordCreated = "Successfully Created New Record";
+        public const string RecordUpdated = "Successfully Updated the Exist Record";
 
         public const string AllAdminRetrieve = "SuccessFully All Admin Data retrieved";
         public const string AllOfferRetrieve = "SuccessFully All Offer Data retrieved";
