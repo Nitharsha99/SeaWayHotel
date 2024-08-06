@@ -138,6 +138,44 @@ namespace seaway.API.Manager
             }
         }
 
+        public void UpdateAdmin(Admin admin)
+        {
+            try
+            {
+                byte[]? picPathBytes = null;
+
+                if (admin.ProfilePicPath != null)
+                {
+                    picPathBytes = Encoding.UTF8.GetBytes(admin.ProfilePicPath);
+                }
+
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateAdmin", con))
+                    {
+                        con.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@adminId", admin.AdminId);
+                        cmd.Parameters.AddWithValue("@username", admin.Username);
+                        cmd.Parameters.AddWithValue("@profilePic", picPathBytes);
+                        cmd.Parameters.AddWithValue("@isAdmin", admin.IsAdmin);
+                        cmd.Parameters.AddWithValue("@updatedBy", admin.UpdatedBy);
+
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                _logger.LogTrace(LogMessages.RecordUpdated);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Warning at Update the " + admin.Username + " : " + ex.Message);
+                throw;
+            }
+        }
+
         public bool IsUsernameExist(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -158,6 +196,16 @@ namespace seaway.API.Manager
                 {
                     return false;
                 }
+            }
+        }
+
+        public bool IsNameChange(string inputName, string oldName)
+        {
+            if (string.IsNullOrEmpty(inputName) || string.IsNullOrEmpty(oldName)) { return false; }
+            else
+            {
+                bool isNameChange = inputName.Trim().ToLower() != oldName.Trim().ToLower();
+                return isNameChange;
             }
         }
 
