@@ -309,10 +309,10 @@ namespace seaway.API.Controllers
         }
 
         [HttpPatch]
-        [Route("")]
+        [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ChangeActiveStatus(bool status, int id)
+        public IActionResult ChangeActiveStatus(Activity act, int id)
         {
             try
             {
@@ -323,7 +323,7 @@ namespace seaway.API.Controllers
 
                     if (activity?.ActivityName != null)
                     {
-                        isStatusChanged = _activityManager.ChangeActiveStatus(status, id);
+                        isStatusChanged = _activityManager.ChangeActiveStatus(act.IsActive, id);
 
                         if (isStatusChanged)
                         {
