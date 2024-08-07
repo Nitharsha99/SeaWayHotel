@@ -37,16 +37,23 @@ export class ActivityService {
     );
   }
 
-  DeleteImages(ids: string[]){
-    console.log("Deleting images:", ids);
+  DeleteImages(ids: string[]): Observable<any>{
     let params = new HttpParams();
     ids.forEach((id) => params = params.append('ids', id));
     return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
   }
 
   DeleteActivity(id: number): Observable<any>{
-    console.log('id', id)
     return this.http.delete<any>(this.baseUrl + "/" + id);
+  }
+
+  ChangeStatus(status: boolean, id: number): Observable<any>{
+    console.log('input', status);
+    return this.http.patch<any>(this.baseUrl + "/" + id, { isActive: status }).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 
 }
