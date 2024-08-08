@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -60,7 +61,8 @@ import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-off
     ReactiveFormsModule,
     BrowserAnimationsModule,
     NgxPaginationModule,
-    FormsModule
+    FormsModule,
+    NgbDatepickerModule
   ],
   providers: [CommonFunctionComponent],
   bootstrap: [AppComponent]
