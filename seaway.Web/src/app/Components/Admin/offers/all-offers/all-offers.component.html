@@ -7,7 +7,7 @@
             </div>
             <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
                 <i class="bi bi-search"></i>
-                <input type="text" class="form-control" (input)="onSearch()" placeholder="Search Offers....">
+                <input type="text" class="form-control" [(ngModel)]="search" (input)="onSearch()" placeholder="Search Offers....">
             </div>
             <div class="col-3 mt-3" style="text-align: right;">
                 <button type="button" class="btn" (click)="navigateToAddOffer()" style="background-color: #570254; color: #FFFFFF;">+ New Offer</button>
@@ -15,9 +15,9 @@
         </div>  
     </div>
 
-    <div class="mt-4 mb-5" style="text-align: center;"> <h3>There is no any Offers here now !!</h3></div>
+    <div class="mt-4 mb-5" style="text-align: center;" *ngIf="offers.length == 0"> <h3>There is no any Offers here now !!</h3></div>
 
-    <div>
+    <div *ngIf="filteredOffers.length > 0">
         <table class="table table-striped mx-3 my-3 mt-4">
             <thead>
                 <tr>
@@ -34,20 +34,20 @@
             </thead>
 
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Offer1</td>
-                    <td>20/06/2024</td>
-                    <td>20/08/2024</td>
-                    <td>Rs 5000.00</td>
+                <tr *ngFor="let offer of filteredOffers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: offers.length }">
+                    <td>{{offer.offerId}}</td>
+                    <td>{{offer.name}}</td>
+                    <td>{{offer.validFrom | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{offer.validTo | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{offer.price | currency: 'LKR' : 'Rs '}}</td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isRoomOffer">
                         </div>
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isActive">
                         </div>
                     </td>
                     <td>
