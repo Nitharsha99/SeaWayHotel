@@ -56,7 +56,6 @@ export class AllRoomsComponent implements OnInit{
   }
 
   onFilterChange(): void{
-    console.log(this.filters)
     this.filteredCategory = this.roomCategory.filter(room => {
       return(
         (this.filters.search === '' || room.roomName.toLowerCase().includes(this.filters.search.toLowerCase())) &&

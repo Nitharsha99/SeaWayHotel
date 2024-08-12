@@ -7,12 +7,46 @@
             </div>
             <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
                 <i class="bi bi-search"></i>
-                <input type="text" class="form-control" [(ngModel)]="search" (input)="onSearch()" placeholder="Search Offers....">
+                <input type="text" class="form-control" [(ngModel)]="filters.search" (input)="onSearch()" placeholder="Search Offers....">
             </div>
             <div class="col-3 mt-3" style="text-align: right;">
                 <button type="button" class="btn" (click)="navigateToAddOffer()" style="background-color: #570254; color: #FFFFFF;">+ New Offer</button>
             </div>
         </div>  
+    </div>
+
+    <div style="width: 90%; margin-left: 10%;" class="row mt-4">
+        <div class="col-sm-2">
+            <select class="form-select" [(ngModel)]="filters.roomOffer" (change)="onSearch()">
+                <option value="">All</option>
+                <option value="true">Room Offer</option>
+                <option value="false">Not Room Offer</option>
+              </select>
+        </div>
+        <div class="col-sm-2">
+            <input #dateInput type="text" class="form-control date" [(ngModel)]="filters.validFrom" 
+            (input)="onSearch()" placeholder="Valid From" (focus)="dateInput.type='date'" (blur)="dateInput.type='text'">
+        </div>
+        <div class="col-sm-2">
+            <input #dateInput type="text" class="form-control date" [(ngModel)]="filters.validTo" 
+            (input)="onSearch()" placeholder="Valid To" (focus)="dateInput.type='date'" (blur)="dateInput.type='text'">
+        </div>
+        <div class="col-sm-2">
+            <select class="form-select" [(ngModel)]="filters.priceRange" (change)="onSearch()">
+                <option value="">Price Range</option>
+                <option *ngFor="let rate of getPriceRates()" [value]="rate">{{ rate }}</option>
+              </select>
+        </div>
+        <div class="col-sm-2">
+            <select class="form-select" [(ngModel)]="filters.discount" (change)="onSearch()">
+                <option value="">Discount</option>
+                <option *ngFor="let rate of getDiscountRates()" [value]="rate">{{ rate }}</option>
+              </select>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn custom-btn" style="margin-left: -40px;" (click)="onReset()">Reset Filters</a>
+        </div>
+        
     </div>
 
     <div class="mt-4 mb-5" style="text-align: center;" *ngIf="offers.length == 0"> <h3>There is no any Offers here now !!</h3></div>
@@ -26,6 +60,7 @@
                     <th scope="col" class="text-white">ValidFrom</th>
                     <th scope="col" class="text-white">ValidTo</th>
                     <th scope="col" class="text-white">Price</th>
+                    <th scope="col" class="text-white">Discount(%)</th>
                     <th scope="col" class="text-white">RoomOffer</th>
                     <th scope="col" class="text-white">Active</th>
                     <th scope="col" class="text-white">Edit</th>
@@ -34,12 +69,13 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let offer of filteredOffers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: offers.length }">
+                <tr *ngFor="let offer of filteredOffers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
                     <td>{{offer.offerId}}</td>
                     <td>{{offer.name}}</td>
                     <td>{{offer.validFrom | date: 'dd/MM/yyyy'}}</td>
                     <td>{{offer.validTo | date: 'dd/MM/yyyy'}}</td>
                     <td>{{offer.price | currency: 'LKR' : 'Rs '}}</td>
+                    <td>{{offer.discountPercentage}}</td>
                     <td>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isRoomOffer">
@@ -67,8 +103,8 @@
         <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
             <pagination-controls
                 class="pagination-right"
-                
-                (totalItems)="10"
+                (pageChange)="onPageChange($event)"
+                (totalItems)="totalItems"
                 (itemsPerPage)="pageSize"
             >
             </pagination-controls>
