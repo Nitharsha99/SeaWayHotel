@@ -264,20 +264,28 @@ namespace seaway.API.Controllers
                     List<string> idArray = new List<string>();
                     idArray = ids.Split(',').ToList();
                     bool IsRemoveFromCLoudinary = false;
+                    bool isDeleted = false;
 
                     IsRemoveFromCLoudinary = _docManager.DeleteAssetFromCloudinary(idArray).Result;
 
                     if (IsRemoveFromCLoudinary)
                     {
-                        string picType = "Room";
-                        _docManager.DeleteImageFromDB(idArray, picType);
+                        int picType = 1;
+                        isDeleted = _docManager.DeleteImageFromDB(idArray, picType).Result;
                     }
 
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(ids);
+                    if (!isDeleted)
+                    {
+                        return BadRequest(DisplayMessages.ImageDeleteError);
+                    }
+                    else
+                    {
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(ids);
 
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                    return Ok("Deleted : " + responseBody);
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                        return Ok("Deleted " + responseBody);
+                    }
                 }
 
             }

@@ -106,7 +106,7 @@ namespace seaway.API.Manager
            
         }
 
-        public async void DeleteImageFromDB(List<string> Ids, string picType)
+        public async Task<bool> DeleteImageFromDB(List<string> Ids, int picType)
         {
             var query = "DELETE FROM PicDocuments WHERE CloudinaryPublicId= @Id AND PicType = @PicType";
 
@@ -114,32 +114,31 @@ namespace seaway.API.Manager
             {
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+
+                    if (con.State != ConnectionState.Open)
                     {
-                        cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
-                        cmd.Parameters.Add("@PicType", SqlDbType.NVarChar);
+                        await con.OpenAsync();
+                    }
 
-                        if (con.State != ConnectionState.Open)
+                    foreach (var Id in Ids)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(query, con))
                         {
-                            await con.OpenAsync();
-                        }
-
-                        foreach (var Id in Ids)
-                        {
-                            cmd.Parameters["@Id"].Value = Id;
-                            cmd.Parameters["@PicType"].Value = picType;
+                            cmd.Parameters.Add("@Id", SqlDbType.NVarChar).Value = Id.Trim();
+                            cmd.Parameters.Add("@PicType", SqlDbType.Int).Value = picType;
 
                             await cmd.ExecuteNonQueryAsync();
 
                             _logger.LogTrace("Successfully Deleted PicPublic Id --> " + Id + "From Database");
                         }
                     }
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogWarning("Warning -- " + ex.Message);
-                throw;
+                return false;
             }
 
         }
