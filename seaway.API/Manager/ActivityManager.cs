@@ -24,7 +24,7 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Activity> GetActivities()
+        public async Task<List<Activity>> GetActivities()
         {
             try
             {
@@ -34,13 +34,13 @@ namespace seaway.API.Manager
                 {
                     SqlCommand command = _con.CreateCommand();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "GetAllActivities";                                  
+                    command.CommandText = "GetAllActivities";
 
-                    _con.Open();
+                    await _con.OpenAsync();
 
-                    using(SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        while(reader.Read())
+                        while(await reader.ReadAsync())
                         {
                             Activity activity = new Activity
                             {
@@ -54,7 +54,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
 
                     _logger.LogTrace("SuccessFully All Activity Data retrieved");
 
@@ -68,7 +68,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public Activity GetActivityById(int activityId)
+        public async Task<Activity> GetActivityById(int activityId)
         {
             try
             {
@@ -77,16 +77,16 @@ namespace seaway.API.Manager
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
-                    _con.Open();
+                    await _con.OpenAsync();
                     using (var cmd = new SqlCommand("GetActivityById", _con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@activityId", activityId);
 
-                        using (var reader = cmd.ExecuteReader())
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 var Id = (int)reader["ActivityId"];
                                 Activity activity = activityList.FirstOrDefault(r => r.ActivityId == Id) ?? new Activity();
@@ -118,7 +118,7 @@ namespace seaway.API.Manager
                                         PicValue = val
                                     };
 
-                                    if (activity.ActivityPics == null)
+                                    if (activity?.ActivityPics == null)
                                     {
                                         activity.ActivityPics = new List<PicDocument>();
                                     }
@@ -129,7 +129,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
                     _logger.LogTrace("SuccessFully Activity Data retrieved By Id : " + activityId);
                     mainActivity = activityList.FirstOrDefault() ?? new Activity();
 
@@ -143,7 +143,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public int PostActivity(Activity activity)
+        public async Task<int> PostActivity(Activity activity)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand command = new SqlCommand("InsertActivityWithPic", _con))
                     {
-                        _con.Open();
+                        await _con.OpenAsync();
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Clear();
 
@@ -163,10 +163,8 @@ namespace seaway.API.Manager
                         command.Parameters.AddWithValue("@IsActive", active);
                         command.Parameters.AddWithValue("@createdBy", activity.CreatedBy);
 
-                        activityId = (int)command.ExecuteScalar();
+                        activityId = (int?)(await command.ExecuteScalarAsync()) ?? 0;
                         
-
-                        //activityId = Convert.ToInt32(outputIdParam.Value);
 
                     }
                 }
@@ -183,7 +181,7 @@ namespace seaway.API.Manager
 
         }
 
-        public bool DeleteActivity(int activityId)
+        public async Task<bool> DeleteActivity(int activityId)
         {
             try
             {
@@ -191,12 +189,12 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("DeleteActivity", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@activityId", activityId);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                         _logger.LogTrace("Sucessfully Deleted Activity of Id --> " + activityId + "From Database");
 
@@ -212,7 +210,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateActivity(Activity activity, int activityId)
+        public async void UpdateActivity(Activity activity, int activityId)
         {
             try
             {
@@ -220,7 +218,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("UpdateActivity", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@ActivityId", activityId);
@@ -228,9 +226,9 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@Description", activity.Description);
                         cmd.Parameters.AddWithValue("@IsActive", activity.IsActive);
                         cmd.Parameters.AddWithValue("@UpdatedBy", activity.UpdatedBy);
-                     
 
-                        cmd.ExecuteNonQuery();
+
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -243,7 +241,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool ChangeActiveStatus(bool status, int id)
+        public async Task<bool> ChangeActiveStatus(bool status, int id)
         {
             try
             {
@@ -253,12 +251,12 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
                         cmd.Parameters.AddWithValue("@Id", id);
                         cmd.Parameters.AddWithValue("@status", status);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                         _logger.LogTrace("Sucessfully Changed Activity Status of Id --> " + id + "From Database");
 
@@ -274,7 +272,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool IsUsernameExist(string name)
+        public async Task<bool> IsUsernameExist(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -282,7 +280,7 @@ namespace seaway.API.Manager
             }
             else
             {
-                var result = GetActivities()
+                var result = (await GetActivities())
                     .Where(a => a.ActivityName.Trim().ToLower() == name.Trim().ToLower())
                     .ToList();
 

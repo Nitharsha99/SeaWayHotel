@@ -29,7 +29,7 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult NewCustomer([FromForm] Customer customer)
+        public async Task<IActionResult> NewCustomer([FromForm] Customer customer)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("An exception occurred while inserting new customer data : " + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }

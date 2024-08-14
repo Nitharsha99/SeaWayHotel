@@ -22,7 +22,7 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public bool CheckUserValid(LoginModel login)
+        public async Task<bool> CheckUserValid(LoginModel login)
         {
             if (string.IsNullOrEmpty(login.Password))
             {
@@ -30,8 +30,9 @@ namespace seaway.API.Manager
             }
             else
             {
-                 Admin admin = _adminManager.GetAllAdmins()
-                                 .FirstOrDefault(a => a.Username.Trim().ToLower() == login.Username.Trim().ToLower() 
+                List<Admin> admins = await _adminManager.GetAllAdmins();
+                 Admin admin = admins
+                               .FirstOrDefault(a => a.Username.Trim().ToLower() == login.Username.Trim().ToLower() 
                                  && a.IsAdmin == login.IsAdmin) ?? new Admin();
                 
                 bool validUser = false;
@@ -50,19 +51,19 @@ namespace seaway.API.Manager
             }
         }
 
-        public void AddLoginTime(Admin login)
+        public async void AddLoginTime(Admin login)
         {
             using (SqlConnection con = new SqlConnection(this._conString))
             {
                 using (SqlCommand cmd = new SqlCommand("LoginLogoutTime", con))         
                 {
-                    con.Open();
+                    await con.OpenAsync();
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@username", login.Username);
                     cmd.Parameters.AddWithValue("@adminId", login.AdminId);
 
-                    cmd.ExecuteNonQuery();
+                   await cmd.ExecuteNonQueryAsync();
                 }
             }
 

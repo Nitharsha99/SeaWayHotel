@@ -42,7 +42,7 @@ namespace seaway.API.Controllers
                 }
                 else
                 {
-                    isNameExist = _adminManager.IsUsernameExist(admin.Username);
+                    isNameExist = await _adminManager.IsUsernameExist(admin.Username);
 
                     if (isNameExist)
                     {
@@ -74,7 +74,7 @@ namespace seaway.API.Controllers
                             CreatedBy = admin.CreatedBy
                         };
 
-                        bool isCreated = _adminManager.NewAdmin(newAdmin);
+                        bool isCreated = await _adminManager.NewAdmin(newAdmin);
 
                         string responseBody = JsonConvert.SerializeObject(admin);
                         string requestUrl = HttpContext.Request.Path.ToString();
@@ -95,7 +95,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.InsertDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");  
             }
         }
 
@@ -107,7 +107,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                List<Admin> admins = _adminManager.GetAllAdmins();
+                List<Admin> admins = await _adminManager.GetAllAdmins();
 
                 string responseBody = JsonConvert.SerializeObject(admins);
 
@@ -120,7 +120,7 @@ namespace seaway.API.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(LogMessages.GetAdminDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -134,7 +134,7 @@ namespace seaway.API.Controllers
             {
                 if(Id > 0)
                 {
-                    Admin admin = _adminManager.GetAdminById(Id);
+                    Admin admin = await _adminManager.GetAdminById(Id);
 
                     string responseBody = JsonConvert.SerializeObject(admin);
 
@@ -159,7 +159,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -177,7 +177,7 @@ namespace seaway.API.Controllers
                     bool isNameChange = false;
                     string? filePath = null;
 
-                    Admin existAdmin = _adminManager.GetAdminById(Id);
+                    Admin existAdmin = await _adminManager.GetAdminById(Id);
                     if (existAdmin.Username != null)
                     {
                         if (admin.Username != null)
@@ -186,7 +186,7 @@ namespace seaway.API.Controllers
 
                             if (isNameChange)
                             {
-                                isNameExist = _adminManager.IsUsernameExist(admin.Username);
+                                isNameExist =   await _adminManager.IsUsernameExist(admin.Username);
                             }
                         }
                         if (isNameExist)
@@ -241,7 +241,7 @@ namespace seaway.API.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(LogMessages.UpdateDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }

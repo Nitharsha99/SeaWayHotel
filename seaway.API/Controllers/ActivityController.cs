@@ -38,11 +38,11 @@ namespace seaway.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllActivities()
+        public async Task<IActionResult> GetAllActivities()
         {
             try
             {
-                List<Activity> activities = _activityManager.GetActivities();
+                List<Activity> activities = await _activityManager.GetActivities();
 
                 string responseBody = JsonConvert.SerializeObject(activities);
 
@@ -55,7 +55,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.GetActivityDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -63,13 +63,13 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindActivityById([FromRoute] int Id)
+        public async Task<IActionResult> FindActivityById([FromRoute] int Id)
         {
             try
             {
                 if(Id > 0)
                 {
-                    Activity activity = _activityManager.GetActivityById(Id);
+                    Activity activity = await _activityManager.GetActivityById(Id);
 
                     string responseBody = JsonConvert.SerializeObject(activity);
 
@@ -94,7 +94,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -102,14 +102,14 @@ namespace seaway.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult NewActivity(ActivityWithPicModel activity)
+        public async Task<IActionResult> NewActivity(ActivityWithPicModel activity)
         {
             try
             {
                 bool isNameExist = false;
                 if (activity.ActivityName != null)
                 {
-                    isNameExist = _activityManager.IsUsernameExist(activity.ActivityName);
+                    isNameExist = await _activityManager.IsUsernameExist(activity.ActivityName);
 
                     if (isNameExist)
                     {
@@ -125,32 +125,39 @@ namespace seaway.API.Controllers
                             CreatedBy = activity.CreatedBy
                     };
                        
-                        int actId = _activityManager.PostActivity(act);
+                        int actId = await _activityManager.PostActivity(act);
 
-                        PicDocument pic = new PicDocument
+                        if(actId > 0)
                         {
-                            PicType = PicType.Activity,
-                            PicTypeId = actId,
-                            CreatedBy = activity.CreatedBy
-                    };
-
-                        if (activity?.ActivityPics?.Length > 0)
-                        {
-                            foreach (var item in activity.ActivityPics)
+                            if (activity?.ActivityPics?.Length > 0)
                             {
-                                pic.PicValue = item.PicValue;
-                                pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+                                PicDocument pic = new PicDocument
+                                {
+                                    PicType = PicType.Activity,
+                                    PicTypeId = actId,
+                                    CreatedBy = activity.CreatedBy
+                                };
 
-                                _documentManager.UploadImage(pic);
+                                foreach (var item in activity.ActivityPics)
+                                {
+                                    pic.PicValue = item.PicValue;
+                                    pic.PicName = item.PicName;
+                                    pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                    _documentManager.UploadImage(pic);
+                                }
                             }
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(activity);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                            return Ok(activity);
                         }
-
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(activity);
-
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                        return Ok(activity);
+                        else
+                        {
+                            return StatusCode(500, "Internal Server Error");
+                        }
 
                     }
                 }
@@ -163,7 +170,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.InsertDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
 
         }
@@ -173,7 +180,7 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteActivity([FromRoute] int Id)
+        public async Task<IActionResult> DeleteActivity([FromRoute] int Id)
         {
             try
             {
@@ -181,13 +188,30 @@ namespace seaway.API.Controllers
                 {
                     Activity activity = new Activity();
                     bool isActivityRemove = false;
+                    List<string> publicIds = new List<string>();
+                    bool IsRemoveFromCLoudinary = false;
 
-                    activity = _activityManager.GetActivityById(Id);
+                    activity = await _activityManager.GetActivityById(Id);
 
-                    if (activity?.ActivityId != null)
+                    if (activity?.ActivityId > 0)
                     {
+                        if(activity?.ActivityPics?.Count > 0)
+                        {
+                            foreach (var pic in activity.ActivityPics)
+                            {
+                                publicIds.Add(pic.CloudinaryPublicId ?? "");
+                            }
+                            IsRemoveFromCLoudinary = _documentManager.DeleteAssetFromCloudinary(publicIds).Result;
 
-                        isActivityRemove = _activityManager.DeleteActivity(Id);
+                            if (IsRemoveFromCLoudinary)
+                            {
+                                isActivityRemove = await _activityManager.DeleteActivity(Id);
+                            }
+                        }
+                        else
+                        {
+                            isActivityRemove = await _activityManager.DeleteActivity(Id);
+                        }
 
                         string requestUrl = HttpContext.Request.Path.ToString();
                         string responseBody = JsonConvert.SerializeObject(activity);
@@ -216,7 +240,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteActivityError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -225,7 +249,7 @@ namespace seaway.API.Controllers
         [Route("{activityId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateActivity(ActivityWithPicModel activity, int activityId)
+        public async Task<IActionResult> UpdateActivity(ActivityWithPicModel activity, int activityId)
         {
             try
             {
@@ -233,7 +257,7 @@ namespace seaway.API.Controllers
                 {
                     bool isNameExist = false;
                     bool isNameChange = false;
-                    Activity oldActivity = _activityManager.GetActivityById(activityId);
+                    Activity oldActivity = await _activityManager.GetActivityById(activityId);
                     if (oldActivity.ActivityName != null)
                     {
                         if (activity.ActivityName != null)
@@ -242,7 +266,7 @@ namespace seaway.API.Controllers
 
                             if (isNameChange)
                             {
-                                isNameExist = _activityManager.IsUsernameExist(activity.ActivityName);
+                                isNameExist = await _activityManager.IsUsernameExist(activity.ActivityName);
                             }
                         }
                         if (isNameExist)
@@ -262,15 +286,15 @@ namespace seaway.API.Controllers
                             _activityManager.UpdateActivity(updateActivity, activityId);
 
 
-                            PicDocument pic = new PicDocument()
-                            {
-                                PicType = PicType.Activity,
-                                PicTypeId = activityId,
-                                CreatedBy = activity.UpdatedBy,
-                        };
-
                             if (activity?.ActivityPics?.Length > 0)
                             {
+                                PicDocument pic = new PicDocument()
+                                {
+                                    PicType = PicType.Activity,
+                                    PicTypeId = activityId,
+                                    CreatedBy = activity.UpdatedBy
+                                };
+
                                 foreach (var item in activity.ActivityPics)
                                 {
                                     pic.PicValue = item.PicValue;
@@ -304,7 +328,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.UpdateDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -312,18 +336,18 @@ namespace seaway.API.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ChangeActiveStatus(Activity act, int id)
+        public async Task<IActionResult> ChangeActiveStatus(Activity act, int id)
         {
             try
             {
                 if (id > 0)
                 {
                     bool isStatusChanged = false;
-                    Activity activity = _activityManager.GetActivityById(id);
+                    Activity activity = await _activityManager.GetActivityById(id);
 
                     if (activity?.ActivityName != null)
                     {
-                        isStatusChanged = _activityManager.ChangeActiveStatus(act.IsActive, id);
+                        isStatusChanged = await _activityManager.ChangeActiveStatus(act.IsActive, id);
 
                         if (isStatusChanged)
                         {
@@ -347,7 +371,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.StatusChangeError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -392,7 +416,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteImageError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
