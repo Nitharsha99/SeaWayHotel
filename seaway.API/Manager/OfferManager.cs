@@ -19,7 +19,7 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Offer> GetOffers()
+        public async Task<List<Offer>> GetOffers()
         {
             try
             {
@@ -31,11 +31,11 @@ namespace seaway.API.Manager
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandText = "GetAllOffers";               
 
-                    _con.Open();
+                    await _con.OpenAsync();
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
 
                                 Offer offer = new Offer
@@ -58,7 +58,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
 
                     _logger.LogTrace("SuccessFully All Offer Data retrieved");
 
@@ -72,7 +72,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public Offer GetOfferById(int offerId)
+        public async Task<Offer> GetOfferById(int offerId)
         {
      
             try
@@ -82,23 +82,23 @@ namespace seaway.API.Manager
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
-                    _con.Open();
+                    await _con.OpenAsync();
                     using (var cmd = new SqlCommand("GetOfferById", _con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@OfferId", offerId);
 
-                        using (var reader = cmd.ExecuteReader())
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 var Id = (int)reader["OfferId"];
                                 Offer offer = offerList.FirstOrDefault(o => o.OfferId == Id) ?? new Offer();
 
 
-                                if (offer.OfferId != null)
+                                if (offer?.OfferId > 0)
                                 {
                                     offer = new Offer
                                     {
@@ -123,7 +123,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
                     _logger.LogTrace(LogMessages.AllOfferRetrieve);
                     mainoffer = offerList.FirstOrDefault() ?? new Offer();
                 }
@@ -137,7 +137,7 @@ namespace seaway.API.Manager
         }
 
 
-        public int NewOffer(Offer offer)
+        public async Task<int> NewOffer(Offer offer)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("InsertNewOffer", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@offerName", offer.Name);
@@ -157,7 +157,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@price", offer.Price);
                         cmd.Parameters.AddWithValue("@discountPercentage", offer.DiscountPercentage);
 
-                        offerId = (int)cmd.ExecuteScalar();
+                        offerId = (int?)(await cmd.ExecuteScalarAsync()) ?? 0;
                     }
                 }
 
@@ -172,7 +172,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool ChangeActiveStatus(bool status, int id)
+        public async Task<bool> ChangeActiveStatus(bool status, int id)
         {
             try
             {
@@ -182,12 +182,12 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
                         cmd.Parameters.AddWithValue("@Id", id);
                         cmd.Parameters.AddWithValue("@status", status);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                         _logger.LogTrace("Sucessfully Changed Offer Status of Id --> " + id + "From Database");
 
@@ -203,7 +203,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateOffer(Offer offer, int offerId)
+        public async void UpdateOffer(Offer offer, int offerId)
         {
             try
             {
@@ -211,7 +211,8 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("UpdateOffer", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
+
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@offerId", offerId);
@@ -224,7 +225,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@isActive", offer?.IsActive);
                         cmd.Parameters.AddWithValue("@isRoomOffer", offer?.IsRoomOffer);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -237,7 +238,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool DeleteOffer(int offerId)
+        public async Task<bool> DeleteOffer(int offerId)
         {
             try
             {
@@ -245,12 +246,12 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("DeleteOfferWithPics", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@offerId", offerId);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                         _logger.LogTrace("Sucessfully Deleted Offers of Id --> " + offerId + "From Database");
 

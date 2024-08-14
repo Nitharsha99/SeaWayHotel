@@ -23,7 +23,7 @@ namespace seaway.API.Manager
             _passwordHelper = passwordHelper;
         }
 
-        public bool NewAdmin(Admin admin)
+        public async Task<bool> NewAdmin(Admin admin)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("NewAdmin", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@username", admin.Username);
@@ -50,7 +50,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@profilePic", picPathBytes);
                         cmd.Parameters.AddWithValue("@created", admin.CreatedBy);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -64,7 +64,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public List<Admin> GetAllAdmins()
+        public async Task<List<Admin>> GetAllAdmins()
         {
             try
             {
@@ -76,14 +76,14 @@ namespace seaway.API.Manager
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandText = "AllAdmin";
 
-                    _con.Open();
+                    await _con.OpenAsync();
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             string? picFile = null;
-                            if(reader["ProfilePic"] != DBNull.Value)
+                            if (reader["ProfilePic"] != DBNull.Value)
                             {
                                 byte[] filePathInByte = (byte[])reader["ProfilePic"];
                                 picFile = Convert.ToBase64String(filePathInByte);
@@ -106,8 +106,7 @@ namespace seaway.API.Manager
 
                         }
                     }
-
-                    _con.Close();
+                    await _con.CloseAsync();
 
                     _logger.LogTrace(LogMessages.AllAdminRetrieve);
 
@@ -121,12 +120,13 @@ namespace seaway.API.Manager
             }
         }
 
-        public Admin GetAdminById(int id)
+        public async Task<Admin> GetAdminById(int id)
         {
             try
             {
+                List<Admin> adminList = await GetAllAdmins();
 
-                Admin admin = GetAllAdmins().FirstOrDefault(a => a.AdminId == id) ?? new Admin();
+                var admin = adminList.FirstOrDefault(a => a.AdminId == id) ?? new Admin();
 
                 return admin;
 
@@ -138,7 +138,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateAdmin(Admin admin)
+        public async void UpdateAdmin(Admin admin)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("UpdateAdmin", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@adminId", admin.AdminId);
@@ -163,7 +163,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@updatedBy", admin.UpdatedBy);
 
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -176,7 +176,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool IsUsernameExist(string username)
+        public async Task<bool> IsUsernameExist(string username)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -184,7 +184,7 @@ namespace seaway.API.Manager
             }
             else
             {
-                var result = GetAllAdmins()
+                var result = (await GetAllAdmins())
                     .Where(a => a.Username.Trim().ToLower() == username.Trim().ToLower())
                     .ToList();
 

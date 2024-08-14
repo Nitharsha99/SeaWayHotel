@@ -33,11 +33,11 @@ namespace seaway.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllRoomCategories()
+        public async Task<IActionResult> GetAllRoomCategories()
         {
             try
             {
-                List<RoomCategory> categories = _roomCategoryManager.GetRoomCategories();
+                List<RoomCategory> categories = await _roomCategoryManager.GetRoomCategories();
 
                 string responseBody = JsonConvert.SerializeObject(categories);
 
@@ -50,7 +50,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.GetRoomCategoryDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -58,13 +58,13 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindCategoryById([FromRoute] int Id)
+        public async Task<IActionResult> FindCategoryById([FromRoute] int Id)
         {
             try
             {
                 if(Id > 0)
                 {
-                    RoomCategory Category = _roomCategoryManager.GetRoomCategoryById(Id);
+                    RoomCategory Category = await _roomCategoryManager.GetRoomCategoryById(Id);
 
                     string responseBody = JsonConvert.SerializeObject(Category);
 
@@ -83,7 +83,7 @@ namespace seaway.API.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -91,14 +91,14 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostNewCategory(RoomCategoryWithPicModel Category)
+        public async Task<IActionResult> PostNewCategory(RoomCategoryWithPicModel Category)
         {
             try
             {
                 bool isNameExist = false;
                 if (Category.RoomName != null)
                 {
-                    isNameExist = _roomCategoryManager.IsUsernameExist(Category.RoomName);
+                    isNameExist = await _roomCategoryManager.IsUsernameExist(Category.RoomName);
 
                     if (isNameExist)
                     {
@@ -111,49 +111,60 @@ namespace seaway.API.Controllers
                             RoomName = Category.RoomName,
                             GuestCountMax = Category.GuestCountMax,
                             Price = Category.Price,
-                            DiscountPercentage = Category.DiscountPercentage
+                            DiscountPercentage = Category.DiscountPercentage,
+                            CreatedBy = Category.CreatedBy
                         };
-                        int roomId = _roomCategoryManager.NewRoomCategory(Category);
+                        int roomId = await _roomCategoryManager.NewRoomCategory(Category);
 
-                        PicDocument pic = new PicDocument
+                        if(roomId > 0)
                         {
-                            PicType = PicType.Room,
-                            PicTypeId = roomId
-                        };
-
-
-                        if (Category?.roomPics?.Length > 0)
-                        {
-                            foreach (var item in Category.roomPics)
+                            if (Category?.roomPics?.Length > 0)
                             {
-                                pic.PicValue = item.PicValue;
-                                pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
+                                PicDocument pic = new PicDocument
+                                {
+                                    PicType = PicType.Room,
+                                    PicTypeId = roomId,
+                                    CreatedBy = Category.CreatedBy
+                                };
 
-                                _docManager.UploadImage(pic);
+                                foreach (var item in Category.roomPics)
+                                {
+                                    pic.PicValue = item.PicValue;
+                                    pic.PicName = item.PicName;
+                                    pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                    _docManager.UploadImage(pic);
+                                }
                             }
+
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(Category);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                            return Ok(Category);
                         }
 
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(Category);
+                        else
+                        {
+                            return StatusCode(500, "Internal Server Error");
+                        }
 
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-
-                        return Ok(Category);
                     }
   
                 }
                 else
                 {
                     _logger.LogError(LogMessages.EmptyDataSetError);
-                    return BadRequest();
+                    return BadRequest(DisplayMessages.NullInput);
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.InsertDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -161,7 +172,7 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateRoomCategory(RoomCategoryWithPicModel category, [FromRoute]int Id)
+        public async Task<IActionResult> UpdateRoomCategory(RoomCategoryWithPicModel category, [FromRoute]int Id)
         {
             try
             {
@@ -170,7 +181,7 @@ namespace seaway.API.Controllers
                     bool isNameExist = false;
                     bool isNameChange = false;
 
-                    RoomCategory oldRoom = _roomCategoryManager.GetRoomCategoryById(Id);
+                    RoomCategory oldRoom = await _roomCategoryManager.GetRoomCategoryById(Id);
 
                     if (oldRoom.RoomName != null)
                     {
@@ -180,7 +191,7 @@ namespace seaway.API.Controllers
 
                             if (isNameChange)
                             {
-                                isNameExist = _roomCategoryManager.IsUsernameExist(category.RoomName);
+                                isNameExist = await _roomCategoryManager.IsUsernameExist(category.RoomName);
                             }
                         }
 
@@ -200,14 +211,15 @@ namespace seaway.API.Controllers
                             };
                             _roomCategoryManager.UpdateRoomCategory(updateCategory, Id);
 
-                            PicDocument pic = new PicDocument
-                            {
-                                PicType = PicType.Room,
-                                PicTypeId = Id
-                            };
-
                             if (category?.roomPics?.Length > 0)
                             {
+                                PicDocument pic = new PicDocument
+                                {
+                                    PicType = PicType.Room,
+                                    PicTypeId = Id,
+                                    CreatedBy = category.UpdatedBy
+                                };
+
                                 foreach (var item in category.roomPics)
                                 {
                                     pic.PicValue = item.PicValue;
@@ -242,7 +254,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.UpdateDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -292,7 +304,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteImageError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -300,7 +312,7 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteRoom([FromRoute] int Id)
+        public async Task<IActionResult> DeleteRoom([FromRoute] int Id)
         {
             try
             {
@@ -311,7 +323,7 @@ namespace seaway.API.Controllers
                     List<string> publicIds = new List<string>();
                     bool IsRemoveFromCLoudinary = false;
 
-                    Category = _roomCategoryManager.GetRoomCategoryById(Id);
+                    Category = await _roomCategoryManager.GetRoomCategoryById(Id);
 
                     if (Category.CategoryId != null)
                     {
@@ -325,10 +337,10 @@ namespace seaway.API.Controllers
 
                             if (IsRemoveFromCLoudinary)
                             {
-                                isCategoryRemove = _roomCategoryManager.DeleteRoomCategory(Id);
+                                isCategoryRemove = await _roomCategoryManager.DeleteRoomCategory(Id);
                             }
                         }
-                        isCategoryRemove = _roomCategoryManager.DeleteRoomCategory(Id);
+                        isCategoryRemove = await _roomCategoryManager.DeleteRoomCategory(Id);
 
                         string requestUrl = HttpContext.Request.Path.ToString();
                         string responseBody = JsonConvert.SerializeObject(Category);
@@ -341,25 +353,25 @@ namespace seaway.API.Controllers
                         }
                         else
                         {
-                            return BadRequest("Issue in deleting process");
+                            return BadRequest(DisplayMessages.DeletingError);
                         }
                     }
                     else
                     {
-                        return NotFound("Invalid Id");
+                        return NotFound(DisplayMessages.EmptyExistData);
                     }
                 }
                 else
                 {
                     _logger.LogError(LogMessages.InvalidIdError);
-                    return BadRequest("Room is not exist for this Id");
+                    return BadRequest(DisplayMessages.InvalidId);
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteRoomCategoryError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 

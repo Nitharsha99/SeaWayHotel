@@ -32,11 +32,11 @@ namespace seaway.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllOffers()
+        public async Task<IActionResult> GetAllOffers()
         {
             try
             {
-                List<Offer> offers = _offerManager.GetOffers();
+                List<Offer> offers = await _offerManager.GetOffers();
 
                 string responseBody = JsonConvert.SerializeObject(offers);
 
@@ -49,7 +49,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.GetOfferDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -57,7 +57,7 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult NewOffer(OfferWithPicModel offer)
+        public async Task<IActionResult> NewOffer(OfferWithPicModel offer)
         {
             try
             {
@@ -78,38 +78,46 @@ namespace seaway.API.Controllers
                         IsRoomOffer = offer.IsRoomOffer
                     };
 
-                    int offerId = _offerManager.NewOffer(o);
+                    int offerId = await _offerManager.NewOffer(o);
 
-                    PicDocument pic = new PicDocument
+                    if(offerId > 0)
                     {
-                        PicType = PicType.Offer,
-                        PicTypeId = offerId
-                    };
-
-                    if(offer?.offerPics?.Length > 0)
-                    {
-                        foreach (var op in offer.offerPics)
+                        if (offer?.offerPics?.Length > 0)
                         {
-                            pic.PicValue = op.PicValue;
-                            pic.PicName = op.PicName;
-                            pic.CloudinaryPublicId = op.CloudinaryPublicId;
+                            PicDocument pic = new PicDocument
+                            {
+                                PicType = PicType.Offer,
+                                PicTypeId = offerId
+                            };
 
-                            _documentManager.UploadImage(pic);
+                            foreach (var op in offer.offerPics)
+                            {
+                                pic.PicValue = op.PicValue;
+                                pic.PicName = op.PicName;
+                                pic.CloudinaryPublicId = op.CloudinaryPublicId;
+
+                                _documentManager.UploadImage(pic);
+                            }
                         }
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(offer);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                        return Ok(offer);
+                    }
+                    else
+                    {
+                        return StatusCode(500, "Internal Server Error");
                     }
 
-                    string requestUrl = HttpContext.Request.Path.ToString();
-                    string responseBody = JsonConvert.SerializeObject(offer);
-
-                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                    return Ok(offer);
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.InsertDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -117,18 +125,18 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ChangeActiveStatus(bool status, int id)
+        public async Task<IActionResult> ChangeActiveStatus(bool status, int id)
         {
             try
             {
                 if (id != 0)
                 {
                     bool isStatusChanged = false;
-                    Offer offer = _offerManager.GetOfferById(id);
+                    Offer offer = await _offerManager.GetOfferById(id);
 
                     if (offer.Name != null)
                     {
-                        isStatusChanged = _offerManager.ChangeActiveStatus(status, id);
+                        isStatusChanged = await _offerManager.ChangeActiveStatus(status, id);
 
                         if (isStatusChanged)
                         {
@@ -152,7 +160,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.StatusChangeError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -160,13 +168,13 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult FindOfferById([FromRoute] int Id)
+        public async Task<IActionResult> FindOfferById([FromRoute] int Id)
         {
             try
             {
-                if(Id != 0)
+                if(Id > 0)
                 {
-                    Offer offer = _offerManager.GetOfferById(Id);
+                    Offer offer = await _offerManager.GetOfferById(Id);
 
                     string responseBody = JsonConvert.SerializeObject(offer);
 
@@ -192,7 +200,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -200,13 +208,13 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateOffer(OfferWithPicModel offer, [FromRoute] int Id)
+        public async Task<IActionResult> UpdateOffer(OfferWithPicModel offer, [FromRoute] int Id)
         {
             try
             {
                 if (Id != 0)
                 {
-                    Offer oldOffer = _offerManager.GetOfferById(Id);
+                    Offer oldOffer = await _offerManager.GetOfferById(Id);
                     if (oldOffer.Name != null)
                     {
                         Offer updatedOffer = new Offer
@@ -222,14 +230,15 @@ namespace seaway.API.Controllers
                         };
                         _offerManager.UpdateOffer(updatedOffer, Id);
 
-                        PicDocument pic = new PicDocument
-                        {
-                            PicType = PicType.Offer,
-                            PicTypeId = Id
-                        };
 
                         if (offer?.offerPics?.Length > 0)
                         {
+                            PicDocument pic = new PicDocument
+                            {
+                                PicType = PicType.Offer,
+                                PicTypeId = Id
+                            };
+
                             foreach (var item in offer.offerPics)
                             {
                                 pic.PicValue = item.PicValue;
@@ -259,7 +268,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.UpdateDataError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -267,7 +276,7 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteOffer([FromRoute] int Id)
+        public async Task<IActionResult> DeleteOffer([FromRoute] int Id)
         {
             try
             {
@@ -277,7 +286,7 @@ namespace seaway.API.Controllers
                     List<string> publicIds = new List<string>();
                     bool IsRemoveFromCLoudinary = false;
 
-                    Offer offer = _offerManager.GetOfferById(Id);
+                    Offer offer = await _offerManager.GetOfferById(Id);
 
                     if (offer.Name != null)
                     {
@@ -291,10 +300,14 @@ namespace seaway.API.Controllers
 
                             if (IsRemoveFromCLoudinary)
                             {
-                                isOfferRemove = _offerManager.DeleteOffer(Id);
+                                isOfferRemove = await _offerManager.DeleteOffer(Id);
                             }
                         }
-                        isOfferRemove = _offerManager.DeleteOffer(Id);
+                        else
+                        {
+                            isOfferRemove = await _offerManager.DeleteOffer(Id);
+                        }
+                        
 
                         string requestUrl = HttpContext.Request.Path.ToString();
                         string responseBody = JsonConvert.SerializeObject(offer);
@@ -324,7 +337,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteOfferError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
@@ -376,7 +389,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.DeleteImageError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }

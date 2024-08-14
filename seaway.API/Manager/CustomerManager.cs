@@ -18,7 +18,7 @@ namespace seaway.API.Manager
         }
 
 
-        public void PostCustomer(Customer customer)
+        public async void PostCustomer(Customer customer)
         {
             try
             { 
@@ -26,7 +26,7 @@ namespace seaway.API.Manager
                 {
                     using(SqlCommand cmd = new SqlCommand("NewCustomer", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@customerName", customer.Name);
@@ -35,7 +35,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@nicNo", customer?.NIC);
                         cmd.Parameters.AddWithValue("@passportNo", customer?.PassportNo);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 

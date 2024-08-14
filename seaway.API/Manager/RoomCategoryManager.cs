@@ -20,7 +20,7 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<RoomCategory> GetRoomCategories()
+        public async Task<List<RoomCategory>> GetRoomCategories()
         {
             try
             {
@@ -30,13 +30,13 @@ namespace seaway.API.Manager
                 {
                     SqlCommand command = _con.CreateCommand();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "GetAllRoomCategories";                
+                    command.CommandText = "GetAllRoomCategories";
 
-                    _con.Open();
+                    await _con.OpenAsync();
 
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                                 RoomCategory category = new RoomCategory
                                 {
@@ -57,7 +57,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
 
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
 
@@ -71,7 +71,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public int NewRoomCategory(RoomCategoryWithPicModel category)
+        public async Task<int> NewRoomCategory(RoomCategoryWithPicModel category)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace seaway.API.Manager
                 {
                     using(SqlCommand cmd = new SqlCommand("InsertNewRoomCategory", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@roomName", category.RoomName);
@@ -89,7 +89,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@discountPercentage", category.DiscountPercentage);
                         cmd.Parameters.AddWithValue("@createdBy", category.CreatedBy);
 
-                        categoryId = (int)cmd.ExecuteScalar();
+                        categoryId = (int?)(await cmd.ExecuteScalarAsync()) ?? 0; ;
                     }
                 }
 
@@ -104,7 +104,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public RoomCategory GetRoomCategoryById(int categoryId)
+        public async Task<RoomCategory> GetRoomCategoryById(int categoryId)
         {
             try
             {
@@ -113,16 +113,16 @@ namespace seaway.API.Manager
 
                 using (SqlConnection _con = new SqlConnection(this._conString))
                 {
-                    _con.Open();
+                    await _con.OpenAsync();
                     using(var cmd = new SqlCommand("GetAllRoomCategoryWithPicDetails", _con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@categoryId", categoryId);
 
-                        using(var reader = cmd.ExecuteReader())
+                        using(var reader = await cmd.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 var Id = (int)reader["CategoryId"];
                                 RoomCategory category = categoryList.FirstOrDefault(r => r.CategoryId == Id) ?? new RoomCategory();
@@ -171,7 +171,7 @@ namespace seaway.API.Manager
                         }
                     }
 
-                    _con.Close();
+                    await _con.CloseAsync();
                     _logger.LogTrace("SuccessFully All Room Data retrieved");
                     maincategory = categoryList.FirstOrDefault() ?? new RoomCategory();
 
@@ -185,7 +185,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public void UpdateRoomCategory(RoomCategory category, int categoryId)
+        public async void UpdateRoomCategory(RoomCategory category, int categoryId)
         {
             try
             {
@@ -193,7 +193,7 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("UpdateRoomCategory", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@categoryId", categoryId);
@@ -203,7 +203,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@discountPercent", category.DiscountPercentage);
                         cmd.Parameters.AddWithValue("@updatedBy", category.UpdatedBy);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -216,7 +216,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool DeleteRoomCategory(int categoryId)
+        public async Task<bool> DeleteRoomCategory(int categoryId)
         {
             try
             {
@@ -224,12 +224,12 @@ namespace seaway.API.Manager
                 {
                     using (SqlCommand cmd = new SqlCommand("DeleteRoomCategoryWithPics", con))
                     {
-                        con.Open();
+                        await con.OpenAsync();
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@categoryId", categoryId);
 
-                        cmd.ExecuteNonQuery();
+                        await cmd.ExecuteNonQueryAsync();
 
                         _logger.LogTrace("Sucessfully Deleted Room of Id --> " + categoryId + "From Database");
 
@@ -245,7 +245,7 @@ namespace seaway.API.Manager
             }
         }
 
-        public bool IsUsernameExist(string name)
+        public async Task<bool> IsUsernameExist(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -253,7 +253,7 @@ namespace seaway.API.Manager
             }
             else
             {
-                var result = GetRoomCategories()
+                var result = (await GetRoomCategories())
                     .Where(a => a.RoomName.Trim().ToLower() == name.Trim().ToLower())
                     .ToList();
 

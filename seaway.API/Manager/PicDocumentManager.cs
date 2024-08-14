@@ -28,7 +28,7 @@ namespace seaway.API.Manager
            
         }
 
-        public void UploadImage(PicDocument pic)
+        public async void UploadImage(PicDocument pic)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace seaway.API.Manager
                     {
                         using(SqlCommand command = new SqlCommand("UploadImage", _con))
                         {
-                            _con.Open();
+                            await _con.OpenAsync();
                             command.CommandType = CommandType.StoredProcedure;
 
                             command.Parameters.AddWithValue("@PicTypeId", pic.PicTypeId);
@@ -50,7 +50,7 @@ namespace seaway.API.Manager
                             command.Parameters.AddWithValue("@PublicId", pic.CloudinaryPublicId);
                             command.Parameters.AddWithValue("@CreatedBy", pic.CreatedBy);
 
-                            command.ExecuteNonQuery();
+                            await command.ExecuteNonQueryAsync();
                         }
                     }
                 }

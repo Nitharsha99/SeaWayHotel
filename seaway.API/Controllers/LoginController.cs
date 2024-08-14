@@ -28,7 +28,7 @@ namespace seaway.API.Controllers
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Login(LoginModel login)
+        public async Task<IActionResult> Login(LoginModel login)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace seaway.API.Controllers
                 {
                     bool isValidUser = false;
      
-                    isValidUser = _logginManager.CheckUserValid(login);
+                    isValidUser = await _logginManager.CheckUserValid(login);
 
                     string responseBody = JsonConvert.SerializeObject(login);
                     string requestUrl = HttpContext.Request.Path.ToString();
@@ -53,7 +53,7 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.LoginError + ex.Message);
-                return BadRequest(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 
