@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Offer } from 'src/app/Models/offer';
 
 @Injectable({
@@ -22,5 +22,21 @@ export class OfferService {
 
   DeleteOffer(id: number): Observable<any>{
     return this.http.delete<any>(this.baseUrl + "/" + id);
+  }
+
+  PostOffer(data: any): Observable<any>{
+    return this.http.post<any>(this.baseUrl, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
+  }
+
+  updateOffer(data: any, id: number): Observable<any>{
+    return this.http.put<any>(this.baseUrl+ "/" + id, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 }

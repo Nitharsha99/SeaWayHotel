@@ -39,25 +39,25 @@
 
                   <div class="row mb-4">
                     <div class="col-md-6">
-                        <label for="validTo" class="form-label">ValidTo<span>*</span></label>
-                        <input type="date" class="form-control" id="validTo" required placeholder="valid"  formControlName="validTo">
-                        <div 
-                        *ngIf="offerForm.controls['validTo'].invalid && (offerForm.controls['validTo'].dirty || offerForm.controls['validTo'].touched)" 
-                        class="alert p-0 mb-0" >
-                          <div *ngIf="offerForm.controls['validTo']?.errors?.['required']">
-                            Please enter the start date of offer
-                          </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
                         <label for="validFrom" class="form-label">ValidFrom<span>*</span></label>
-                        <input type="date" class="form-control" id="validFrom" required placeholder="valid"  formControlName="validFrom">
+                        <input type="date" class="form-control" id="validFrom" required placeholder="valid"  formControlName="validFrom" [min]="minValidFrom">
                         <div 
                         *ngIf="offerForm.controls['validFrom'].invalid && (offerForm.controls['validFrom'].dirty || offerForm.controls['validFrom'].touched)" 
                         class="alert p-0 mb-0" >
                           <div *ngIf="offerForm.controls['validFrom']?.errors?.['required']">
                             Please enter the end date of offer
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="validTo" class="form-label">ValidTo<span>*</span></label>
+                        <input type="date" class="form-control" id="validTo" required placeholder="valid"  formControlName="validTo" [min]="minValidTo">
+                        <div 
+                        *ngIf="offerForm.controls['validTo'].invalid && (offerForm.controls['validTo'].dirty || offerForm.controls['validTo'].touched)" 
+                        class="alert p-0 mb-0" >
+                          <div *ngIf="offerForm.controls['validTo']?.errors?.['required']">
+                            Please enter the start date of offer
                           </div>
                         </div>
                     </div>
@@ -76,11 +76,22 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="discountPercentage" class="form-label">Discount(%)</label>
-                        <input type="text" class="form-control" id="discountPercentage" placeholder="Discount" formControlName="discountPercentage" min="0" max="100">
+                        <label for="discount" class="form-label">Discount(%)</label>
+                        <input type="text" class="form-control" id="discount" placeholder="Discount" formControlName="discount" min="0" max="100">
                     </div>
-
                   </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="isRoomOffer" formControlName="isRoomOffer">
+                                <label class="form-check-label" for="isRoomOffer">
+                                  Room Offer (This offer for room)
+                                </label>
+                              </div>
+                        </div>
+
+                   </div>
     
                 <div class="mb-3 row" *ngIf="updateMode">
                     <label class="col-12 form-label" for="selectedImages">Activity Images</label>
@@ -92,7 +103,7 @@
                             </div>
                             <div class="shadow p-1 mb-2 bg-white rounded" style="margin-right: 15px;" *ngFor="let pic of pictures">
                                 <label>
-                                    <input type="checkbox" (change)="updateSelectedPics()"> 
+                                    <input type="checkbox" (change)="updateSelectedPics(pic.cloudinaryPublicId, $event)"> 
                                     <div>
                                         <img [src]="pic.picValue" class="img-fluid" style="border-radius: 5px; padding-right: 3px;" [title]="pic.picName"
                                              [style.width.px]="imageWidth" [style.margin.px]="imageMargin" [style.height.px]="imageHeight">

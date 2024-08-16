@@ -61,7 +61,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if(offer.Name == null || offer.ValidFrom == null || offer.Price == null)
+                if(offer.OfferName == null || offer.ValidFrom == null || offer.Price == null)
                 {
                     return BadRequest(DisplayMessages.NullInput);
                 }
@@ -69,13 +69,14 @@ namespace seaway.API.Controllers
                 {
                     Offer o = new Offer
                     {
-                        Name = offer.Name,
+                        Name = offer.OfferName,
                         Description = offer.Description,
                         Price = offer.Price,
-                        DiscountPercentage = offer.DiscountPercentage,
+                        DiscountPercentage = offer.Discount,
                         ValidFrom = offer.ValidFrom,
                         ValidTo = offer.ValidTo,
-                        IsRoomOffer = offer.IsRoomOffer
+                        IsRoomOffer = offer.IsRoomOffer,
+                        CreatedBy = offer.CreatedBy
                     };
 
                     int offerId = await _offerManager.NewOffer(o);
@@ -87,7 +88,8 @@ namespace seaway.API.Controllers
                             PicDocument pic = new PicDocument
                             {
                                 PicType = PicType.Offer,
-                                PicTypeId = offerId
+                                PicTypeId = offerId,
+                                CreatedBy = offer.CreatedBy
                             };
 
                             foreach (var op in offer.offerPics)
@@ -219,12 +221,12 @@ namespace seaway.API.Controllers
                     {
                         Offer updatedOffer = new Offer
                         {
-                            Name = offer.Name,
+                            Name = offer.OfferName,
                             Description = offer.Description,
                             ValidFrom = offer.ValidFrom,
                             ValidTo = offer.ValidTo,
                             Price = offer.Price,
-                            DiscountPercentage = offer.DiscountPercentage,
+                            DiscountPercentage = offer.Discount,
                             IsActive = offer.IsActive,
                             IsRoomOffer = offer.IsRoomOffer
                         };
