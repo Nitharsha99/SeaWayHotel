@@ -8,12 +8,12 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-md-12">
-                        <label for="offerName"  class="form-label">Name<span>*</span></label>
-                        <input type="text" class="form-control" id="offerName" placeholder="Offer Name" required formControlName="offerName">
+                        <label for="name"  class="form-label">Name<span>*</span></label>
+                        <input type="text" class="form-control" id="name" placeholder="Offer Name" required formControlName="name">
                         <div 
-                        *ngIf="offerForm.controls['offerName'].invalid && (offerForm.controls['offerName'].dirty || offerForm.controls['offerName'].touched)" 
+                        *ngIf="offerForm.controls['name'].invalid && (offerForm.controls['name'].dirty || offerForm.controls['name'].touched)" 
                         class="alert p-0 mb-0" >
-                          <div *ngIf="offerForm.controls['offerName']?.errors?.['required']">
+                          <div *ngIf="offerForm.controls['name']?.errors?.['required']">
                             Please enter offer name
                           </div>
                         </div>
@@ -40,7 +40,7 @@
                   <div class="row mb-4">
                     <div class="col-md-6">
                         <label for="validFrom" class="form-label">ValidFrom<span>*</span></label>
-                        <input type="date" class="form-control" id="validFrom" required placeholder="valid"  formControlName="validFrom" [min]="minValidFrom">
+                        <input type="date" class="form-control" id="validFrom" required placeholder="valid"  formControlName="validFrom" [min]="minValidFrom" >
                         <div 
                         *ngIf="offerForm.controls['validFrom'].invalid && (offerForm.controls['validFrom'].dirty || offerForm.controls['validFrom'].touched)" 
                         class="alert p-0 mb-0" >
@@ -77,7 +77,7 @@
 
                     <div class="col-md-6">
                         <label for="discount" class="form-label">Discount(%)</label>
-                        <input type="text" class="form-control" id="discount" placeholder="Discount" formControlName="discount" min="0" max="100">
+                        <input type="text" class="form-control" id="discount" placeholder="Discount" formControlName="discountPercentage" min="0" max="100">
                     </div>
                   </div>
 

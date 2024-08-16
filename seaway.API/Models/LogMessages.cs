@@ -38,7 +38,7 @@ namespace seaway.API.Models
     {
         public const string NullInput = "Nullable Input Data Provided";
         public const string InvalidId = "Invalid Id Provided";
-        public const string EmptyExistData = "There is no any data with this Id --> ";
+        public const string EmptyExistData = "There is no any data with this Id";
         public const string InsertingError = "Issue in Inserting data";
 
         public const string ExistNameError = "This name already exists";

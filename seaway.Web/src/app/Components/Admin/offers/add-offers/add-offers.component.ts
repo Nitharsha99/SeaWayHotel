@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { CommonFunctionComponent } from 'src/app/commonFunction';
 import { PicDocument } from 'src/app/Models/picDocument';
 import { CloudinaryService } from 'src/app/Services/CloudinaryService/cloudinary.service';
@@ -33,12 +34,12 @@ export class AddOffersComponent implements OnInit{
   ){}
 
   offerForm: FormGroup = this.builder.group({
-    offerName:['', Validators.required],
+    name:['', Validators.required],
     description:['', Validators.required],
     validFrom:['', Validators.required],
     validTo:['', Validators.required],
     price:['', Validators.required],
-    discount:[0],
+    discountPercentage:[0],
     isRoomOffer: [false],
     createdBy: ['Nitharsha'],
     updatedBy: [''],
@@ -54,12 +55,33 @@ export class AddOffersComponent implements OnInit{
   ngOnInit(): void {
     this.currentDate = this.formatDate(new Date());
     this.minValidFrom = this.currentDate;
-    // this.offerForm.get('validTo')?.valueChanges.subscribe((value: string) => {
-    //   this.minValidFrom = value;
-    // });
 
     this.offerForm.get('validFrom')?.valueChanges.subscribe((value: string) => {
       this.minValidTo = value;
+    });
+
+    this.route.params.subscribe(params => {
+      if(params['id']){
+        this.offerId = params['id'];
+        this.updateMode = true;
+        this.offerService.FindOfferById(this.offerId).subscribe(res => {
+          if(res != null){
+            const formattedRes = {
+              ...res,
+              validFrom: this.formatDate(new Date(res.validFrom)),
+              validTo: this.formatDate(new Date(res.validTo)),
+            };
+            this.offerForm.patchValue(formattedRes);
+            if(res.offerPics != null && res.offerPics.length > 0){
+              this.pictures = res.offerPics;
+              this.pictures.forEach(element => {
+                const urlLink = this.commonFunction.convertBase64ToString(element.picValue);
+                element.picValue = urlLink;
+              });
+          }
+        }
+      });
+      }
     });
   }
 
@@ -70,7 +92,7 @@ export class AddOffersComponent implements OnInit{
       formValue.discount = 0;
     }
 
-    if(!formValue.offerName || !formValue.description || !formValue.validFrom || !formValue.validTo || !formValue.price){
+    if(!formValue.name || !formValue.description || !formValue.validFrom || !formValue.validTo || !formValue.price){
       this.commonFunction.showMandoryFieldPopup();
     }
     else{
@@ -173,7 +195,6 @@ export class AddOffersComponent implements OnInit{
             cloudinaryPublicId: res.public_id
           });
   
-          console.log("sajnjadjjjjjj", picsArray);
           formValue.offerPics = picsArray.controls.map((control: AbstractControl<any>) => {
             const formGroup = control as FormGroup;
             return {
@@ -186,7 +207,6 @@ export class AddOffersComponent implements OnInit{
           count++;
          
           if(count === this.picArrayLength){
-            console.log("auifhcyieaufajka", count, this.picArrayLength);
             Swal.close();
             this.callOfferService();
           }

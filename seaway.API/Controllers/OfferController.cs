@@ -61,7 +61,7 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if(offer.OfferName == null || offer.ValidFrom == null || offer.Price == null)
+                if(offer.Name == null || offer.ValidFrom == null || offer.Price == null)
                 {
                     return BadRequest(DisplayMessages.NullInput);
                 }
@@ -69,7 +69,7 @@ namespace seaway.API.Controllers
                 {
                     Offer o = new Offer
                     {
-                        Name = offer.OfferName,
+                        Name = offer.Name,
                         Description = offer.Description,
                         Price = offer.Price,
                         DiscountPercentage = offer.Discount,
@@ -190,7 +190,7 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                        return NotFound(DisplayMessages.EmptyExistData);
                     }
                 }
                 else
@@ -221,7 +221,7 @@ namespace seaway.API.Controllers
                     {
                         Offer updatedOffer = new Offer
                         {
-                            Name = offer.OfferName,
+                            Name = offer.Name,
                             Description = offer.Description,
                             ValidFrom = offer.ValidFrom,
                             ValidTo = offer.ValidTo,

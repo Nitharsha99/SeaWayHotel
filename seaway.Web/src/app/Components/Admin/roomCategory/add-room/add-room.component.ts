@@ -53,7 +53,6 @@ imageHeight: number = 110;
         this.roomCategoryService.FindRoomCategoryById(this.categoryId).subscribe(res => {
           if(res != null){
             this.roomForm.patchValue(res);
-            console.log('Form Value:', this.roomForm.value);
             if(res.roomPics != null && res.roomPics.length > 0){
               this.pictures = res.roomPics;
               this.pictures.forEach(element => {
