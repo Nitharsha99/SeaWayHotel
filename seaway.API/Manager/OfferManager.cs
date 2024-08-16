@@ -156,6 +156,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@validTo", offer.ValidTo);
                         cmd.Parameters.AddWithValue("@price", offer.Price);
                         cmd.Parameters.AddWithValue("@discountPercentage", offer.DiscountPercentage);
+                        cmd.Parameters.AddWithValue("@createdBy", offer.CreatedBy);
 
                         offerId = (int?)(await cmd.ExecuteScalarAsync()) ?? 0;
                     }

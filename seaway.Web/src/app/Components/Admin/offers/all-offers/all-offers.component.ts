@@ -12,7 +12,7 @@ import * as moment from 'moment';
   styleUrls: ['./all-offers.component.css']
 })
 export class AllOffersComponent implements OnInit{
-  pageSize: number = 1;
+  pageSize: number = 5;
   page: number = 1;
   offers: Offer[] = [];
   filteredOffers: Offer[] = [];
@@ -85,7 +85,7 @@ export class AllOffersComponent implements OnInit{
 
   updateDisplayeditems(): void {
     this.page =1;
-    this.pageSize = 1;
+    this.pageSize = 5;
     this.totalItems = this.filteredOffers.length;
   }
 

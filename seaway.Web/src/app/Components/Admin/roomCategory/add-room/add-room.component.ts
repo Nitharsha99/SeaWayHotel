@@ -69,8 +69,6 @@ imageHeight: number = 110;
   }
 
   onSelect(event: any){
-    console.log(event, 'event');
-    console.log(event.addedFiles[0].name.length);
     event.addedFiles.forEach((file: File) => {
       if(file.name.length <= 50){
         this.files.push(file);
@@ -89,7 +87,6 @@ imageHeight: number = 110;
 
   onRemove(event: any){
     this.files.splice(this.files.indexOf(event), 1);
-    console.log(this.files);
   }
 
   updateSelectedPics(id: string, event: any){
@@ -117,25 +114,22 @@ imageHeight: number = 110;
       data.append('cloud_name', 'dly7yjg1w');
 
       this.cloudinaryService.uploadImage(data).subscribe(res => {
-        console.log('i value', i);
-        const roomPicsArray = this.roomForm.get('roomPics') as FormArray;
-        while (roomPicsArray.length <= i) {
-          roomPicsArray.push(this.builder.group({
+        const picsArray = this.roomForm.get('roomPics') as FormArray;
+        while (picsArray.length <= i) {
+          picsArray.push(this.builder.group({
             picName: [null],
             picValue: [null],
             cloudinaryPublicId: [null]
           }));
         }
-        console.log(res.public_id, res);
 
-        (roomPicsArray.at(i) as FormGroup).patchValue({
+        (picsArray.at(i) as FormGroup).patchValue({
           picName: res.original_filename + "." + res.format,
           picValue: res.url,
           cloudinaryPublicId: res.public_id
         });
 
-        console.log("sajnjadjjjjjj", roomPicsArray);
-        formValue.roomPics = roomPicsArray.controls.map((control: AbstractControl<any>) => {
+        formValue.roomPics = picsArray.controls.map((control: AbstractControl<any>) => {
           const formGroup = control as FormGroup;
           return {
             picName: formGroup.get('picName')?.value,
@@ -147,7 +141,6 @@ imageHeight: number = 110;
         count++;
        
         if(count === this.picArrayLength){
-          console.log("auifhcyieaufajka", count, this.picArrayLength);
           Swal.close();
           this.callRoomCategoryService();
         }
@@ -201,7 +194,6 @@ imageHeight: number = 110;
   }else{
     if(this.categoryId != null){
       this.roomCategoryService.UpdateRoomCategory(formValue, this.categoryId).subscribe((res) => {
-        console.log('edit result', res);
         Swal.fire({
           title: "Room Category Updated Successfully!!",
           icon: "success",
