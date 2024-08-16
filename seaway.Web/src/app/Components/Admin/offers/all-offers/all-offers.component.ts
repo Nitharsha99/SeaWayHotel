@@ -71,6 +71,10 @@ export class AllOffersComponent implements OnInit{
     this.router.navigate(['addOffer'], {relativeTo: this.route});
   }
 
+  navigateToUpdateOffer(id: number): void{
+    this.router.navigate(['editOffer', id], {relativeTo: this.route});
+  }
+
   onReset(): void{
     this.filters = {
       search: '',

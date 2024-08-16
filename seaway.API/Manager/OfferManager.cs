@@ -98,7 +98,7 @@ namespace seaway.API.Manager
                                 Offer offer = offerList.FirstOrDefault(o => o.OfferId == Id) ?? new Offer();
 
 
-                                if (offer?.OfferId > 0)
+                                if (offer?.OfferId == 0)
                                 {
                                     offer = new Offer
                                     {
@@ -111,7 +111,11 @@ namespace seaway.API.Manager
                                         IsRoomOffer = (bool?)reader["IsRoomOffer"],
                                         IsActive = (bool?)reader["IsActive"],
                                         ValidFrom = (DateTime?)reader["ValidFrom"],
-                                        ValidTo = (DateTime?)reader["ValidTo"]
+                                        ValidTo = (DateTime?)reader["ValidTo"],
+                                        Created = (DateTime)reader["Created"],
+                                        CreatedBy = reader["CreatedBy"].ToString(),
+                                        Updated = (DateTime)reader["Updated"],
+                                        UpdatedBy = reader["UpdatedBy"].ToString()
 
                                     };
 
