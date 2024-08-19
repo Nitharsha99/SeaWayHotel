@@ -29,6 +29,8 @@ import { CommonFunctionComponent } from './commonFunction';
 import { OffersComponent } from './Components/Admin/offers/offers.component';
 import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-offers.component';
 import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
+import { ManagersComponent } from './Components/Admin/managers/managers.component';
+
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-off
     AllActivitiesComponent,
     AllOffersComponent,
     AddOffersComponent,
-    OffersComponent
+    OffersComponent,
+    ManagersComponent,
+
   ],
   imports: [
     BrowserModule,

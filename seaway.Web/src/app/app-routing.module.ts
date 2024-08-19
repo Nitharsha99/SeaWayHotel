@@ -14,6 +14,7 @@ import { AddActivitiesComponent } from './Components/Admin/activities/add-activi
 import { OffersComponent } from './Components/Admin/offers/offers.component';
 import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-offers.component';
 import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
+import { ManagersComponent } from './Components/Admin/managers/managers.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -42,8 +43,11 @@ const routes: Routes = [
         {path: 'addOffer', component: AddOffersComponent},
         {path: 'editOffer/:id', component: AddOffersComponent}
       ]
-    }
-        
+    },
+    // {path: 'Packages', component: PackagesComponent,
+     
+    // },
+    {path: 'Managers', component: ManagersComponent}   
     ]
   }
 ];
