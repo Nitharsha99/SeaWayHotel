@@ -9,6 +9,7 @@ import { RouterService } from 'src/app/Services/RouterService/router.service';
 export class HeaderComponent implements OnInit{
   canDisplay: boolean = true;
   adminHeaderFooter: boolean = false;
+  isDropdownOpen = false;
 
   constructor(private routerService: RouterService){
   }
@@ -22,4 +23,9 @@ export class HeaderComponent implements OnInit{
       this.adminHeaderFooter = adminHeaderFooter;
     });
   }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
 }
