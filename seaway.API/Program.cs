@@ -30,6 +30,7 @@ try
     builder.Services.AddScoped<RoomCategoryManager>();
     builder.Services.AddScoped<OfferManager>();
     builder.Services.AddScoped<AdminManager>();
+    builder.Services.AddScoped<RoomManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>

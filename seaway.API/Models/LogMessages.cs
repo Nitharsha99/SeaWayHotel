@@ -32,6 +32,7 @@ namespace seaway.API.Models
 
         public const string AllAdminRetrieve = "SuccessFully All Admin Data retrieved";
         public const string AllOfferRetrieve = "SuccessFully All Offer Data retrieved";
+        public const string AllRoomsRetrieve = "SuccessFully All Room Data retrieved";
     }
 
     public static class DisplayMessages
