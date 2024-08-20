@@ -127,7 +127,7 @@ namespace seaway.API.Manager
                                 var Id = (int)reader["CategoryId"];
                                 RoomCategory category = categoryList.FirstOrDefault(r => r.CategoryId == Id) ?? new RoomCategory();
 
-                                if (category.CategoryId == null)
+                                if (category.CategoryId == 0)
                                 {
                                     category = new RoomCategory
                                     {

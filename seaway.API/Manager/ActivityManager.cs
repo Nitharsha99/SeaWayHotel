@@ -1,13 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-using seaway.API.Configurations;
+﻿using seaway.API.Configurations;
 using seaway.API.Models;
-using seaway.API.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
-using System.Reflection;
-using System.Text;
-using System.Drawing;
-using System.IO;
 using seaway.API.Models.Enum;
 
 namespace seaway.API.Manager
