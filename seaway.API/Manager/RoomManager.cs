@@ -70,5 +70,22 @@ namespace seaway.API.Manager
                 throw;
             }
         }
+
+        public async Task<Room> GetRoomById(int id)
+        {
+            try
+            {
+                List<Room> roomList = await GetAllRooms();
+
+                var room = roomList.FirstOrDefault(a => a.Id == id) ?? new Room();
+
+                return room;
+            }
+            catch(Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                throw;
+            }
+        }
     }
 }
