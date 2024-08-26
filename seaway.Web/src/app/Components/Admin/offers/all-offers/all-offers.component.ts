@@ -5,6 +5,7 @@ import { DiscountRate, PriceRange } from 'src/app/Models/Enum/discount';
 import { Offer } from 'src/app/Models/offer';
 import { OfferService } from 'src/app/Services/OfferService/offer.service';
 import * as moment from 'moment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-all-offers',
@@ -38,7 +39,6 @@ export class AllOffersComponent implements OnInit{
       this.offers = res;
       this.filteredOffers = this.offers;
       this.totalItems = this.filteredOffers.length;
-      console.log(this.offers);
     });
     this.updateDisplayeditems();
   }
@@ -95,6 +95,30 @@ export class AllOffersComponent implements OnInit{
 
   onPageChange(event: number) {
     this.page = event;
+  }
+
+  deleteOffer(id: number): void{
+    this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
+      if (result.isConfirmed) {
+       this.offerService.DeleteOffer(id).subscribe(res => {
+        Swal.fire({
+          icon: "success",
+          title: "Successfully Deleted " + res.name + " !!! ",
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          });
+        });
+       });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        setTimeout(() => {
+          window.location.reload();
+        });
+      }
+  });
   }
 
 }
