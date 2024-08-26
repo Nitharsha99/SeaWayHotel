@@ -3,6 +3,8 @@ using seaway.API.Models;
 using System.Data.SqlClient;
 using System.Data;
 using seaway.API.Models.ViewModels;
+using seaway.API.Models.Enum;
+using System.Diagnostics;
 
 namespace seaway.API.Manager
 {
@@ -113,16 +115,36 @@ namespace seaway.API.Manager
                                         ValidFrom = (DateTime?)reader["ValidFrom"],
                                         ValidTo = (DateTime?)reader["ValidTo"],
                                         Created = (DateTime)reader["Created"],
-                                        CreatedBy = reader["CreatedBy"].ToString(),
+                                        CreatedBy = reader["CreatedBy"].ToString() ?? "",
                                         Updated = (DateTime)reader["Updated"],
-                                        UpdatedBy = reader["UpdatedBy"].ToString()
+                                        UpdatedBy = reader["UpdatedBy"].ToString() ?? ""
 
                                     };
 
                                     offerList.Add(offer);
                                 }
 
+                                if (reader["PicName"] != DBNull.Value)
+                                {
+                                    byte[] picValueInByte = (byte[])reader["PicValue"];
+                                    string val = Convert.ToBase64String(picValueInByte);
 
+                                    PicDocument document = new PicDocument
+                                    {
+                                        PicName = reader["PicName"].ToString(),
+                                        PicType = (PicType)reader["PicType"],
+                                        PicTypeId = (int)reader["PicTypeId"],
+                                        CloudinaryPublicId = reader["CloudinaryPublicId"].ToString(),
+                                        PicValue = val
+                                    };
+
+                                    if (offer?.OfferPics == null)
+                                    {
+                                        offer.OfferPics = new List<PicDocument>();
+                                    }
+
+                                    offer.OfferPics.Add(document);
+                                }
                             }
                         }
                     }
@@ -229,6 +251,7 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@discountPercent", offer?.DiscountPercentage);
                         cmd.Parameters.AddWithValue("@isActive", offer?.IsActive);
                         cmd.Parameters.AddWithValue("@isRoomOffer", offer?.IsRoomOffer);
+                        cmd.Parameters.AddWithValue("@updatedBy", offer.UpdatedBy);
 
                         await cmd.ExecuteNonQueryAsync();
                     }
