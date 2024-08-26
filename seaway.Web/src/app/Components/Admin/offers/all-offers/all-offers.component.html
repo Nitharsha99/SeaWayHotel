@@ -81,7 +81,7 @@
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isActive" >
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isActive" (ngModelChange)="onChange(offer)">
                         </div>
                     </td>
                     <td>

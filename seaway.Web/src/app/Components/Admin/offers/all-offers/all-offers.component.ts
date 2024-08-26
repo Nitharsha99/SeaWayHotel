@@ -121,6 +121,50 @@ export class AllOffersComponent implements OnInit{
   });
   }
 
+  onChange(item: any){
+    Swal.fire({
+      text: `Do you want to ${item.isActive ? 'activate' : 'deactivate'}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      iconColor: '#570254',
+      confirmButtonColor: '#570254',
+      didOpen: () => {
+        const cancelButton = document.querySelectorAll('.swal2-cancel')[0] as HTMLElement;
+        cancelButton.style.backgroundColor = '#fff';
+        cancelButton.style.border = '1px solid #570254';
+        cancelButton.style.color = '#570254';
+
+        // Add hover style
+        cancelButton.addEventListener('mouseover', () => {
+          cancelButton.style.backgroundColor = '#f8edf7'; // Change background color on hover
+          cancelButton.style.borderColor = '#570254'; // Change border color on hover
+          cancelButton.style.cursor = 'pointer'; // Change cursor on hover
+        });
+
+        cancelButton.addEventListener('mouseout', () => {
+          cancelButton.style.backgroundColor = '#fff'; // Reset background color on mouse out
+          cancelButton.style.borderColor = '#570254';
+        });
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.changeStatus(item.isActive, item.offerId);
+      } else {
+        window.location.reload();
+      }
+    });
+  }
+
+  changeStatus(status: boolean, id: number): void{
+    this.offerService.ChangeStatus(status, id).subscribe(() => {
+      setTimeout(() => {
+        window.location.reload();
+      });
+    });
+  }
+
 }
 
 

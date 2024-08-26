@@ -39,4 +39,12 @@ export class OfferService {
       })
     );
   }
+
+  ChangeStatus(status: boolean, id: number): Observable<any>{
+    return this.http.patch<any>(this.baseUrl, { isActive: status, offerId: id }).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
+  }
 }

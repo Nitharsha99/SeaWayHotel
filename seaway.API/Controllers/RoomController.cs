@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
-using seaway.API.Models.ViewModels;
 
 namespace seaway.API.Controllers
 {

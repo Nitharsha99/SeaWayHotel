@@ -333,21 +333,21 @@ namespace seaway.API.Controllers
         }
 
         [HttpPatch]
-        [Route("{id}")]
+        [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangeActiveStatus(Activity act, int id)
+        public async Task<IActionResult> ChangeActiveStatus(Activity act)
         {
             try
             {
-                if (id > 0)
+                if (act.ActivityId > 0)
                 {
                     bool isStatusChanged = false;
-                    Activity activity = await _activityManager.GetActivityById(id);
+                    Activity activity = await _activityManager.GetActivityById(act.ActivityId);
 
                     if (activity?.ActivityName != null)
                     {
-                        isStatusChanged = await _activityManager.ChangeActiveStatus(act.IsActive, id);
+                        isStatusChanged = await _activityManager.ChangeActiveStatus(act.IsActive, act.ActivityId);
 
                         if (isStatusChanged)
                         {
@@ -360,7 +360,7 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        return NotFound(DisplayMessages.EmptyExistData + id);
+                        return NotFound(DisplayMessages.EmptyExistData + act.ActivityId);
                     }
                 }
                 else

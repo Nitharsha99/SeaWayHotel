@@ -109,7 +109,7 @@ namespace seaway.API.Manager
                                         DiscountPercentage = reader["DiscountPercentage"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountPercentage"]),
                                         DiscountAmount = reader["DiscountAmount"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["DiscountAmount"]),
                                         IsRoomOffer = (bool?)reader["IsRoomOffer"],
-                                        IsActive = (bool?)reader["IsActive"],
+                                        IsActive = (bool)reader["IsActive"],
                                         ValidFrom = (DateTime?)reader["ValidFrom"],
                                         ValidTo = (DateTime?)reader["ValidTo"],
                                         Created = (DateTime)reader["Created"],

@@ -48,8 +48,7 @@ export class ActivityService {
   }
 
   ChangeStatus(status: boolean, id: number): Observable<any>{
-    console.log('input', status);
-    return this.http.patch<any>(this.baseUrl + "/" + id, { isActive: status }).pipe(
+    return this.http.patch<any>(this.baseUrl, { isActive: status, activityId: id }).pipe(
       catchError((error: any) => {
         return throwError(error.error);
       })

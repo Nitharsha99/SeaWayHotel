@@ -127,18 +127,18 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangeActiveStatus(bool status, int id)
+        public async Task<IActionResult> ChangeActiveStatus(Offer o)
         {
             try
             {
-                if (id != 0)
+                if (o.OfferId > 0)
                 {
                     bool isStatusChanged = false;
-                    Offer offer = await _offerManager.GetOfferById(id);
+                    Offer offer = await _offerManager.GetOfferById(o.OfferId);
 
                     if (offer.Name != null)
                     {
-                        isStatusChanged = await _offerManager.ChangeActiveStatus(status, id);
+                        isStatusChanged = await _offerManager.ChangeActiveStatus(o.IsActive, o.OfferId);
 
                         if (isStatusChanged)
                         {
@@ -151,7 +151,7 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        return BadRequest(DisplayMessages.EmptyExistData + id);
+                        return BadRequest(DisplayMessages.EmptyExistData + o.OfferId);
                     }
                 }
                 else
