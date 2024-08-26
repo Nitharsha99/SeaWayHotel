@@ -228,7 +228,8 @@ namespace seaway.API.Controllers
                             Price = offer.Price,
                             DiscountPercentage = offer.Discount,
                             IsActive = offer.IsActive,
-                            IsRoomOffer = offer.IsRoomOffer
+                            IsRoomOffer = offer.IsRoomOffer,
+                            UpdatedBy = offer.UpdatedBy
                         };
                         _offerManager.UpdateOffer(updatedOffer, Id);
 
@@ -238,7 +239,8 @@ namespace seaway.API.Controllers
                             PicDocument pic = new PicDocument
                             {
                                 PicType = PicType.Offer,
-                                PicTypeId = Id
+                                PicTypeId = Id,
+                                CreatedBy = offer.UpdatedBy
                             };
 
                             foreach (var item in offer.offerPics)
