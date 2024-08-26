@@ -75,15 +75,13 @@
                     <td>{{offer.validFrom | date: 'dd/MM/yyyy'}}</td>
                     <td>{{offer.validTo | date: 'dd/MM/yyyy'}}</td>
                     <td>{{offer.price | currency: 'LKR' : 'Rs '}}</td>
-                    <td>{{offer.discountPercentage}}</td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isRoomOffer">
-                        </div>
+                    <td style="padding-left: 3%;">{{offer.discountPercentage}}</td>
+                    <td >
+                        <i [ngClass]="offer.isRoomOffer ? 'bi-check text-primary' : 'bi-x text-danger'" style="font-size: 25px; font-weight:bolder; margin-left: 20%;"></i>
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isActive">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="offer.isActive" >
                         </div>
                     </td>
                     <td>
@@ -92,7 +90,7 @@
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn delete-btn">
+                        <button type="button" class="btn delete-btn" (click)="deleteOffer(offer.offerId)">
                             <i class="bi bi-trash-fill" style="color: #EE0004"></i>
                         </button>
                     </td>
