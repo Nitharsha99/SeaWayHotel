@@ -1,5 +1,4 @@
 ﻿using seaway.API.Configurations;
-using seaway.API.Models.ViewModels;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;

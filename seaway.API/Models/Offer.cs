@@ -10,7 +10,7 @@
         public double? DiscountAmount { get; set; }
         public DateTime? ValidFrom { get; set; }
         public DateTime? ValidTo { get; set;}
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public bool? IsRoomOffer { get; set;}
         public string? CreatedBy { get; set; }
         public DateTime? Created { get; set; }
