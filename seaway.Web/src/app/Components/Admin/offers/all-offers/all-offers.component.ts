@@ -18,6 +18,7 @@ export class AllOffersComponent implements OnInit{
   offers: Offer[] = [];
   filteredOffers: Offer[] = [];
   totalItems: number = 0;
+  updatedBy!: string;
   filters = {
     search: '',
     roomOffer: '',
@@ -54,7 +55,6 @@ export class AllOffersComponent implements OnInit{
   onSearch(): void{
     console.log(this.filters);
     this.filteredOffers = this.offers.filter(o => {
-      console.log('date', new Date(o.validFrom).getTime())
       return (
         (this.filters.search === '' || o.name.toLowerCase().includes(this.filters.search.toLowerCase())) &&
         (this.filters.roomOffer === '' || o.isRoomOffer.toString().toLowerCase().includes(this.filters.roomOffer.toLowerCase())) &&
@@ -158,7 +158,8 @@ export class AllOffersComponent implements OnInit{
   }
 
   changeStatus(status: boolean, id: number): void{
-    this.offerService.ChangeStatus(status, id).subscribe(() => {
+    this.updatedBy = "Nitharsha";
+    this.offerService.ChangeStatus(status, id, this.updatedBy).subscribe(() => {
       setTimeout(() => {
         window.location.reload();
       });

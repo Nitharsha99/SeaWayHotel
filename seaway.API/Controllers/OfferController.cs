@@ -138,7 +138,7 @@ namespace seaway.API.Controllers
 
                     if (offer.Name != null)
                     {
-                        isStatusChanged = await _offerManager.ChangeActiveStatus(o.IsActive, o.OfferId);
+                        isStatusChanged = await _offerManager.ChangeActiveStatus(o);
 
                         if (isStatusChanged)
                         {

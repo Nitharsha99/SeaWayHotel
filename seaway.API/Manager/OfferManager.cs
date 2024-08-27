@@ -199,11 +199,11 @@ namespace seaway.API.Manager
             }
         }
 
-        public async Task<bool> ChangeActiveStatus(bool status, int id)
+        public async Task<bool> ChangeActiveStatus(Offer o)
         {
             try
             {
-                var query = "UPDATE Offers SET IsActive = @status WHERE OfferId = @Id";
+                var query = "UPDATE Offers SET IsActive = @status, Created = GETDATE(), UpdatedBy = @updatedBy WHERE OfferId = @Id";
 
                 using (SqlConnection con = new SqlConnection(this._conString))
                 {
@@ -211,12 +211,13 @@ namespace seaway.API.Manager
                     {
                         await con.OpenAsync();
 
-                        cmd.Parameters.AddWithValue("@Id", id);
-                        cmd.Parameters.AddWithValue("@status", status);
+                        cmd.Parameters.AddWithValue("@Id", o.OfferId);
+                        cmd.Parameters.AddWithValue("@status", o.IsActive);
+                        cmd.Parameters.AddWithValue("@updatedBy", o.UpdatedBy);
 
                         await cmd.ExecuteNonQueryAsync();
 
-                        _logger.LogTrace("Sucessfully Changed Offer Status of Id --> " + id + "From Database");
+                        _logger.LogTrace("Sucessfully Changed Offer Status of Id --> " + o.OfferId + "From Database");
 
                         return true;
 

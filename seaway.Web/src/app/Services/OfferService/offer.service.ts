@@ -40,8 +40,8 @@ export class OfferService {
     );
   }
 
-  ChangeStatus(status: boolean, id: number): Observable<any>{
-    return this.http.patch<any>(this.baseUrl, { isActive: status, offerId: id }).pipe(
+  ChangeStatus(status: boolean, id: number, updatedBy: string): Observable<any>{
+    return this.http.patch<any>(this.baseUrl, { isActive: status, offerId: id, updatedBy: updatedBy, createdBy: '' }).pipe(
       catchError((error: any) => {
         return throwError(error.error);
       })
