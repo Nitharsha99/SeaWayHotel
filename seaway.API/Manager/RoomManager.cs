@@ -116,6 +116,36 @@ namespace seaway.API.Manager
             }
         }
 
+        public async void UpdateRoom(Room room)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateRoom", con))
+                    {
+                        await con.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@roomId", room.Id);
+                        cmd.Parameters.AddWithValue("@roomNumber", room.RoomNumber);
+                        cmd.Parameters.AddWithValue("@roomTypeId", room.RoomTypeId);
+                        cmd.Parameters.AddWithValue("@updatedBy", room.UpdatedBy);
+
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                _logger.LogTrace(LogMessages.RecordUpdated);
+            }
+            catch(Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                throw;
+            }
+        }
+
         public async Task<bool> IsNumberExist(string number)
         {
             if (string.IsNullOrEmpty(number))
