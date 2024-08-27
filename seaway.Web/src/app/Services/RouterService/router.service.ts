@@ -19,8 +19,8 @@ export class RouterService {
       filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       const showHeaderFooter = !event.url.includes('/Administration');
-      const adminHeaderFooter$ = (event.url.includes('/Administration/')) && !(event.url.includes('/Administration/password'));
-      const passwordHeaderFooter = event.url.includes('/Administration/password');
+      const adminHeaderFooter$ = (event.url.includes('/Administration/')) && !(event.url.includes('/Administration/password')) && !(event.url.includes('/Administration/reset'));
+      const passwordHeaderFooter = event.url.includes('/Administration/password') || event.url.includes('/Administration/reset');
       console.log("checking", showHeaderFooter, event.url, '/Administration');
       this._showHeaderFooter.next(showHeaderFooter);
       this._adminHeaderFooter.next(adminHeaderFooter$);
