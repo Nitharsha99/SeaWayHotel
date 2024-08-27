@@ -28,8 +28,8 @@
             (input)="onSearch()" placeholder="Valid From" (focus)="dateInput.type='date'" (blur)="dateInput.type='text'">
         </div>
         <div class="col-sm-2">
-            <input #dateInput type="text" class="form-control date" [(ngModel)]="filters.validTo" 
-            (input)="onSearch()" placeholder="Valid To" (focus)="dateInput.type='date'" (blur)="dateInput.type='text'">
+            <input #dateInputTo type="text" class="form-control date" [(ngModel)]="filters.validTo" 
+            (input)="onSearch()" placeholder="Valid To" (focus)="dateInputTo.type='date'" (blur)="dateInputTo.type='text'">
         </div>
         <div class="col-sm-2">
             <select class="form-select" [(ngModel)]="filters.priceRange" (change)="onSearch()">
