@@ -86,5 +86,67 @@ namespace seaway.API.Manager
                 throw;
             }
         }
+
+        public async Task<bool> NewRoom(Room room)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("InsertNewRoom", con))
+                    {
+                        await con.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@roomNumber", room.RoomNumber);
+                        cmd.Parameters.AddWithValue("@roomTypeId", room.RoomTypeId);
+                        cmd.Parameters.AddWithValue("@createdBy", room.CreatedBy);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                _logger.LogTrace(LogMessages.NewRecordCreated);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> IsNumberExist(string number)
+        {
+            if (string.IsNullOrEmpty(number))
+            {
+                return false;
+            }
+            else
+            {
+                var result = (await GetAllRooms())
+                    .Where(a => a.RoomNumber.Trim().ToLower() == number.Trim().ToLower())
+                    .ToList();
+
+                if (result.Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsNumberChange(string inputNumber, string oldNumber)
+        {
+            if (string.IsNullOrEmpty(inputNumber) || string.IsNullOrEmpty(oldNumber)) { return false; }
+            else
+            {
+                bool isNameChange = inputNumber.Trim().ToLower() != oldNumber.Trim().ToLower();
+                return isNameChange;
+            }
+        }
     }
 }

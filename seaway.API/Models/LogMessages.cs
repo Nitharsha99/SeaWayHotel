@@ -43,6 +43,7 @@ namespace seaway.API.Models
         public const string InsertingError = "Issue in Inserting data";
 
         public const string ExistNameError = "This name already exists";
+        public const string ExistNumberError = "This number already exists";
 
         public const string StatusChangeError = "Error on changing active status";
         public const string DeletingError = "Issue While delete the data";
