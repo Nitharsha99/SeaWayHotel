@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using seaway.API.Models.Enum;
+using seaway.API.Models.ViewModels;
 
 namespace seaway.API.Controllers
 {
@@ -83,6 +85,56 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.FindDataByIdError + Id + " : " + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> NewRoom(Room room)
+        {
+            try
+            {
+                bool isNumberExist = false;
+                if (room.RoomNumber == null || room.RoomTypeId == 0)
+                {
+                    return BadRequest(DisplayMessages.NullInput);
+                }
+                else
+                {
+                    isNumberExist = await _roomManager.IsNumberExist(room.RoomNumber);
+
+                    if (isNumberExist)
+                    {
+                        return BadRequest(DisplayMessages.ExistNumberError);
+                    }
+                    else
+                    {
+                        bool isCreated = await _roomManager.NewRoom(room);
+
+                        string responseBody = JsonConvert.SerializeObject(room);
+                        string requestUrl = HttpContext.Request.Path.ToString();
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                        if (!isCreated)
+                        {
+                            return StatusCode(500, "Internal Server Error");
+                        }
+                        else
+                        {
+                            return Ok(room);
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
