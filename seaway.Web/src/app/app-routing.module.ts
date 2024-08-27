@@ -16,6 +16,7 @@ import { AllOffersComponent } from './Components/Admin/offers/all-offers/all-off
 import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-offers.component';
 import { ManagersComponent } from './Components/Admin/managers/managers.component';
 import { ForgotPasswordComponent } from './Components/Admin/login/forgot-password/forgot-password.component';
+import { NewPasswordComponent } from './Components/Admin/login/new-password/new-password.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -24,9 +25,10 @@ const routes: Routes = [
    children: [
     {path: '', component: LoginComponent},
     {path: 'password', component: ForgotPasswordComponent},
+    {path: 'reset', component: NewPasswordComponent},
     {path: 'Home', component: MainAdminPageComponent},
     {path: 'Rooms', component: RoomsComponent,
-    children: [
+     children: [
       {path: '', component: AllRoomsComponent},
       {path: 'addRoom', component:AddRoomComponent},
       {path: 'editRoom/:id', component:AddRoomComponent}
