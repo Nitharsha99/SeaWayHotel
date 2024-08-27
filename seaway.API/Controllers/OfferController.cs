@@ -214,7 +214,10 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if (Id != 0)
+                bool isNameExist = false;
+                bool isNameChange = false;
+
+                if (Id > 0)
                 {
                     Offer oldOffer = await _offerManager.GetOfferById(Id);
                     if (oldOffer.Name != null)
@@ -261,7 +264,7 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                        return NotFound(DisplayMessages.EmptyExistData);
                     }
                 }
                 else

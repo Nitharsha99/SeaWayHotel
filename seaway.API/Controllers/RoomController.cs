@@ -139,6 +139,65 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateRoom(Room room, int Id)
+        {
+            try
+            {
+                bool isNumberExist = false;
+                bool isNumberChange = false;
+
+                if (Id > 0)
+                {
+                    Room oldRoom = await _roomManager.GetRoomById(Id);
+                    if(oldRoom.RoomNumber != null)
+                    {
+                        if(room.RoomNumber != null)
+                        {
+                            isNumberChange = _roomManager.IsNumberChange(room.RoomNumber, oldRoom.RoomNumber);
+
+                            if (isNumberChange)
+                            {
+                                isNumberExist = await _roomManager.IsNumberExist(room.RoomNumber);
+                            }
+                        }
+                        if (isNumberExist)
+                        {
+                            return BadRequest(DisplayMessages.ExistNumberError);
+                        }
+                        else
+                        {
+                            room.Id = Id;
+                            _roomManager.UpdateRoom(room);
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(room);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                            return Ok(room);
+                        }
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
 
     }
 }
