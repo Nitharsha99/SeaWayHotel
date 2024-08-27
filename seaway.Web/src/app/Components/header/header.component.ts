@@ -9,6 +9,7 @@ import { RouterService } from 'src/app/Services/RouterService/router.service';
 export class HeaderComponent implements OnInit{
   canDisplay: boolean = true;
   adminHeaderFooter: boolean = false;
+  passwordHeaderFooter: boolean = false;
   isDropdownOpen = false;
 
   constructor(private routerService: RouterService){
@@ -21,6 +22,10 @@ export class HeaderComponent implements OnInit{
 
     this.routerService.adminHeaderFooter$.subscribe(adminHeaderFooter => {
       this.adminHeaderFooter = adminHeaderFooter;
+    });
+
+    this.routerService.passwordHeaderFooter$.subscribe(passwordHeaderFooter => {
+      this.passwordHeaderFooter = passwordHeaderFooter;
     });
   }
 

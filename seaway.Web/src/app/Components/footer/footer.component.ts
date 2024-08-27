@@ -10,6 +10,7 @@ export class FooterComponent implements OnInit{
 
   canDisplay: boolean = true;
   adminHeaderFooter: boolean = false;
+  passwordHeaderFooter: boolean = false;
 
   constructor(private routerService: RouterService){
   }
@@ -20,6 +21,9 @@ export class FooterComponent implements OnInit{
     });
     this.routerService.adminHeaderFooter$.subscribe(adminHeaderFooter => {
       this.adminHeaderFooter = adminHeaderFooter;
+    });
+    this.routerService.passwordHeaderFooter$.subscribe(passwordHeaderFooter => {
+      this.passwordHeaderFooter = passwordHeaderFooter;
     });
     
   }

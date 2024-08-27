@@ -2,13 +2,7 @@
     <div>
 
         <form style="margin-left: 30%; margin-right: 30%; border-radius: 40px;" class="shadow-lg p-4 mb-5 bg-body" [formGroup]="loginForm">
-            <!-- 
 
-            <div class="input">
-                <input [type]="visible ? 'text' : 'password' " id="password" placeholder="Password" required formControlName="password">
-                <i (click)="passwordVisible()" [ngClass]="visible? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill' "></i>
-            </div>
- -->
             <div class="mt-4 mb-4" style="width: 93%; margin-left: 5%;">
                 <div style="text-align: center; margin-top: 5%; padding-bottom: 6%; ">
                     <h1>Login to Account</h1>
@@ -25,8 +19,8 @@
 
                 <div class="row" style="padding-top: 10px; padding-bottom: 15px;">
                     <div class="col-md-12 mb-3">
-                        <label for="activityName"  class="form-label">Username</label>
-                        <input type="text" class="form-control" id="activityName" placeholder="SeawayHotel" required >
+                        <label for="username"  class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="SeawayHotel" required >
                         <!-- <div 
                         *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
                         class="alert p-0 mb-0" >
