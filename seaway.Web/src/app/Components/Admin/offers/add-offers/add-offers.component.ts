@@ -127,7 +127,31 @@ export class AddOffersComponent implements OnInit{
   }
 
   deleteImages(): void{
-
+    this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
+      if(result.isConfirmed){
+        this.offerService.DeleteImages(this.selectedPictures).subscribe((res) =>{
+          if(res.includes("Deleted")){
+            Swal.fire({
+              icon: "success",
+              title: "Successfully Deleted Images!!! ",
+              showConfirmButton: true,
+              iconColor: '#570254',
+              confirmButtonColor: '#570254'
+            }).then(() => {
+              setTimeout(() => {
+                window.location.reload();
+              });
+            });
+          }
+    
+        });
+      }
+      else if (result.dismiss === Swal.DismissReason.cancel) {
+        setTimeout(() => {
+          window.location.reload();
+        });
+     }
+    });
   }
 
   onSelect(event: any){
