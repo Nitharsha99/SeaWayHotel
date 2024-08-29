@@ -8,11 +8,11 @@ import { PicDocument } from 'src/app/Models/picDocument';
 import { CommonFunctionComponent } from 'src/app/commonFunction';
 
 @Component({
-  selector: 'app-add-room',
-  templateUrl: './add-room.component.html',
-  styleUrls: ['./add-room.component.css']
+  selector: 'app-add-room-category',
+  templateUrl: './add-room-category.component.html',
+  styleUrls: ['./add-room-category.component.css']
 })
-export class AddRoomComponent implements OnInit{
+export class AddRoomCategoryComponent implements OnInit {
 
 updateMode: boolean = false;
 files: File[] = [];
