@@ -8,6 +8,7 @@ using seaway.API.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using seaway.API.Models;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -31,6 +32,7 @@ try
     builder.Services.AddScoped<OfferManager>();
     builder.Services.AddScoped<AdminManager>();
     builder.Services.AddScoped<RoomManager>();
+    builder.Services.AddScoped<EmailManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
@@ -45,6 +47,8 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:Key"]))
             };
         });
+
+    builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
