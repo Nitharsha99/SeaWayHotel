@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Offer } from 'src/app/Models/offer';
@@ -46,5 +46,11 @@ export class OfferService {
         return throwError(error.error);
       })
     );
+  }
+
+  DeleteImages(ids: string[]): Observable<any>{
+    let params = new HttpParams();
+    ids.forEach((id) => params = params.append('ids', id));
+    return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
   }
 }
