@@ -16,11 +16,8 @@ import { NewActivityComponent } from './Components/new-activity/new-activity.com
 import { RoomListComponent } from './Components/room-list/room-list.component';
 import { RoomViewComponent } from './Components/room-view/room-view.component';
 import { MainAdminPageComponent } from './Components/Admin/main-admin-page/main-admin-page.component';
-import { RoomsComponent } from './Components/Admin/roomCategory/rooms.component';
 import { ActivitiesComponent } from './Components/Admin/activities/activities.component';
 import { AdminMainComponent } from './Components/Admin/admin-main/admin-main.component';
-import { AddRoomComponent } from './Components/Admin/roomCategory/add-room/add-room.component';
-import { AllRoomsComponent } from './Components/Admin/roomCategory/all-rooms/all-rooms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './Components/Admin/login/login.component';
 import { AddActivitiesComponent } from './Components/Admin/activities/add-activities/add-activities.component';
@@ -32,6 +29,12 @@ import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-off
 import { ManagersComponent } from './Components/Admin/managers/managers.component';
 import { ForgotPasswordComponent } from './Components/Admin/login/forgot-password/forgot-password.component';
 import { NewPasswordComponent } from './Components/Admin/login/new-password/new-password.component';
+import { RoomCategoriesComponent } from './Components/Admin/room-categories/room-categories.component';
+import { AddRoomCategoryComponent } from './Components/Admin/room-categories/add-room-category/add-room-category.component';
+import { AllRoomCategoiesComponent } from './Components/Admin/room-categories/all-room-categoies/all-room-categoies.component';
+import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
+import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
 
 
 @NgModule({
@@ -45,11 +48,8 @@ import { NewPasswordComponent } from './Components/Admin/login/new-password/new-
     RoomListComponent,
     RoomViewComponent,
     MainAdminPageComponent,
-    RoomsComponent,
     ActivitiesComponent,
     AdminMainComponent,
-    AddRoomComponent,
-    AllRoomsComponent,
     LoginComponent,
     AddActivitiesComponent,
     AllActivitiesComponent,
@@ -59,7 +59,12 @@ import { NewPasswordComponent } from './Components/Admin/login/new-password/new-
     ManagersComponent,
     ForgotPasswordComponent,
     NewPasswordComponent,
-
+    RoomCategoriesComponent,
+    AddRoomCategoryComponent,
+    AllRoomCategoiesComponent,
+    AllRoomsComponent,
+    AddRoomComponent,
+    RoomsComponent
   ],
   imports: [
     BrowserModule,

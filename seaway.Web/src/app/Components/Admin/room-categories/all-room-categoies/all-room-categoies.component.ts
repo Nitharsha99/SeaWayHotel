@@ -7,12 +7,13 @@ import { RoomCategoryService } from 'src/app/Services/RoomCategoryService/room.s
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-all-rooms',
-  templateUrl: './all-rooms.component.html',
-  styleUrls: ['./all-rooms.component.css']
+  selector: 'app-all-room-categoies',
+  templateUrl: './all-room-categoies.component.html',
+  styleUrls: ['./all-room-categoies.component.css']
 })
-export class AllRoomsComponent implements OnInit{
+export class AllRoomCategoiesComponent implements OnInit {
 
+  
   roomCategory:RoomCategory[] = [];
   pageSize:number = 5;
   page: number = 1;

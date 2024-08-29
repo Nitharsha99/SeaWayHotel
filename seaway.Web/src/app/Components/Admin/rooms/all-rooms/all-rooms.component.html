@@ -1,0 +1,75 @@
+<div style="width: 98%; border-radius: 15px; border: #4F4F4F;" class="mx-3 shadow-lg mb-5 bg-body"> 
+
+    <div class="mx-3 mt-4">
+        <div class="row">
+            <div class="col-2 mt-3">
+                <h1>Room List</h1>
+            </div>
+            <div class="col-7 d-flex form-inputs mt-3" style="text-align: center;">
+                <i class="bi bi-search"></i>
+                <input type="text" [(ngModel)]="filters.search" class="form-control" placeholder="Search Rooms...." (input)="onFilterChange()">
+            </div>
+            <div class="col-3 mt-3" style="text-align: right;">
+                <button type="button" class="btn btn-view" (click)="navigateToCategories()" style="background-color: #570254; color: #FFFFFF;">Room Categories</button>
+                <button type="button" class="btn" (click)="navigateToNewRoom()" style="background-color: #570254; color: #FFFFFF;">+ New Room</button>
+            </div>
+        </div>  
+    </div>
+
+    <div class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms now !!</h3></div>
+
+    <div class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms for this Serching !!</h3></div>
+
+    <div>
+        <table class="table table-striped mx-3 my-3 mt-4">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-white">Id</th>
+                    <th scope="col" class="text-white">Room Number</th>
+                    <th scope="col" class="text-white">Room Type</th>
+                    <th scope="col" class="text-white">Avalability</th>
+                    <th scope="col" class="text-white">Last Booking</th>
+                    <th scope="col" class="text-white">Edit</th>
+                    <th scope="col" class="text-white">Delete</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr >
+                    <td>1</td>
+                    <td>R001</td>
+                    <td style="justify-content: center;">Double Room</td>
+                    <td >
+                        <i [ngClass]="available ? 'bi-check text-primary' : 'bi-x text-danger'" style="font-size: 25px; font-weight:bolder; margin-left: 10%;"></i>
+                    </td>
+                    <td style="justify-content: center;">22-08-2024</td>
+                    <td>
+                        <button type="button" class="btn edit-btn" (click)="navigateToUpdate()">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn delete-btn" (click)="deleteRoom()">
+                            <i class="bi bi-trash-fill" style="color: #EE0004"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>    
+        </table>
+
+        <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
+            <pagination-controls
+                class="pagination-right"
+                (pageChange)="onPageChange($event)"
+                (totalItems)="totalItems"
+                (itemsPerPage)="pageSize"
+            >
+            </pagination-controls>
+        </div>
+
+    </div>
+
+
+</div>
+
+
