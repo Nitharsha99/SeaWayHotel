@@ -146,6 +146,37 @@ namespace seaway.API.Manager
             }
         }
 
+        public async Task<bool> DeleteRoom(int id)
+        {
+            try
+            {
+                var query = "DELETE FROM Rooms WHERE RoomId = @roomId";
+
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        await con.OpenAsync();
+
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@roomId", id);
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                        _logger.LogTrace("Sucessfully Deleted Room of Id --> " + id + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
+
         public async Task<bool> IsNumberExist(string number)
         {
             if (string.IsNullOrEmpty(number))
