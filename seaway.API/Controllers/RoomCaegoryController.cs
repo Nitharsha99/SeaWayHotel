@@ -325,7 +325,7 @@ namespace seaway.API.Controllers
 
                     Category = await _roomCategoryManager.GetRoomCategoryById(Id);
 
-                    if (Category.CategoryId != null)
+                    if (Category.CategoryId > 0)
                     {
                         if (Category?.RoomPics?.Count > 0)
                         {

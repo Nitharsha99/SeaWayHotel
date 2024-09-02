@@ -198,6 +198,56 @@ namespace seaway.API.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteRoom([FromRoute] int Id)
+        {
+            try
+            {
+                if(Id > 0)
+                {
+                    bool isRoomRemove = false;
+
+                    Room room = await _roomManager.GetRoomById(Id);
+
+                    if(room.Id > 0)
+                    {
+                        isRoomRemove = await _roomManager.DeleteRoom(Id);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(room);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        if (isRoomRemove)
+                        {
+                            return Ok(room);
+                        }
+                        else
+                        {
+                            return BadRequest(DisplayMessages.DeletingError);
+                        }
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData);
+                    }
+                }
+                else
+                {
+                    _logger.LogError(LogMessages.InvalidIdError);
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.DeleteRoomCategoryError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
 
     }
 }
