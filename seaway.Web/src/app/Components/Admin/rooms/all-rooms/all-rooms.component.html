@@ -1,26 +1,42 @@
 <div style="width: 98%; border-radius: 15px; border: #4F4F4F;" class="mx-3 shadow-lg mb-5 bg-body"> 
 
-    <div class="mx-3 mt-4">
+    <!-- <div class="mx-3 mt-4">
         <div class="row">
             <div class="col-2 mt-3">
                 <h1>Room List</h1>
             </div>
             <div class="col-7 d-flex form-inputs mt-3" style="text-align: center;">
                 <i class="bi bi-search"></i>
-                <input type="text" [(ngModel)]="filters.search" class="form-control" placeholder="Search Rooms...." (input)="onFilterChange()">
+                <input type="text" [(ngModel)]="search" class="form-control" placeholder="Search Rooms...." (input)="onFilterChange()">
             </div>
             <div class="col-3 mt-3" style="text-align: right;">
                 <button type="button" class="btn btn-view" (click)="navigateToCategories()" style="background-color: #570254; color: #FFFFFF;">Room Categories</button>
                 <button type="button" class="btn" (click)="navigateToNewRoom()" style="background-color: #570254; color: #FFFFFF;">+ New Room</button>
             </div>
         </div>  
-    </div>
+    </div> -->
 
-    <div class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms now !!</h3></div>
+    <div class="container-fluid mx-3 mt-4">
+        <div class="row">
+          <div class="col-12 col-md-2 mt-3">
+            <h1 class="text-md-left">Room List</h1>
+          </div>
+          <div class="col-12 col-md-7 d-flex form-inputs mt-3" style="text-align: center;">
+            <i class="bi bi-search"></i>
+            <input type="text" [(ngModel)]="search" class="form-control" placeholder="Search Rooms...." (input)="onFilterChange()">
+          </div>
+          <div class="col-12 col-md-3 mt-3 text-center text-md-right">
+            <button type="button" class="btn btn-view" (click)="navigateToCategories()" style="background-color: #570254; color: #FFFFFF;">Room Categories</button>
+            <button type="button" class="btn" (click)="navigateToNewRoom()" style="background-color: #570254; color: #FFFFFF;">+ New Room</button>
+          </div>
+        </div>
+      </div>
 
-    <div class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms for this Serching !!</h3></div>
+    <div *ngIf="rooms.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms now !!</h3></div>
 
-    <div>
+    <div *ngIf="rooms.length > 0 && filteredRooms.length == 0" class="mt-4 mb-5" style="text-align: center; padding-bottom: 10px; text-decoration-style: double;"> <h3>There is no any Rooms for this Serching !!</h3></div>
+
+    <div *ngIf="filteredRooms.length > 0">
         <table class="table table-striped mx-3 my-3 mt-4">
             <thead>
                 <tr>
@@ -35,14 +51,16 @@
             </thead>
 
             <tbody>
-                <tr >
-                    <td>1</td>
-                    <td>R001</td>
-                    <td style="justify-content: center;">Double Room</td>
+                <tr *ngFor="let room of filteredRooms | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
+                    <td>{{room.id}}</td>
+                    <td>{{room.roomNumber}}</td>
+                    <td style="justify-content: center;">{{room.roomType}}</td>
                     <td >
-                        <i [ngClass]="available ? 'bi-check text-primary' : 'bi-x text-danger'" style="font-size: 25px; font-weight:bolder; margin-left: 10%;"></i>
+                        <i [ngClass]="room.isAvailable ? 'bi-check text-primary' : 'bi-x text-danger'" style="font-size: 25px; font-weight:bolder; margin-left: 10%;"></i>
                     </td>
-                    <td style="justify-content: center;">22-08-2024</td>
+                    <td style="justify-content: center;">
+                        {{ room.lastCheckOut }}
+                    </td>
                     <td>
                         <button type="button" class="btn edit-btn" (click)="navigateToUpdate()">
                             <i class="bi bi-pencil-fill"></i>
