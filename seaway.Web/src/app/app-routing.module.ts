@@ -14,9 +14,11 @@ import { AddOffersComponent } from './Components/Admin/offers/add-offers/add-off
 import { ManagersComponent } from './Components/Admin/managers/managers.component';
 import { ForgotPasswordComponent } from './Components/Admin/login/forgot-password/forgot-password.component';
 import { NewPasswordComponent } from './Components/Admin/login/new-password/new-password.component';
-import { AddRoomCategoryComponent } from './Components/Admin/room-categories/add-room-category/add-room-category.component';
 import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
+import { AllRoomCategoiesComponent } from './Components/Admin/room-categories/all-room-categoies/all-room-categoies.component';
+import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
+import { AddRoomCategoryComponent } from './Components/Admin/room-categories/add-room-category/add-room-category.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -30,8 +32,14 @@ const routes: Routes = [
     {path: 'Rooms', component: RoomsComponent,
      children: [
       {path: '', component: AllRoomsComponent},
-      {path: 'addRoom', component: AddRoomCategoryComponent},
-      {path: 'editRoom/:id', component: AddRoomCategoryComponent}
+      {path: 'addRoom', component: AddRoomComponent},
+      {path: 'editRoom/:id', component: AddRoomComponent},
+      {path: 'types', component: AllRoomCategoiesComponent,
+        children: [
+          {path: 'add', component: AddRoomCategoryComponent},
+          {path: 'edit/:id', component: AddRoomCategoryComponent},
+        ]
+      }
     ]
     },
     {path: 'Activities', component: ActivitiesComponent,

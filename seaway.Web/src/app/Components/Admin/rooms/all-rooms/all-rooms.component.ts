@@ -1,5 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonFunctionComponent } from 'src/app/commonFunction';
 import { Room } from 'src/app/Models/room';
 import { RoomService } from 'src/app/Services/RoomService/room.service';
 
@@ -11,7 +13,7 @@ import { RoomService } from 'src/app/Services/RoomService/room.service';
 export class AllRoomsComponent implements OnInit{
 
   totalItems!: number;
-  pageSize:number = 5;
+  pageSize:number = 8;
   page: number = 1;
   search: string = '';
   
@@ -20,7 +22,9 @@ export class AllRoomsComponent implements OnInit{
 
   available: boolean = false;
 
-  constructor(private roomService: RoomService){
+  constructor(private roomService: RoomService, private route: ActivatedRoute,
+              private router: Router, private commonFunction: CommonFunctionComponent
+  ){
   }
 
   ngOnInit(): void {
@@ -40,19 +44,25 @@ export class AllRoomsComponent implements OnInit{
   }
 
   onFilterChange(): void{
+    this.filteredRooms = this.rooms.filter(r => {
+      return(
+        this.search === '' || 
+        (
+          r.roomNumber.toLowerCase().includes(this.search.toLowerCase()) || 
+          r.roomType.toLowerCase().includes(this.search.toLowerCase())
+        )
+      )
+    });
 
+    this.updateFilteredRooms();
   }
 
   navigateToNewRoom(): void{
-
-  }
-
-  onReset(): void{
-
+    this.router.navigate(['addRoom'], {relativeTo: this.route});
   }
 
   onPageChange(event: any): void{
-
+    this.page = event;
   }
 
   deleteRoom(){
@@ -60,11 +70,17 @@ export class AllRoomsComponent implements OnInit{
   }
 
   navigateToUpdate(){
-    
+    //this.router.navigate(['editRoom', id], {relativeTo: this.route});
   }
 
   navigateToCategories(){
+    this.router.navigate(['types'], {relativeTo: this.route});
+  }
 
+  updateFilteredRooms(){
+    this.page =1;
+    this.pageSize = 8;
+    this.totalItems = this.filteredRooms.length;
   }
 
 }
