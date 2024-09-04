@@ -34,11 +34,9 @@ export class AllRoomCategoiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.roomCategoryService.GetAllRoomCategories().subscribe(res => {
-      console.log(res)
       this.roomCategory = res;
       this.filteredCategory = this.roomCategory;
       this.totalItems = this.filteredCategory.length;
-      console.log(this.totalItems)
     });
 
     this.updateDisplayedRooms();

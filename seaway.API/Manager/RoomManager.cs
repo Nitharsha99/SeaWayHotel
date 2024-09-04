@@ -11,13 +11,15 @@ namespace seaway.API.Manager
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly RoomCategoryManager _roomCategoryManager;
+        private readonly BookingManager _bookingManager;
         string _conString;
-        public RoomManager(ILogger<LogHandler> logger, IConfiguration configuration, RoomCategoryManager roomCategoryManager)
+        public RoomManager(ILogger<LogHandler> logger, IConfiguration configuration, RoomCategoryManager roomCategoryManager, BookingManager bookingManager)
         {
             _logger = logger;
             _configuration = configuration;
             _conString = _configuration.GetConnectionString("DefaultConnection");
             _roomCategoryManager = roomCategoryManager;
+            _bookingManager = bookingManager;
         }
 
         public async Task<List<Room>> GetAllRooms()
@@ -48,6 +50,22 @@ namespace seaway.API.Manager
                                 Updated = Convert.ToDateTime(reader["Updated"]),
                                 UpdatedBy = reader["UpdatedBy"].ToString()
                             };
+
+                            List<Bookings> bookings = await _bookingManager.GetBookingsByRoomId(r.Id);
+                            
+                            if (bookings.Count > 0)
+                            {
+                                var b = bookings.FirstOrDefault();
+                                r.LastCheckOut = b.CheckOut;
+
+                                DateTime today = DateTime.Now;
+                                r.isAvailable = b.CheckOut < today;
+                            }
+                            else
+                            {
+                                r.isAvailable = true;
+                            }
+                            
 
                             RoomCategory roomTypes = await _roomCategoryManager.GetRoomCategoryById(r.RoomTypeId ?? 0);
                             r.RoomType = roomTypes.RoomName;
