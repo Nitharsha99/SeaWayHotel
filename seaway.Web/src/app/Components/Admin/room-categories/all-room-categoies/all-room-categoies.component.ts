@@ -68,12 +68,11 @@ export class AllRoomCategoiesComponent implements OnInit {
 
 
   navigateToNewRoom(): void{
-    this.router.navigate(['addRoom'], {relativeTo: this.route});
+    this.router.navigate(['add'], {relativeTo: this.route});
   }
 
   navigateToUpdate(id: number){
-    console.log("id", id);
-    this.router.navigate(['editRoom', id], {relativeTo: this.route});
+    this.router.navigate(['edit', id], {relativeTo: this.route});
   }
 
   deleteRoom(id: number){

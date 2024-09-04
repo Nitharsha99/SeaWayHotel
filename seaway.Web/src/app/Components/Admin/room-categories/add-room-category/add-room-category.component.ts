@@ -222,10 +222,10 @@ imageHeight: number = 110;
 
  redirectToBack(){
   if(this.updateMode){
-    this.router.navigate(['../../../Rooms'], {relativeTo: this.route});
+    this.router.navigate(['../../../types'], {relativeTo: this.route});
   }
   else{
-    this.router.navigate(['../../Rooms'], {relativeTo: this.route});
+    this.router.navigate(['../../types'], {relativeTo: this.route});
   }
 
  }
