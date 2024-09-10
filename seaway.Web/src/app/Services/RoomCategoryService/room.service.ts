@@ -37,7 +37,6 @@ export class RoomCategoryService {
   }
 
   DeleteImages(ids: string[]){
-    console.log("Deleting images:", ids);
     let params = new HttpParams();
     ids.forEach((id) => params = params.append('ids', id));
     return this.http.delete(`${this.baseUrl}/image`, { params, responseType: 'text'});
