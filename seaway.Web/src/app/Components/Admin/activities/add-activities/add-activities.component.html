@@ -96,12 +96,12 @@
                 </div>
         
                 <div class="row mt-3">
-                    <div class="col-2">
+                    <div class="col-3">
                         <button type="button" class="btn" (click)="redirectToBack()" style="background-color: #570254; color: #FFFFFF;">
                             <i class="bi bi-arrow-left-short"></i>
                             Back</button> 
                     </div>
-                    <div class="col-10" style="text-align: right;">
+                    <div class="col-9" style="text-align: right;">
                         <button *ngIf="updateMode == false" type="button" class="btn btn-reset" (click)="resetForm()">Reset</button>
                         <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addActivity()">
                             {{updateMode ? 'Update' : 'Create'}}

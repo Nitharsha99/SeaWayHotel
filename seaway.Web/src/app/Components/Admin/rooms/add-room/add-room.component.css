@@ -1,0 +1,28 @@
+.container{
+    width: 60%;
+    border-radius: 10px;
+    margin-top: 2%;
+    display: block;
+}
+
+h1{
+    background-color: #4F4F4F;
+    color: #FFFFFF;
+    padding-left: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 5px;
+    font-size: 26px;
+}
+
+input, select{
+    background-color: #F5F6FA;
+}
+
+span, .alert{
+    color: #EE0004;
+}
+
+.btn-reset{
+    background-color: #FCBE2D;
+}

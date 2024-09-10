@@ -1,1 +1,51 @@
-<p>add-room works!</p>
+<div>
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+    
+        <form [formGroup]="roomForm" (ngSubmit)="addRoom()" class="row g-3">
+            <div class="mt-4 mb-4" style="width: 90%; margin-left: 5%;">
+                <div style="padding-bottom: 10px;">
+                    <h1>{{ updateMode ? 'Update Room' : 'Create Room'}}</h1>
+                </div>
+                <div class="mb-4" style="padding-bottom: 10px;">
+                    <label for="roomName"  class="form-label">Room Name<span>*</span></label>
+                    <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
+                        <div *ngIf="roomForm.controls['roomName'].invalid && (roomForm.controls['roomName'].dirty || roomForm.controls['roomName'].touched)" class="alert p-0 mb-0" >
+                          <div *ngIf="roomForm.controls['roomName']?.errors?.['required']">
+                            Please enter room name
+                          </div>
+                        </div>
+
+                </div>
+
+                <div class="mb-3" style="padding-bottom: 10px;">
+                    <label for="roomCategory"  class="form-label">Room Category<span>*</span></label>
+                    <select class="form-control" id="roomCategory" formControlName="roomCategory" requireds>
+                        <option value="" selected>Select Room Category</option>
+                        <option *ngFor="let category of categories" [value]="category.categoryId">{{ category.roomName }}</option>
+                    </select>
+                    <div *ngIf="roomForm.controls['roomCategory'].invalid && (roomForm.controls['roomCategory'].dirty || roomForm.controls['roomCategory'].touched)" class="alert p-0 mb-0" >
+                        <div *ngIf="roomForm.controls['roomCategory']?.errors?.['required']">
+                        Please enter room name
+                        </div>
+                    </div>
+
+                </div>
+        
+                <div class="row mt-3" style="padding-top: 20px;">
+                    <div class="col-3">
+                        <button type="button" class="btn" (click)="redirectToBack()" style="background-color: #570254; color: #FFFFFF;">
+                            <i class="bi bi-arrow-left-short"></i>
+                            Back</button> 
+                    </div>
+                    <div class="col-9" style="text-align: right;">
+                        <button *ngIf="updateMode == false" type="button" class="btn btn-reset" (click)="resetForm()">Reset</button>
+                        <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addRoom()">
+                            {{updateMode ? 'Update' : 'Create'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
