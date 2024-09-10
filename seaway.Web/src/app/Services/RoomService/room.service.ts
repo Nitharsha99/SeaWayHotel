@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Room } from 'src/app/Models/room';
 
 @Injectable({
@@ -18,5 +18,14 @@ export class RoomService {
 
   FindRoomById(id: number): Observable<Room>{
     return this.http.get<Room>(this.baseUrl + "/" + id);
+  }
+
+  
+  PostRoom(data: any): Observable<any>{
+    return this.http.post<any>(this.baseUrl, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 }

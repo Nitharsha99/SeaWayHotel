@@ -7,10 +7,10 @@
                     <h1>{{ updateMode ? 'Update Room' : 'Create Room'}}</h1>
                 </div>
                 <div class="mb-4" style="padding-bottom: 10px;">
-                    <label for="roomName"  class="form-label">Room Name<span>*</span></label>
-                    <input type="text" class="form-control" id="roomName" placeholder="Room Name" required formControlName="roomName">
-                        <div *ngIf="roomForm.controls['roomName'].invalid && (roomForm.controls['roomName'].dirty || roomForm.controls['roomName'].touched)" class="alert p-0 mb-0" >
-                          <div *ngIf="roomForm.controls['roomName']?.errors?.['required']">
+                    <label for="roomNumber"  class="form-label">Room Number<span>*</span></label>
+                    <input type="text" class="form-control" id="roomNumber" placeholder="Room Number" required formControlName="roomNumber">
+                        <div *ngIf="roomForm.controls['roomNumber'].invalid && (roomForm.controls['roomNumber'].dirty || roomForm.controls['roomNumber'].touched)" class="alert p-0 mb-0" >
+                          <div *ngIf="roomForm.controls['roomNumber']?.errors?.['required']">
                             Please enter room name
                           </div>
                         </div>
@@ -18,13 +18,13 @@
                 </div>
 
                 <div class="mb-3" style="padding-bottom: 10px;">
-                    <label for="roomCategory"  class="form-label">Room Category<span>*</span></label>
-                    <select class="form-control" id="roomCategory" formControlName="roomCategory" requireds>
+                    <label for="roomTypeId"  class="form-label">Room Category<span>*</span></label>
+                    <select class="form-control" id="roomTypeId" formControlName="roomTypeId" requireds>
                         <option value="" selected>Select Room Category</option>
                         <option *ngFor="let category of categories" [value]="category.categoryId">{{ category.roomName }}</option>
                     </select>
-                    <div *ngIf="roomForm.controls['roomCategory'].invalid && (roomForm.controls['roomCategory'].dirty || roomForm.controls['roomCategory'].touched)" class="alert p-0 mb-0" >
-                        <div *ngIf="roomForm.controls['roomCategory']?.errors?.['required']">
+                    <div *ngIf="roomForm.controls['roomTypeId'].invalid && (roomForm.controls['roomTypeId'].dirty || roomForm.controls['roomTypeId'].touched)" class="alert p-0 mb-0" >
+                        <div *ngIf="roomForm.controls['roomTypeId']?.errors?.['required']">
                         Please enter room name
                         </div>
                     </div>
