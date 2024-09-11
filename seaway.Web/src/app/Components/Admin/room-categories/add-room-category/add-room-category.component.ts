@@ -60,7 +60,6 @@ imageHeight: number = 110;
                 element.picValue = urlLink;
               });
             }
-            console.log("pics", this.pictures);
           }
         });
       }
@@ -175,7 +174,6 @@ imageHeight: number = 110;
   const formValue = this.roomForm.value;
   if(this.updateMode === false){
     this.roomCategoryService.PostRoomCategory(formValue).subscribe((res) => {
-      console.log('post result', res);
       Swal.fire({
         title: "Room Category Saved Successfully!!",
         icon: "success",
