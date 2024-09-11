@@ -16,6 +16,7 @@ export class AddRoomComponent implements OnInit{
 
   updateMode: boolean = false;
   categories: RoomCategory[] = [];
+  roomId!: number;
 
   constructor( private router: Router, private builder: FormBuilder,
                private route: ActivatedRoute, private categoryService: RoomCategoryService,
@@ -33,6 +34,18 @@ export class AddRoomComponent implements OnInit{
     this.categoryService.GetAllRoomCategories().subscribe(res => {
       this.categories = res;
     });
+
+    this.route.params.subscribe(params => {
+      if(params['id']){
+        this.roomId = params['id'];
+        this.updateMode = true;
+        this.roomService.FindRoomById(this.roomId).subscribe(res => {
+          if(res != null){
+            this.roomForm.patchValue(res);
+          }
+        })
+      }
+    });
   }
 
   addRoom(){
@@ -40,7 +53,25 @@ export class AddRoomComponent implements OnInit{
 
     if(formValue.roomNumber && formValue.roomTypeId){
       if(this.updateMode){
-
+        if(this.roomId > 0){
+          this.roomService.UpdateRoom(formValue, this.roomId).subscribe(res => {
+            Swal.fire({
+              title: "Room Updated Successfully!!",
+              icon: "success",
+              iconColor: '#570254',
+              showConfirmButton: true,
+              confirmButtonColor: '#570254'
+            }).then(() => {
+              setTimeout(() => {
+                window.location.reload();
+              });
+            });
+          },
+          (error) =>{
+            this.commonFunction.ShowErrorPopup(error);
+           }
+        );
+        }
       }
       else{
         this.roomService.PostRoom(formValue).subscribe(res => {

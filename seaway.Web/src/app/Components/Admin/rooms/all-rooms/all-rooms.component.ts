@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonFunctionComponent } from 'src/app/commonFunction';
 import { Room } from 'src/app/Models/room';
 import { RoomService } from 'src/app/Services/RoomService/room.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-all-rooms',
@@ -65,12 +66,32 @@ export class AllRoomsComponent implements OnInit{
     this.page = event;
   }
 
-  deleteRoom(){
-
+  deleteRoom(id: number){
+    this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
+      if (result.isConfirmed) {
+       this.roomService.DeleteRoom(id).subscribe(res => {
+        Swal.fire({
+          icon: "success",
+          title: "Successfully Deleted " + res.roomNumber + " !!! ",
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          });
+        });
+       });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        setTimeout(() => {
+          window.location.reload();
+        });
+      }
+  });
   }
 
-  navigateToUpdate(){
-    //this.router.navigate(['editRoom', id], {relativeTo: this.route});
+  navigateToUpdate(id: number){
+    this.router.navigate(['editRoom', id], {relativeTo: this.route});
   }
 
   navigateToCategories(){

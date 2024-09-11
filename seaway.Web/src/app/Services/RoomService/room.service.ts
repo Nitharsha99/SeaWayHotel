@@ -28,4 +28,16 @@ export class RoomService {
       })
     );
   }
+
+  UpdateRoom(data: any, id: number): Observable<any>{
+    return this.http.put<any>(this.baseUrl+ "/" + id, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
+  }
+
+  DeleteRoom(id: number): Observable<any>{
+    return this.http.delete<any>(this.baseUrl + "/" + id);
+  }
 }
