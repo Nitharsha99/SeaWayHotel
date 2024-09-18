@@ -295,5 +295,39 @@ namespace seaway.API.Manager
                 return false;
             }
         }
+
+        public async Task<bool> IsUsernameExist(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+            else
+            {
+                var result = (await GetOffers())
+                    .Where(a => a.Name.Trim().ToLower() == name.Trim().ToLower())
+                    .ToList();
+
+                if (result.Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsNameChange(string inputName, string oldName)
+        {
+            if (string.IsNullOrEmpty(inputName) || string.IsNullOrEmpty(oldName)) { return false; }
+            else
+            {
+                bool isNameChange = inputName.Trim().ToLower() != oldName.Trim().ToLower();
+                return isNameChange;
+            }
+        }
+
     }
 }

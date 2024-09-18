@@ -123,7 +123,7 @@ namespace seaway.API.Controllers
                             IsActive = activity.IsActive,
                             Description = activity.Description,
                             CreatedBy = activity.CreatedBy
-                    };
+                        };
                        
                         int actId = await _activityManager.PostActivity(act);
 
