@@ -6,6 +6,7 @@ using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
 using seaway.API.Models.Enum;
+using System.Diagnostics;
 
 namespace seaway.API.Controllers
 {
@@ -61,58 +62,68 @@ namespace seaway.API.Controllers
         {
             try
             {
-                if(offer.Name == null || offer.ValidFrom == null || offer.Price == null)
+                bool isNameExist = false;
+
+                if (offer.Name == null || offer.ValidFrom == null || offer.Price == null)
                 {
                     return BadRequest(DisplayMessages.NullInput);
                 }
                 else
                 {
-                    Offer o = new Offer
+                    isNameExist = await _offerManager.IsUsernameExist(offer.Name);
+
+                    if (isNameExist)
                     {
-                        Name = offer.Name,
-                        Description = offer.Description,
-                        Price = offer.Price,
-                        DiscountPercentage = offer.Discount,
-                        ValidFrom = offer.ValidFrom,
-                        ValidTo = offer.ValidTo,
-                        IsRoomOffer = offer.IsRoomOffer,
-                        CreatedBy = offer.CreatedBy
-                    };
-
-                    int offerId = await _offerManager.NewOffer(o);
-
-                    if(offerId > 0)
-                    {
-                        if (offer?.offerPics?.Length > 0)
-                        {
-                            PicDocument pic = new PicDocument
-                            {
-                                PicType = PicType.Offer,
-                                PicTypeId = offerId,
-                                CreatedBy = offer.CreatedBy
-                            };
-
-                            foreach (var op in offer.offerPics)
-                            {
-                                pic.PicValue = op.PicValue;
-                                pic.PicName = op.PicName;
-                                pic.CloudinaryPublicId = op.CloudinaryPublicId;
-
-                                _documentManager.UploadImage(pic);
-                            }
-                        }
-
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(offer);
-
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                        return Ok(offer);
+                        return BadRequest(DisplayMessages.ExistNameError);
                     }
                     else
                     {
-                        return StatusCode(500, "Internal Server Error");
-                    }
+                        Offer o = new Offer
+                        {
+                            Name = offer.Name,
+                            Description = offer.Description,
+                            Price = offer.Price,
+                            DiscountPercentage = offer.Discount,
+                            ValidFrom = offer.ValidFrom,
+                            ValidTo = offer.ValidTo,
+                            IsRoomOffer = offer.IsRoomOffer,
+                            CreatedBy = offer.CreatedBy
+                        };
 
+                        int offerId = await _offerManager.NewOffer(o);
+
+                        if (offerId > 0)
+                        {
+                            if (offer?.offerPics?.Length > 0)
+                            {
+                                PicDocument pic = new PicDocument
+                                {
+                                    PicType = PicType.Offer,
+                                    PicTypeId = offerId,
+                                    CreatedBy = offer.CreatedBy
+                                };
+
+                                foreach (var op in offer.offerPics)
+                                {
+                                    pic.PicValue = op.PicValue;
+                                    pic.PicName = op.PicName;
+                                    pic.CloudinaryPublicId = op.CloudinaryPublicId;
+
+                                    _documentManager.UploadImage(pic);
+                                }
+                            }
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(offer);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                            return Ok(offer);
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Internal Server Error");
+                        }
+                    }
                 }
 
             }
@@ -222,45 +233,62 @@ namespace seaway.API.Controllers
                     Offer oldOffer = await _offerManager.GetOfferById(Id);
                     if (oldOffer.Name != null)
                     {
-                        Offer updatedOffer = new Offer
+                        if(offer.Name != null)
                         {
-                            Name = offer.Name,
-                            Description = offer.Description,
-                            ValidFrom = offer.ValidFrom,
-                            ValidTo = offer.ValidTo,
-                            Price = offer.Price,
-                            DiscountPercentage = offer.Discount,
-                            IsActive = offer.IsActive,
-                            IsRoomOffer = offer.IsRoomOffer,
-                            UpdatedBy = offer.UpdatedBy
-                        };
-                        _offerManager.UpdateOffer(updatedOffer, Id);
+                            isNameChange = _offerManager.IsNameChange(offer.Name, oldOffer.Name);
 
-
-                        if (offer?.offerPics?.Length > 0)
-                        {
-                            PicDocument pic = new PicDocument
+                            if (isNameChange)
                             {
-                                PicType = PicType.Offer,
-                                PicTypeId = Id,
-                                CreatedBy = offer.UpdatedBy
-                            };
-
-                            foreach (var item in offer.offerPics)
-                            {
-                                pic.PicValue = item.PicValue;
-                                pic.PicName = item.PicName;
-                                pic.CloudinaryPublicId = item.CloudinaryPublicId;
-
-                                _documentManager.UploadImage(pic);
+                                isNameExist = await _offerManager.IsUsernameExist(offer.Name);
                             }
                         }
 
-                        string requestUrl = HttpContext.Request.Path.ToString();
-                        string responseBody = JsonConvert.SerializeObject(offer);
+                        if (isNameExist)
+                        {
+                            return BadRequest(DisplayMessages.ExistNameError);
+                        }
+                        else
+                        {
+                            Offer updatedOffer = new Offer
+                            {
+                                Name = offer.Name,
+                                Description = offer.Description,
+                                ValidFrom = offer.ValidFrom,
+                                ValidTo = offer.ValidTo,
+                                Price = offer.Price,
+                                DiscountPercentage = offer.Discount,
+                                IsActive = offer.IsActive,
+                                IsRoomOffer = offer.IsRoomOffer,
+                                UpdatedBy = offer.UpdatedBy
+                            };
+                            _offerManager.UpdateOffer(updatedOffer, Id);
 
-                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
-                        return Ok(offer);
+                            if (offer?.offerPics?.Length > 0)
+                            {
+                                PicDocument pic = new PicDocument
+                                {
+                                    PicType = PicType.Offer,
+                                    PicTypeId = Id,
+                                    CreatedBy = offer.UpdatedBy
+                                };
+
+                                foreach (var item in offer.offerPics)
+                                {
+                                    pic.PicValue = item.PicValue;
+                                    pic.PicName = item.PicName;
+                                    pic.CloudinaryPublicId = item.CloudinaryPublicId;
+
+                                    _documentManager.UploadImage(pic);
+                                }
+                            }
+
+                            string requestUrl = HttpContext.Request.Path.ToString();
+                            string responseBody = JsonConvert.SerializeObject(offer);
+
+                            _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+                            return Ok(offer);
+
+                        }  
                     }
                     else
                     {
