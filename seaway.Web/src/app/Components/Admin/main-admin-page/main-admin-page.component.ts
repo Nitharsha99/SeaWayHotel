@@ -9,10 +9,17 @@ import { AuthService } from 'src/app/Services/AuthService/auth.service';
 })
 export class MainAdminPageComponent implements OnInit{
 
+  activeTab!: string;
+
   constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService){}
 
   ngOnInit(): void {
-    
+    this.activeTab = 'daily';
+  }
+
+  selectTab(tab: string, event: any) {
+    event.preventDefault();
+    this.activeTab = tab;
   }
 
   get currentUser(): any {

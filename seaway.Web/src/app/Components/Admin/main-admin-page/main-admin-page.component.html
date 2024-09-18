@@ -1,42 +1,220 @@
 <div>
-    <div  class="mt-5 mb-5">
-        <h1>Welcome {{ currentUser.username }}</h1>
-        <div class="row mb-4" style="text-align: center; width: 80%;" >
-            <div class="col" style="text-align: right; margin-left: 20%;">
-                <button type="button" class="btn btn-danger" (click)="navigateToRooms()">
-                    <div>
-                        <div><img src="../../../../assets/images/homeImage.jpg"></div>
-                        <h2>Rooms</h2>
+    <div class="container">
+
+        <div>
+            <h1>Overview</h1>
+            <div class="row px-2">
+
+                <div class="col shadow p-3 mb-5 bg-body main-box">
+                    <div class="row">
+                        <div class="col-9" style="font-size: 18px;">
+                            <p>Total Available Rooms</p>
+                        </div>
+                        <div class="col-3">
+                            <img src="../../../../assets/images/reserve.png">
+                        </div>
                     </div>
-                </button>
-            </div>
-            <div class="col" style="text-align: left;">
-                <button type="button" class="btn btn-danger" (click)="navigateToActivities()"> 
-                    <div>
-                        <div><img src="../../../../assets/images/homeImage.jpg"></div>
-                        <h2>Activities</h2>
+                    <div style="padding-left: 50px;">
+                        <h2>20</h2>
                     </div>
-                </button>
+                </div>
+
+                <div class="col shadow p-3 mb-5 bg-body main-box">
+                    <div class="row">
+                        <div class="col-9" style="font-size: 18px;">
+                            <p>Total Booking Rooms</p>
+                        </div>
+                        <div class="col-3">
+                            <img src="../../../../assets/images/online-reservation.png">
+                        </div>
+                    </div>
+                    <div style="padding-left: 50px;">
+                        <h2>20</h2>
+                    </div>
+                </div>
+
+                <div class="col shadow p-3 mb-5 bg-body main-box">
+                    <div class="row">
+                        <div class="col-9" style="font-size: 18px;">
+                            <p>Available Offers</p>
+                        </div>
+                        <div class="col-3">
+                            <img src="../../../../assets/images/discount.png">
+                        </div>
+                    </div>
+                    <div style="padding-left: 50px;">
+                        <h2>20</h2>
+                    </div>
+                </div>
+
+                <div class="col shadow p-3 mb-5 bg-body main-box">
+                    <div class="row">
+                        <div class="col-9" style="font-size: 18px;">
+                            <p>Available Packages</p>
+                        </div>
+                        <div class="col-3">
+                            <img src="../../../../assets/images/badge.png">
+                        </div>
+                    </div>
+                    <div style="padding-left: 50px;">
+                        <h2>20</h2>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <div class="row" style="text-align: center; width: 80%;">
-            <div class="col" style=" text-align: right; margin-left: 20%;">
-                <button type="button" class="btn btn-danger">
-                    <div>
-                        <div><img src="../../../../assets/images/homeImage.jpg"></div>
-                        <h2>Offers</h2>
+        <div id="tabs" class="project-tab">
+            <h1>Summary</h1>
+
+              <div class="row shadow p-3 mb-5 bg-body tab-main">
+                <div class="col-md-12">
+                    <nav>
+                        <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link" id="daily-tab" data-toggle="tab" aria-controls="daily" aria-selected="true"  [class.active]="activeTab === 'daily'" (click)="selectTab('daily', $event)">
+                                Daily
+                            </a>
+                            <a class="nav-item nav-link" id="weekly-tab" data-toggle="tab" aria-controls="weekly" aria-selected="false" [class.active]="activeTab === 'weekly'" (click)="selectTab('weekly', $event)">
+                                Weekly
+                            </a>
+                            <a class="nav-item nav-link" id="monthly-tab" data-toggle="tab" aria-controls="monthly" aria-selected="false" [class.active]="activeTab === 'monthly'" (click)="selectTab('monthly', $event)">
+                                Monthly
+                            </a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab" [class.active]="activeTab === 'daily'">
+                            <table class="table table-striped mx-3 my-3 mt-4" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Id</th>
+                                        <th>Guest Count</th>
+                                        <th>Room Count</th>
+                                        <th>Booking Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>26-10-2024</td>
+                                        <td>Not Yet</td>
+                                        <td>Not Yet</td>
+                                        <td>
+                                            <button class="btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>24-10-2024</td>
+                                        <td>28-10-2024 08.30 a.m</td>
+                                        <td>28-10-2024 09.00 p.m</td>
+                                        <td>
+                                            <button>View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
+                                <pagination-controls
+                                    class="pagination-right"
+                                    
+                                    (totalItems)="10"
+                                    (itemsPerPage)="3"
+                                >
+                                </pagination-controls>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade show" id="weekly" role="tabpanel" aria-labelledby="weekly-tab" [class.active]="activeTab === 'weekly'">
+                            <table class="table table-striped mx-3 my-3 mt-4" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Id</th>
+                                        <th>Guest Count</th>
+                                        <th>Room Count</th>
+                                        <th>Booking Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>26-10-2024</td>
+                                        <td>Not Yet</td>
+                                        <td>Not Yet</td>
+                                        <td>
+                                            <button  class="btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>26-10-2024</td>
+                                        <td>Not Yet</td>
+                                        <td>Not Yet</td>
+                                        <td>
+                                            <button>View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade show" id="monthly" role="tabpanel" aria-labelledby="monthly-tab" [class.active]="activeTab === 'monthly'">
+                            <table class="table table-striped mx-3 my-3 mt-4" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Id</th>
+                                        <th>Guest Count</th>
+                                        <th>Room Count</th>
+                                        <th>Booking Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>26-10-2024</td>
+                                        <td>Not Yet</td>
+                                        <td>Not Yet</td>
+                                        <td>
+                                            <button  class="btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>3</td>
+                                        <td>1</td>
+                                        <td>28-10-2024</td>
+                                        <td>29-10-2024 03.00 p.m</td>
+                                        <td>Not Yet</td>
+                                        <td>
+                                            <button>View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </button>
+                </div>
             </div>
-            <div class="col" style=" text-align: left;">
-                <button type="button" class="btn btn-danger">
-                    <div>
-                        <div><img src="../../../../assets/images/homeImage.jpg"></div>
-                        <h2>Packages</h2>
-                    </div>
-                </button>
-            </div>
+
         </div>
+
     </div>
 </div>
