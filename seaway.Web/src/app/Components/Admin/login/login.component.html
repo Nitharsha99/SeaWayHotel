@@ -11,8 +11,8 @@
 
                 <div class="row" style="padding-top: 10px;">
                     <div class="col-md-12 mb-3" style="text-align: right;">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1" style="padding-left: 4px;">Login as Admin</label>
+                        <input type="checkbox" class="form-check-input" id="isAdmin" id="isAdmin" formControlName="isAdmin">
+                        <label class="form-check-label" for="isAdmin" style="padding-left: 4px;">Login as Admin</label>
                     </div>
 
                   </div>
@@ -20,14 +20,7 @@
                 <div class="row" style="padding-top: 10px; padding-bottom: 15px;">
                     <div class="col-md-12 mb-3">
                         <label for="username"  class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="SeawayHotel" required >
-                        <!-- <div 
-                        *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
-                        class="alert p-0 mb-0" >
-                          <div *ngIf="activityForm.controls['activityName']?.errors?.['required']">
-                            Please enter activity name
-                          </div>
-                        </div> -->
+                        <input type="text" class="form-control" id="username" placeholder="SeawayHotel" required formControlName="username">
                     </div>
 
                   </div>
@@ -38,25 +31,17 @@
                             <label for="description"  class="form-label col-7">Password</label>
                             <a class="col-5 forgot-password">Forgot Password?</a>
                         </div>
-                        <diV class="input">
-                            <input type="text" class="form-control" id="password" placeholder="........." required >
+                        <div class="input">
+                            <input type="password" class="form-control" id="password" placeholder="........." required formControlName="password" max="8" min="6">
                             <i (click)="passwordVisible()" [ngClass]="visible? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill' "></i>
-                        </diV>
-
-                    <!-- <div 
-                        *ngIf="activityForm.controls['description'].invalid && (activityForm.controls['description'].dirty || activityForm.controls['description'].touched)" 
-                        class="alert p-0 mb-0" >
-                          <div *ngIf="activityForm.controls['description']?.errors?.['required']">
-                            Please enter the description
-                          </div>
-                        </div> -->
+                        </div>
+                        <span style="color: gray;">(Password must contains atleast 6 characters)</span>
                     </div>
-
                   </div>
         
                 <div class="row" >
                     <div class="col-md-12" style="padding-top: 25px;">
-                        <button type="button" class="btn btn-login">Sign In</button>
+                        <button type="button" class="btn btn-login" [disabled]="loginForm.invalid" (click)="login()">Sign In</button>
                     </div>
                 </div>
             </div>

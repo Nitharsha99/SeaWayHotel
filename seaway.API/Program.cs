@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using seaway.API.Models;
+using System.Web.Http;
+using seaway.API.Models.ViewModels;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -38,16 +40,18 @@ try
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
+            options.SaveToken = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
-                ValidIssuer = builder.Configuration["JWTSettings:Issuer"],
-                ValidAudience = builder.Configuration["JWTSettings:Audience"],
+                //ValidIssuer = builder.Configuration["JWTSettings:Issuer"],
+                //ValidAudience = builder.Configuration["JWTSettings:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:Key"]))
             };
         });
+
 
     builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
@@ -60,8 +64,7 @@ try
 
     app.UseCors(policy => policy.AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .SetIsOriginAllowed(origin => true)
-                                .AllowCredentials());
+                                .WithOrigins("http://localhost:4200"));
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -77,6 +80,11 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    //app.MapPost("api/Login", async (LoginManager loginManager, [FromBody] LoginModel login) =>
+    //{
+
+    //});
 
     app.Run();
 
