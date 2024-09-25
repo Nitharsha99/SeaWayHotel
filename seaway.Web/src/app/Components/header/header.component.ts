@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterService } from 'src/app/Services/RouterService/router.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class HeaderComponent implements OnInit{
   passwordHeaderFooter: boolean = false;
   isDropdownOpen = false;
 
-  constructor(private routerService: RouterService){
+  constructor(private routerService: RouterService, private router: Router, private route: ActivatedRoute){
   }
 
   ngOnInit(): void {
@@ -31,6 +32,11 @@ export class HeaderComponent implements OnInit{
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  logout(){
+    localStorage.removeItem('token');
+    this.router.navigate(['/Administration']);
   }
 
 }

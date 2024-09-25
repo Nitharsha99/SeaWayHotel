@@ -5,6 +5,10 @@ using seaway.API.Configurations;
 using seaway.API.Models.ViewModels;
 using Newtonsoft.Json;
 using MailKit;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace seaway.API.Controllers
 {
@@ -27,9 +31,42 @@ namespace seaway.API.Controllers
             _emailManager = emailManager;
         }
 
+        //[HttpPost]
+        //[Route("login")]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> Login(LoginModel login)
+        //{
+        //    try
+        //    {
+        //        if (login.Username == null)
+        //        {
+        //            return BadRequest(DisplayMessages.NullInput);
+        //        }
+        //        else
+        //        {
+        //            bool isValidUser = false;
+
+        //            isValidUser = await _logginManager.CheckUserValid(login);
+
+        //            string responseBody = JsonConvert.SerializeObject(login);
+        //            string requestUrl = HttpContext.Request.Path.ToString();
+
+        //             _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+        //            return Ok(isValidUser);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(LogMessages.LoginError + ex.Message);
+        //        return StatusCode(500, "Internal Server Error");
+        //    }
+        //}
+
         [HttpPost]
-        [Route("login")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginModel login)
         {
@@ -41,16 +78,33 @@ namespace seaway.API.Controllers
                 }
                 else
                 {
-                    bool isValidUser = false;
-     
-                    isValidUser = await _logginManager.CheckUserValid(login);
+                    Admin loginUser = await _logginManager.CheckUserValid(login);
 
-                    string responseBody = JsonConvert.SerializeObject(login);
-                    string requestUrl = HttpContext.Request.Path.ToString();
+                    if (loginUser.AdminId > 0)
+                    {
+                        var loginKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTSettings:Key"]));
 
-                     _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+                        var tokenDescriptor = new SecurityTokenDescriptor
+                        {
+                            Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
+                            {
+                                new Claim("AdminID", loginUser.AdminId.ToString())
+                            }),
+                            Expires = DateTime.UtcNow.AddDays(1),
+                            SigningCredentials = new SigningCredentials(
+                                loginKey, SecurityAlgorithms.HmacSha256Signature
+                            )
+                        };
 
-                    return Ok(isValidUser);
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                        var token = tokenHandler.WriteToken(securityToken);
+                        return Ok(new { token });
+                    }
+                    else
+                    {
+                        return BadRequest("Wrong Login Credentials");
+                    }
                 }
             }
             catch (Exception ex)

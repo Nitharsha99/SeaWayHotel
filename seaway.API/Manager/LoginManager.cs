@@ -22,11 +22,11 @@ namespace seaway.API.Manager
             _conString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<bool> CheckUserValid(LoginModel login)
+        public async Task<Admin> CheckUserValid(LoginModel login)
         {
             if (string.IsNullOrEmpty(login.Password))
             {
-                return false;
+                return new Admin();
             }
             else
             {
@@ -44,10 +44,17 @@ namespace seaway.API.Manager
                     if(validUser)
                     {
                         AddLoginTime(admin);
+                        return admin;
+                    }
+                    else
+                    {
+                        return new Admin();
                     }
                 }
-
-                return validUser;
+                else
+                {
+                    return new Admin();
+                }
             }
         }
 
