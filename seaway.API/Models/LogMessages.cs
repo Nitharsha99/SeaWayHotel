@@ -15,6 +15,8 @@ namespace seaway.API.Models
 
         public const string GetAdminDataError = "An exception occurred while get all data from Admin --> ";
 
+        public const string GetBookingDataError = "An exception occurred while get all data from Bookings --> ";
+
         public const string GetRoomCategoryDataError = "An exception occurred while get all data from RoomCategory --> ";
         public const string DeleteRoomCategoryError = "An exception occurred while deleting room category --> ";
 
