@@ -30,7 +30,7 @@ namespace seaway.API.Manager
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@customerName", customer.Name);
-                        cmd.Parameters.AddWithValue("@email", customer.Email);
+                        cmd.Parameters.AddWithValue("@email", customer.Email_add);
                         cmd.Parameters.AddWithValue("@contactNo", customer.ContactNo);
                         cmd.Parameters.AddWithValue("@nicNo", customer?.NIC);
                         cmd.Parameters.AddWithValue("@passportNo", customer?.PassportNo);
