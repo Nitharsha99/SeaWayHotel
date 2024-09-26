@@ -24,7 +24,7 @@ namespace seaway.API.Manager
             try
             {
                 List<BookingListView> bookingList = new List<BookingListView>();
-                var query = "SELECT * FROM Bookings B JOIN Customer C ON B.CustomerId = C.CustomerId";
+                var query = "SELECT * FROM Bookings";
 
                 using(SqlConnection con = new SqlConnection(this._conString))
                 {
@@ -44,10 +44,10 @@ namespace seaway.API.Manager
                                 BookingDate = Convert.ToDateTime(reader["BookingDate"]),
                                 CheckIn = Convert.ToDateTime(reader["CheckinDateTime"]),
                                 CheckOut = Convert.ToDateTime(reader["CheckoutDateTime"]),
-                                CustomerId = (int)reader["CustomerId"],
+                                //CustomerId = (int)reader["CustomerId"],
                                 GuestCount = (int)reader["GuestCount"],
                                 RoomCount = (int)reader["RoomCount"],
-                                Name = reader["Name"].ToString(),
+                                //Name = reader["Name"].ToString(),
                                 Created = Convert.ToDateTime(reader["Created"]),
                                 Updated = Convert.ToDateTime(reader["Updated"]),
                             };
