@@ -4,6 +4,8 @@ import * as moment from 'moment';
 import { BookingList } from 'src/app/Models/bookings';
 import { AuthService } from 'src/app/Services/AuthService/auth.service';
 import { BookingsService } from 'src/app/Services/BookingsService/bookings.service';
+import { OfferService } from 'src/app/Services/OfferService/offer.service';
+import { RoomService } from 'src/app/Services/RoomService/room.service';
 
 @Component({
   selector: 'app-main-admin-page',
@@ -17,9 +19,14 @@ export class MainAdminPageComponent implements OnInit{
   filteredBookings: BookingList[] = [];
   page: number = 1;
   pageSize: number = 5;
+  availablePackages: number = 0;
+  availableoffers: number = 0;
+  totalAvailableRooms: number = 0;
+  totalBookingRooms: number = 0;
 
   constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService,
-              private bookingService: BookingsService
+              private bookingService: BookingsService, private offerService: OfferService, 
+              private roomService: RoomService
   ){}
 
   ngOnInit(): void {
@@ -27,8 +34,10 @@ export class MainAdminPageComponent implements OnInit{
     this.bookingService.GetAllBookings().subscribe(res => {
       this.bookings = res;
       this.getFilteredBookingList();
-      console.log(this.bookings)
     });
+    this.getAvailableOffers();
+    this.getBookingRoomsCount();
+    this.getAvailablePackages();
   }
 
   selectTab(tab: string, event: any) {
@@ -62,6 +71,32 @@ export class MainAdminPageComponent implements OnInit{
 
   onPageChange(event: any): void{
 
+  }
+
+  getAvailableOffers(): void{
+    this.offerService.GetOffers().subscribe(res => {
+      let item = res.filter(o => {
+        return o.isActive === true
+      });
+
+      this.availableoffers = item.length;
+    });
+  }
+
+  getAvailablePackages(): void{
+
+  }
+
+  getBookingRoomsCount(): void{
+    this.roomService.GetAllRooms().subscribe(res => {
+      this.totalAvailableRooms = res.filter(r => {
+        return r.isAvailable === true
+      }).length;
+
+      this.totalBookingRooms = res.filter(r => {
+        return r.isAvailable === false
+      }).length;
+    });
   }
 
 }
