@@ -53,7 +53,6 @@ export class AllOffersComponent implements OnInit{
   }
 
   onSearch(): void{
-    console.log(this.filters);
     this.filteredOffers = this.offers.filter(o => {
       return (
         (this.filters.search === '' || o.name.toLowerCase().includes(this.filters.search.toLowerCase())) &&
