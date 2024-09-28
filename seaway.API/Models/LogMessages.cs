@@ -31,6 +31,7 @@ namespace seaway.API.Models
 
         public const string NewRecordCreated = "Successfully Created New Record";
         public const string RecordUpdated = "Successfully Updated the Exist Record";
+        public const string GetExistData = "Successfully Get Exist data From Database";
 
         public const string AllAdminRetrieve = "SuccessFully All Admin Data retrieved";
         public const string AllOfferRetrieve = "SuccessFully All Offer Data retrieved";

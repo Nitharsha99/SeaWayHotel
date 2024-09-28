@@ -39,7 +39,7 @@ namespace seaway.API.Controllers
                     customer.NIC = customer.NIC ?? null;
 
 
-                    _customerManager.PostCustomer(customer);
+                    await _customerManager.PostCustomer(customer);
 
                     string requestUrl = HttpContext.Request.Path.ToString();
                     string responseBody = JsonConvert.SerializeObject(customer);

@@ -112,5 +112,37 @@ namespace seaway.API.Manager
                 throw;
             }
         }
+
+        public async Task<bool> NewBooking(Bookings bookings)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("NewBooking", con))
+                    {
+                        await con.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@guestCount", bookings.GuestCount);
+                        cmd.Parameters.AddWithValue("@roomCount", bookings.RoomCount);
+                        cmd.Parameters.AddWithValue("@customerId", bookings.CustomerId);
+                        cmd.Parameters.AddWithValue("@date", bookings.BookingDate);
+                        cmd.Parameters.AddWithValue("@checkIn", bookings.CheckIn);
+                        cmd.Parameters.AddWithValue("@checkOut", bookings.CheckOut);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                _logger.LogTrace(LogMessages.NewRecordCreated);
+                return true;
+            }
+            catch(Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                return false;
+            }
+        }
     }
 }
