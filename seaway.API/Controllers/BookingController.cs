@@ -15,13 +15,15 @@ namespace seaway.API.Controllers
         private readonly ILogger<LogHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly BookingManager _bookingManager;
+        private readonly CustomerManager _customerManager;
         LogHandler _log;
 
-        public BookingController(ILogger<LogHandler> logger, IConfiguration configuration, BookingManager bookingManager, LogHandler log)
+        public BookingController(ILogger<LogHandler> logger, IConfiguration configuration, BookingManager bookingManager, LogHandler log, CustomerManager customerManager)
         {
             _logger = logger;
             _configuration = configuration;
             _bookingManager = bookingManager;
+            _customerManager = customerManager;
             _log = log;
         }
 
@@ -46,6 +48,70 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.GetBookingDataError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> NewBooking(BookingAdd bookingAdd)
+        {
+            try
+            {
+                if(bookingAdd.PassportNo != null || bookingAdd.NIC != null)
+                {
+                    var existCustomer = await _customerManager.GetByUniqueId(bookingAdd.NIC ?? bookingAdd.PassportNo)
+                                   .ConfigureAwait(false);
+
+                    Bookings bookings = new Bookings
+                    {
+                        BookingDate = bookingAdd.BookingDate,
+                        CheckIn = bookingAdd.CheckIn,
+                        CheckOut = bookingAdd.CheckOut,
+                        GuestCount = bookingAdd.GuestCount,
+                        RoomCount = bookingAdd.RoomCount
+                    };
+
+                    if (existCustomer.Id == 0)
+                    {
+                        Customer customer = new Customer
+                        {
+                            Name = bookingAdd.Name,
+                            NIC = bookingAdd.NIC,
+                            PassportNo = bookingAdd.PassportNo,
+                            ContactNo = bookingAdd.ContactNo,
+                            Email_add = bookingAdd.Email_add
+                        };
+
+                        bookings.CustomerId = await _customerManager.PostCustomer(customer);
+                    }
+                    else
+                    {
+                        bookings.CustomerId = existCustomer.Id;
+                    }
+
+                    bool booked = await _bookingManager.NewBooking(bookings);
+
+                    if (booked)
+                    {
+                        return Ok(true);
+                    }
+                    else
+                    {
+                        return StatusCode(400, "Booking Failed");
+                    }
+                }
+                else
+                {
+                    return StatusCode(401, "Invalid Identity Id");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.InsertDataError + ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
