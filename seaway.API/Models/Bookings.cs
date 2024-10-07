@@ -11,5 +11,6 @@
         public int RoomCount { get; set; }
         public DateTime Created {  get; set; }
         public DateTime Updated { get; set; }
+        //virtual Customer Customer {  get; set; }
     }
 }
