@@ -35,6 +35,8 @@ import { AllRoomCategoiesComponent } from './Components/Admin/room-categories/al
 import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.component';
 import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
 import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
+import { AllManagersComponent } from './Components/Admin/managers/all-managers/all-managers.component';
+import { AddManagerComponent } from './Components/Admin/managers/add-manager/add-manager.component';
 
 
 @NgModule({
@@ -64,7 +66,9 @@ import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
     AllRoomCategoiesComponent,
     AllRoomsComponent,
     AddRoomComponent,
-    RoomsComponent
+    RoomsComponent,
+    AllManagersComponent,
+    AddManagerComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,72 @@
+<div style="width: 98%; border-radius: 15px; border: #4F4F4F;" class="mx-3 shadow-lg mb-5 bg-body"> 
+
+    <div class="mx-3 mt-4">
+        <div class="row">
+            <div class="col-3 mt-3">
+                <h1>Manager List</h1>
+            </div>
+            <div class="col-6 d-flex form-inputs mt-3" style="text-align: center;">
+                <i class="bi bi-search"></i>
+                <input type="text" [(ngModel)]="search" class="form-control" (input)="onSearch()" placeholder="Search Managers....">
+            </div>
+            <div class="col-3 mt-3" style="text-align: right;">
+                <button type="button" class="btn" (click)="navigateToAddManager()" style="background-color: #570254; color: #FFFFFF;">+ New Manager</button>
+            </div>
+        </div>  
+    </div>
+
+    <div class="mt-4 mb-5" style="text-align: center;" *ngIf="managers.length == 0"> <h3>There is no any Managers here now !!</h3></div>
+
+    <div *ngIf="filteredManagers.length > 0">
+        <table class="table table-striped mx-3 my-3 mt-4">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-white">Id</th>
+                    <th scope="col" class="text-white">Profile Pic</th>
+                    <th scope="col" class="text-white">UserName</th>  
+                    <th scope="col" class="text-white">Reset Password</th>
+                    <th scope="col" class="text-white">Edit</th>
+                    <th scope="col" class="text-white">Delete</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let man of filteredManagers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: managers.length }">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button type="button" class="btn re-pass-btn">
+                            Reset Password
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn edit-btn" (click)="navigateToUpdatePage()">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn delete-btn" (click)="deleteManager()">
+                            <i class="bi bi-trash-fill" style="color: #EE0004"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>    
+        </table>
+
+        <div class="pagination" style="display: flex; justify-content: flex-end; margin-right: 16px;">
+            <pagination-controls
+                class="pagination-right"
+                (pageChange)="onPageChange($event)"
+                (totalItems)="managers.length"
+                (itemsPerPage)="pageSize"
+            >
+            </pagination-controls>
+        </div>
+
+    </div>
+
+
+</div>
+
+

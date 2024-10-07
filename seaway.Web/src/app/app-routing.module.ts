@@ -19,6 +19,8 @@ import { AllRoomsComponent } from './Components/Admin/rooms/all-rooms/all-rooms.
 import { AllRoomCategoiesComponent } from './Components/Admin/room-categories/all-room-categoies/all-room-categoies.component';
 import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.component';
 import { AddRoomCategoryComponent } from './Components/Admin/room-categories/add-room-category/add-room-category.component';
+import { AllManagersComponent } from './Components/Admin/managers/all-managers/all-managers.component';
+import { AddManagerComponent } from './Components/Admin/managers/add-manager/add-manager.component';
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
@@ -59,7 +61,13 @@ const routes: Routes = [
     // {path: 'Packages', component: PackagesComponent,
      
     // },
-    {path: 'Managers', component: ManagersComponent}   
+    {path: 'Managers', component: ManagersComponent,
+      children: [
+        {path: '', component: AllManagersComponent},
+        {path: 'addManager', component: AddManagerComponent},
+        {path: 'editManager/:id', component: AddManagerComponent}
+      ]
+    }   
     ]
   }
 ];
