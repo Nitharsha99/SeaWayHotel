@@ -144,5 +144,79 @@ namespace seaway.API.Manager
                 return false;
             }
         }
+
+        public async Task<BookingDetails> GetBookingById(int id)
+        {
+            try
+            {
+                BookingDetails bookingDetails = new BookingDetails();
+
+                using(SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    await _con.OpenAsync();
+                    using (var cmd = new SqlCommand("GetBookingDetailsById", _con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@bookingId", id);
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var Id = (int)reader["BookingId"];
+
+                                if(bookingDetails?.Id == 0)
+                                {
+                                    bookingDetails = new BookingDetails
+                                    {
+                                        Id = Id,
+                                        BookingDate = Convert.ToDateTime(reader["BookingDate"]),
+                                        CheckIn = Convert.ToDateTime(reader["CheckinDateTime"]),
+                                        CheckOut = Convert.ToDateTime(reader["CheckoutDateTime"]),
+                                        GuestCount = (int)reader["GuestCount"],
+                                        RoomCount = (int)reader["RoomCount"],
+                                        Name = reader["Name"].ToString(),
+                                        Email_add = reader["Email"].ToString(),
+                                        ContactNo = reader["ContactNo"].ToString(),
+                                        PassportNo = reader["PassportNo"].ToString() ?? null,
+                                        NIC = reader["NIC_No"].ToString() ?? null,
+                                        Created = Convert.ToDateTime(reader["Created"]),
+                                        Updated = Convert.ToDateTime(reader["Updated"])
+                                    };
+                                }
+
+                                if (reader["BookingRoomId"] != DBNull.Value)
+                                {
+                                    var bookingRoom = new BookingRoom
+                                    {
+                                        BookingRoomId = (int)reader["BookingRoomId"],
+                                        RoomNumber = reader["RoomNumber"].ToString(),
+                                        RoomType = reader["RoomName"].ToString()
+                                    };
+
+                                    if(bookingDetails?.bookingRooms == null)
+                                    {
+                                        bookingDetails.bookingRooms = new List<BookingRoom>();
+                                    }
+
+                                    bookingDetails.bookingRooms.Add(bookingRoom);
+                                }
+                            }
+                        }
+                    }
+
+                    await _con.CloseAsync();
+                    _logger.LogTrace("SuccessFully Activity Data retrieved By Id : " + id);
+                }
+
+                return bookingDetails ?? new BookingDetails();
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(" Warning -- " + e.Message);
+                throw;
+            }
+        }
     }
 }

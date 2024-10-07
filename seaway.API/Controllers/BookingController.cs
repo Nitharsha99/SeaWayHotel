@@ -5,6 +5,7 @@ using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
 using seaway.API.Models.ViewModels;
+using System.Diagnostics;
 
 namespace seaway.API.Controllers
 {
@@ -112,6 +113,45 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.InsertDataError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpGet]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetBookingById([FromRoute] int Id)
+        {
+            try
+            {
+                if(Id > 0)
+                {
+                    BookingDetails bookingDetail = await _bookingManager.GetBookingById(Id).ConfigureAwait(false);
+
+                    string responseBody = JsonConvert.SerializeObject(bookingDetail);
+
+                    string requestUrl = HttpContext.Request.Path.ToString();
+
+                    _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                    if(bookingDetail.Id > 0)
+                    {
+                        return Ok(bookingDetail);
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.FindDataByIdError + ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
