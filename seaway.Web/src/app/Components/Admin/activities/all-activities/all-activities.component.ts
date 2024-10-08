@@ -17,6 +17,7 @@ export class AllActivitiesComponent implements OnInit{
   activities: Activity[] = [];
   filteredActivities: Activity[] = [];
   search: string = '';
+  totalItems: number = 0;
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private activityService: ActivityService, private commonFunction: CommonFunctionComponent){
@@ -26,7 +27,9 @@ export class AllActivitiesComponent implements OnInit{
     this.activityService.GetActivities().subscribe(res => {
       this.activities = res;
       this.filteredActivities = this.activities;
-    })
+      this.totalItems = this.filteredActivities.length;
+    });
+    this.updateDisplayeditems();
   }
 
   navigateToAddActivity(): void{
@@ -41,7 +44,8 @@ export class AllActivitiesComponent implements OnInit{
   onSearch(): void{
     this.filteredActivities = this.activities.filter(act => {
       return act.activityName.toLowerCase().includes(this.search.toLowerCase());
-    })
+    });
+    this.updateDisplayeditems();
   }
 
   deleteActivity(id: number){
@@ -70,6 +74,13 @@ export class AllActivitiesComponent implements OnInit{
 
   navigateToUpdatePage(id: number): void{
     this.router.navigate(['editActivity', id], {relativeTo: this.route});
+  }
+
+  
+  updateDisplayeditems(): void {
+    this.page =1;
+    this.pageSize = 5;
+    this.totalItems = this.filteredActivities.length;
   }
 
   onChange(act: any){

@@ -32,7 +32,7 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let act of filteredActivities | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: activities.length }">
+                <tr *ngFor="let act of filteredActivities | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
                     <td>{{act.activityId}}</td>
                     <td>{{act.activityName}}</td>
                     <td colspan="2">{{act.description}}</td>
@@ -59,7 +59,7 @@
             <pagination-controls
                 class="pagination-right"
                 (pageChange)="onPageChange($event)"
-                (totalItems)="activities.length"
+                (totalItems)="totalItems"
                 (itemsPerPage)="pageSize"
             >
             </pagination-controls>

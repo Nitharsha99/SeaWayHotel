@@ -31,17 +31,21 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let man of filteredManagers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: managers.length }">
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                <tr *ngFor="let man of filteredManagers | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalItems }">
+                    <td>{{man.adminId}}</td>
+                    <td style="align-items: center;">
+                        <div>
+                            <img [src]="man.picPath" class="profile-img">
+                        </div>
+                    </td>
+                    <td>{{man.username}}</td>
                     <td>
-                        <button type="button" class="btn re-pass-btn">
+                        <button type="button" class="btn" style="background-color: #570254; color: #FFFFFF;">
                             Reset Password
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn edit-btn" (click)="navigateToUpdatePage()">
+                        <button type="button" class="btn edit-btn" (click)="navigateToUpdatePage(man.adminId)">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
                     </td>
@@ -58,7 +62,7 @@
             <pagination-controls
                 class="pagination-right"
                 (pageChange)="onPageChange($event)"
-                (totalItems)="managers.length"
+                (totalItems)="totalItems"
                 (itemsPerPage)="pageSize"
             >
             </pagination-controls>

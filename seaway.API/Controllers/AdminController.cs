@@ -50,27 +50,30 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        if (admin.ProfilePic != null)
-                        {
-                            var folder = Path.Combine("wwwroot", "Uploads");
-                            if (!Directory.Exists(folder))
-                            {
-                                Directory.CreateDirectory(folder);
-                            }
-                            filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
+                        //if (admin.ProfilePic != null)
+                        //{
+                        //    var currentDir = Directory.GetCurrentDirectory();
+                        //    var folder = Path.Combine(currentDir, "wwwroot", "Uploads");
+                        //    if (!Directory.Exists(folder))
+                        //    {
+                        //        Directory.CreateDirectory(folder);
+                        //    }
+                        //    filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
 
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await admin.ProfilePic.CopyToAsync(stream);
-                            }
-                        }
+                        //    using (var stream = new FileStream(filePath, FileMode.Create))
+                        //    {
+                        //        await admin.ProfilePic.CopyToAsync(stream);
+                        //    }
+                        //}
 
                         var newAdmin = new Admin
                         {
                             Username = admin.Username,
                             Password = admin.Password,
                             IsAdmin = admin.IsAdmin,
-                            ProfilePicPath = filePath,
+                            PicPath = admin.PicPath,
+                            PicName = admin.PicName,
+                            PublicId = admin.PublicId,
                             CreatedBy = admin.CreatedBy
                         };
 
@@ -195,26 +198,14 @@ namespace seaway.API.Controllers
                         }
                         else
                         {
-                            if (admin.ProfilePic != null)
-                            {
-                                var folder = Path.Combine("wwwroot", "Uploads");
-                                if (!Directory.Exists(folder))
-                                {
-                                    Directory.CreateDirectory(folder);
-                                }
-                                filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
-
-                                using (var stream = new FileStream(filePath, FileMode.Create))
-                                {
-                                    await admin.ProfilePic.CopyToAsync(stream);
-                                }
-                            }
                             Admin updateAdmin = new Admin
                             {
                                 AdminId = Id,
                                 Username = admin.Username,
                                 IsAdmin = admin.IsAdmin,
-                                ProfilePicPath = filePath,
+                                PublicId = admin.PublicId,
+                                PicName = admin.PicName,
+                                PicPath = admin.PicPath,
                                 UpdatedBy = admin.UpdatedBy
                             };
 

@@ -11,22 +11,29 @@ h1{
 
 .form-inputs{
     position:relative;
-  }
+}
   
-  .form-inputs .form-control{
+.form-inputs .form-control{
     height:45px; 
     border-radius: 25px;
     box-shadow: inset 0 0 5px #4F4F4F;
-  }
+}
   
-  .form-inputs .form-control:focus{
+.form-inputs .form-control:focus{
     box-shadow: inset 0 0 5px #570254;
     border: none;
-  }
+}
   
-  .form-inputs i{
+.form-inputs i{
     font-size: 18px;
     position:absolute;
     right:25px;
     top:13px;
-  }
+}
+
+.profile-img{
+    width: 55px;
+    height: 55px;
+    border-radius: 30px;
+}
+
