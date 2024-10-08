@@ -31,9 +31,9 @@ namespace seaway.API.Manager
                 var hashPassword = _passwordHelper.HashingPassword(admin.Password);
                 byte[]? picPathBytes = null;
 
-                if (admin.ProfilePicPath != null)
+                if (admin.PicPath != null)
                 {
-                   picPathBytes = Encoding.UTF8.GetBytes(admin.ProfilePicPath);
+                   picPathBytes = Encoding.UTF8.GetBytes(admin.PicPath);
                 }
 
                 using (SqlConnection con = new SqlConnection(this._conString))
@@ -47,6 +47,8 @@ namespace seaway.API.Manager
                         cmd.Parameters.AddWithValue("@password", hashPassword);
                         cmd.Parameters.AddWithValue("@isAdmin", admin.IsAdmin);
                         cmd.Parameters.AddWithValue("@profilePic", picPathBytes);
+                        cmd.Parameters.AddWithValue("@picName", admin.PicName);
+                        cmd.Parameters.AddWithValue("@publicId", admin.PublicId);
                         cmd.Parameters.AddWithValue("@created", admin.CreatedBy);
 
                         await cmd.ExecuteNonQueryAsync();
@@ -94,7 +96,7 @@ namespace seaway.API.Manager
                                 Username = reader["Username"].ToString(),
                                 Password = reader["Password"].ToString(),
                                 IsAdmin = (bool)reader["IsAdmin"],
-                                ProfilePicPath = picFile,
+                                PicPath = picFile,
                                 Created = Convert.ToDateTime(reader["Created"]),
                                 CreatedBy = reader["CreatedBy"].ToString(),
                                 Updated = Convert.ToDateTime(reader["Updated"]),
@@ -143,9 +145,9 @@ namespace seaway.API.Manager
             {
                 byte[]? picPathBytes = null;
 
-                if (admin.ProfilePicPath != null)
+                if (admin.PicPath != null)
                 {
-                    picPathBytes = Encoding.UTF8.GetBytes(admin.ProfilePicPath);
+                    picPathBytes = Encoding.UTF8.GetBytes(admin.PicPath);
                 }
 
                 using (SqlConnection con = new SqlConnection(this._conString))
