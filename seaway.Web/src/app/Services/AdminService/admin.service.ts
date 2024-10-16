@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Admin } from 'src/app/Models/admin';
 
 @Injectable({
@@ -23,6 +23,22 @@ export class AdminService {
 
   FindAdminById(id: number): Observable<Admin>{
     return this.http.get<Admin>(this.baseUrl + "/" + id);
+  }
+
+  PostAdmin(data: any): Observable<any>{
+    return this.http.post<any>(this.baseUrl, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
+  }
+
+  UpdateAdmin(data: any, id: number): Observable<any>{
+    return this.http.put<any>(this.baseUrl+ "/" + id, data).pipe(
+      catchError((error: any) => {
+        return throwError(error.error);
+      })
+    );
   }
 
 }

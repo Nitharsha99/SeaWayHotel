@@ -136,7 +136,6 @@ export class AddActivitiesComponent implements OnInit{
     if(this.updateMode === false){
       formValue.createdBy = 'Nitharsha';
       this.activityService.PostActivity(formValue).subscribe((res) => {
-        console.log('post result', res);
         Swal.fire({
           title: "Activity Saved Successfully!!",
           icon: "success",

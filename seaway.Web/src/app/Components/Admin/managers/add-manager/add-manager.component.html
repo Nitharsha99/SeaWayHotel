@@ -11,10 +11,13 @@
                 <div class="mb-3 row prof-pic">
                     <ngx-dropzone (change)="onSelectProfilePic($event)" class="upload-field">
                         <img [src]="profilePic" alt="Profile Picture" class="profile-pic">
-                        <!-- <ngx-dropzone-preview *ngIf="profilePic" [removable]="true">
-                            <img [src]="profilePic" alt="Profile Picture" class="profile-pic">
-                        </ngx-dropzone-preview> -->
-                    </ngx-dropzone>                     
+                    </ngx-dropzone> 
+                    <!-- <div *ngIf="fileSize > 0"> -->
+                        <ngx-dropzone-preview *ngIf="fileSize > 0" [removable]="true" (removed)="onRemove()" class="dropzone-preview">
+                            <ngx-dropzone-label> {{file.name}} {{file.type}} </ngx-dropzone-label>
+                        </ngx-dropzone-preview>
+                        <!-- <ngx-dropzone-label [removable]="true"> {{file.name}} {{file.type}} </ngx-dropzone-label> -->
+                    <!-- </div>                    -->
                 </div>
 
                 <div class="row" style="padding-top: 10px;">
@@ -27,42 +30,44 @@
                 <div class="row mb-3" style="padding-top: 10px;">
                     <div class="col-md-12">
                         <label for="username"  class="form-label">Username<span>*</span></label>
-                        <input type="text" class="form-control" id="username" placeholder="username" required formControlName="username">
-                        <!-- <div 
-                        *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
+                        <input type="text" class="form-control" id="username" placeholder="Username" required formControlName="username">
+                        <div 
+                        *ngIf="managerForm.controls['username'].invalid && (managerForm.controls['username'].dirty || managerForm.controls['username'].touched)" 
                         class="alert p-0 mb-0" >
-                          <div *ngIf="activityForm.controls['activityName']?.errors?.['required']">
-                            Please enter activity name
+                          <div *ngIf="managerForm.controls['username']?.errors?.['required']">
+                            Please enter user name
                           </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mb-3" style="padding-top: 10px;">
+                <div class="row mb-3" style="padding-top: 15px;">
                     <div class="col-md-12">
                         <label for="password"  class="form-label">Password<span>*</span></label>
                         <input type="text" class="form-control" id="password" placeholder="password" required formControlName="password">
-                        <!-- <div 
-                        *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
+                        <span style="color: gray;">(Password should be minimum 6 characters and maximum 8 characters)</span>
+                        <div 
+                        *ngIf="managerForm.controls['password'].invalid && (managerForm.controls['password'].dirty || managerForm.controls['password'].touched)" 
                         class="alert p-0 mb-0" >
-                          <div *ngIf="activityForm.controls['activityName']?.errors?.['required']">
-                            Please enter activity name
+                          <div *ngIf="managerForm.controls['password']?.errors?.['required']">
+                            Please enter valid password
                           </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mb-3" style="padding-top: 10px;">
+                <div class="row mb-3" style="padding-top: 15px; padding-bottom: 10px;">
                     <div class="col-md-12">
                         <label for="co-password"  class="form-label">Confirm Password<span>*</span></label>
-                        <input type="text" class="form-control" id="co-password" placeholder="confirm password" required formControlName="password">
-                        <!-- <div 
-                        *ngIf="activityForm.controls['activityName'].invalid && (activityForm.controls['activityName'].dirty || activityForm.controls['activityName'].touched)" 
+                        <input type="text" class="form-control" id="co-password" placeholder="confirm password" required formControlName="confirmPassword">
+                        <span style="color: gray;">(Password should be minimum 6 characters and maximum 8 characters)</span>
+                        <div 
+                        *ngIf="managerForm.invalid && (managerForm.controls['confirmPassword'].dirty || managerForm.controls['confirmPassword'].touched) && managerForm.controls['confirmPassword'].value" 
                         class="alert p-0 mb-0" >
-                          <div *ngIf="activityForm.controls['activityName']?.errors?.['required']">
-                            Please enter activity name
+                          <div *ngIf="managerForm.errors?.['mismatch']">
+                            Please enter correct password
                           </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -74,7 +79,7 @@
                     </div>
                     <div class="col-9" style="text-align: right;">
                         <button *ngIf="updateMode == false" type="button" class="btn btn-reset" (click)="resetForm()">Reset</button>
-                        <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addManager()">
+                        <button style="background-color: #570254; color: #FFFFFF; margin-left: 25px;" type="button" class="btn" (click)="addManager()" [disabled]="managerForm.invalid">
                             {{updateMode ? 'Update' : 'Create'}}
                         </button>
                     </div>
