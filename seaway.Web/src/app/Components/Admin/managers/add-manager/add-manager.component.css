@@ -1,5 +1,5 @@
 .container{
-    width: 63%;
+    width: 58%;
     border-radius: 10px;
     margin-top: 2%;
     display: block;
@@ -35,7 +35,7 @@ span, .alert{
 }
 
 .prof-pic{
-    margin-left: 40%;
+    margin-left: 39%;
     width: 200px;
     height: 200px;
 }
@@ -44,4 +44,10 @@ img {
     height: 170px;
     width: 170px;
     object-fit: fill;
+    border-radius: 85px;
   }
+
+:host ::ng-deep .dropzone-preview{
+    height: 20px !important;
+    min-height: 20px;
+}

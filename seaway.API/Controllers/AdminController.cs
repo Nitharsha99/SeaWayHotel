@@ -30,7 +30,7 @@ namespace seaway.API.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> NewAdmin([FromForm]AdminWithProfilePic admin)
+        public async Task<IActionResult> NewAdmin(AdminWithProfilePic admin)
         {
             try
             {
