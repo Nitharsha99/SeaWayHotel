@@ -179,8 +179,8 @@ namespace seaway.API.Manager
                                         Name = reader["Name"].ToString(),
                                         Email_add = reader["Email"].ToString(),
                                         ContactNo = reader["ContactNo"].ToString(),
-                                        PassportNo = reader["PassportNo"].ToString() ?? null,
-                                        NIC = reader["NIC_No"].ToString() ?? null,
+                                        PassportNo = reader["PassportNo"] != DBNull.Value ? reader["PassportNo"].ToString() : null,
+                                        NIC = reader["NIC_No"] != DBNull.Value ? reader["NIC_No"].ToString() : null,
                                         Created = Convert.ToDateTime(reader["Created"]),
                                         Updated = Convert.ToDateTime(reader["Updated"])
                                     };
