@@ -37,3 +37,47 @@ h1{
     border-radius: 30px;
 }
 
+.table {
+    width: 98%;
+  }
+
+.pagination{
+    display: flex; 
+    justify-content: flex-end; 
+    margin-right: 16px;
+}
+
+.pagination-right{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-controls {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #570254;
+    color: #4F4F4F;
+  }
+
+  .pagination-right .ngx-pagination {
+    display: flex;
+    gap: 5px;
+  }
+
+  :host ::ng-deep .ngx-pagination .current{
+    color: #fefefe;
+    background:#570254 !important; 
+  }
+  
+  :host ::ng-deep .pagination-right .pagination-button:hover {
+    background-color:#4F4F4F; /* Example: change background color on hover */
+  }
+
+  .delete-btn:hover{
+    border-color: #EE0004;
+  }
+
+  .edit-btn:hover{
+    border-color: black;
+  }
+

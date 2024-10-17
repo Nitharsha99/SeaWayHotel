@@ -14,6 +14,7 @@ namespace seaway.API.Models
         public const string DeleteOfferError = "An exception occurred while deleting offer --> ";
 
         public const string GetAdminDataError = "An exception occurred while get all data from Admin --> ";
+        public const string DeleteAdminError = "An exception occurred while deleting admin --> ";
 
         public const string GetBookingDataError = "An exception occurred while get all data from Bookings --> ";
 

@@ -3,6 +3,7 @@ import { Admin } from 'src/app/Models/admin';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from 'src/app/Services/AdminService/admin.service';
 import { CommonFunctionComponent } from 'src/app/commonFunction';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-all-managers',
@@ -55,8 +56,28 @@ export class AllManagersComponent implements OnInit{
     this.router.navigate(['editManager', id], {relativeTo: this.route});
   }
 
-  deleteManager(): void{
-
+  deleteManager(id: number): void{
+    this.commonFunction.showDeleteNotification().then((result: { isConfirmed: any; dismiss: Swal.DismissReason; }) => {
+      if (result.isConfirmed) {
+       this.adminService.DeleteAdmin(id).subscribe(res => {
+        Swal.fire({
+          icon: "success",
+          title: "Successfully Deleted " + res.username + " !!! ",
+          showConfirmButton: true,
+          iconColor: '#570254',
+          confirmButtonColor: '#570254'
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          });
+        });
+       });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        setTimeout(() => {
+          window.location.reload();
+        });
+      }
+  });
   }
 
   

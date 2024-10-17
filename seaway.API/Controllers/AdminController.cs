@@ -50,21 +50,6 @@ namespace seaway.API.Controllers
                     }
                     else
                     {
-                        //if (admin.ProfilePic != null)
-                        //{
-                        //    var currentDir = Directory.GetCurrentDirectory();
-                        //    var folder = Path.Combine(currentDir, "wwwroot", "Uploads");
-                        //    if (!Directory.Exists(folder))
-                        //    {
-                        //        Directory.CreateDirectory(folder);
-                        //    }
-                        //    filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, admin.ProfilePic.FileName);
-
-                        //    using (var stream = new FileStream(filePath, FileMode.Create))
-                        //    {
-                        //        await admin.ProfilePic.CopyToAsync(stream);
-                        //    }
-                        //}
 
                         var newAdmin = new Admin
                         {
@@ -235,5 +220,55 @@ namespace seaway.API.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [HttpDelete]
+        [Route("{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteAdmin([FromRoute] int Id)
+        {
+            try
+            {
+                if(Id > 0)
+                {
+                    Admin admin = new Admin();
+                    bool isAdminRemoved = false;
+
+                    admin = await _adminManager.GetAdminById(Id);
+
+                    if(admin.AdminId > 0)
+                    {
+                        isAdminRemoved = await _adminManager.DeleteAdmin(Id);
+
+                        string requestUrl = HttpContext.Request.Path.ToString();
+                        string responseBody = JsonConvert.SerializeObject(admin);
+
+                        _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), requestUrl, responseBody);
+
+                        if (!isAdminRemoved)
+                        {
+                            return BadRequest(DisplayMessages.DeletingError);
+                        }
+                        else
+                        {
+                            return Ok(admin);
+                        }
+                    }
+                    else
+                    {
+                        return NotFound(DisplayMessages.EmptyExistData + Id);
+                    }
+                }
+                else
+                {
+                    return BadRequest(DisplayMessages.InvalidId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LogMessages.DeleteAdminError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }           
     }
 }

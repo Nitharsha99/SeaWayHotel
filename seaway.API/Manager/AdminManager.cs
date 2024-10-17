@@ -210,6 +210,37 @@ namespace seaway.API.Manager
             }
         }
 
+        public async Task<bool> DeleteAdmin(int id)
+        {
+            try
+            {
+                var query = "DELETE FROM Admin WHERE AdminId = @adminId";
+
+                using (SqlConnection con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        await con.OpenAsync();
+
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@adminId", id);
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                        _logger.LogTrace("Sucessfully Deleted Admin of Id --> " + id + "From Database");
+
+                        return true;
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(" Warning -- " + ex.Message);
+                return false;
+            }
+        }
+
 
     }
 }
