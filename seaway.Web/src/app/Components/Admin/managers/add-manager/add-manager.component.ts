@@ -33,19 +33,63 @@ export class AddManagerComponent implements OnInit{
     confirmPassword:['', [Validators.required]],
     isAdmin:[false],
     createdBy: ['Nitharsha'],
-    updatedBy: [''],
+    updatedBy: ['Nitharsha'],
+    created:[''],
+    updated:[''],
     picName: [null],
     picPath: [null],
     publicId: [null]
   }, { validators: this.checkPassword});
 
   ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      if(params['id']){
+        this.managerId = params['id'];
+        this.updateMode = true;
+        this.adminService.FindAdminById(this.managerId).subscribe(res => {
+          if(res != null){
+            if(res.picPath != null){
+              res.picPath = this.commonFunction.convertBase64ToString(res.picPath);
+              this.profilePic = res.picPath;
+            }
+            else{
+              this.profilePic = this.defaultPic;
+            }
+
+            const formattedRes = {
+              ...res,
+              created: this.formatDate(new Date(res.created)),
+              updated: this.formatDate(new Date(res.updated)),
+            };
+            
+            this.managerForm.patchValue(formattedRes);
+          }
+        });
+
+      }
+    });
+
     if(!this.updateMode){
       this.profilePic = this.defaultPic;
     }
-    else{
 
-    }
+    console.log(this.profilePic);
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
+    const day = (`0${date.getDate()}`).slice(-2);
+    const hours = date.getHours();
+    const minutes = (`0${date.getMinutes()}`).slice(-2);
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours to 12-hour format
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const paddedHours = (`0${formattedHours}`).slice(-2);
+
+    return `${year}-${month}-${day}  ${paddedHours}:${minutes} ${ampm}`;
   }
 
   onSelectProfilePic(event: any): void{
@@ -105,7 +149,26 @@ export class AddManagerComponent implements OnInit{
     const formValue = this.managerForm.value;
 
     if(this.updateMode){
-
+      if(this.managerId > 0){
+        this.adminService.UpdateAdmin(formValue, this.managerId).subscribe((res) => {
+          Swal.fire({
+            title: "Manager Updated Successfully!!",
+            icon: "success",
+            iconColor: '#570254',
+            showConfirmButton: true,
+            confirmButtonColor: '#570254'
+          }).then(() =>{
+            this.file = new File([], '');
+            setTimeout(() => {
+              window.location.reload();
+            });
+          });
+         },
+         (error) =>{
+          this.commonFunction.ShowErrorPopup(error);
+         }
+        )
+      }
     }
     else{
       formValue.createdBy = 'Nitharsha';
