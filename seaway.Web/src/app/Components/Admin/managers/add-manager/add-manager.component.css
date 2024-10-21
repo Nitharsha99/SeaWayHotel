@@ -35,7 +35,7 @@ span, .alert{
 }
 
 .prof-pic{
-    margin-left: 39%;
+    margin-left: 37%;
     width: 200px;
     height: 200px;
 }
@@ -47,7 +47,15 @@ img {
     border-radius: 85px;
   }
 
-:host ::ng-deep .dropzone-preview{
-    height: 20px !important;
-    min-height: 20px;
+.dropzone-label{
+    background-color: #F5F6FA;
+    border-radius: 10px;
+    color: black;
+    max-width: 300px;
+    padding-bottom: 8px;
+    text-align: center;
+}
+
+.readonly-field{
+    pointer-events: none;
 }

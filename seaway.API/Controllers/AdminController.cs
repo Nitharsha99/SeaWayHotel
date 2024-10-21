@@ -155,7 +155,7 @@ namespace seaway.API.Controllers
         [Route("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAdmin([FromForm]AdminWithProfilePic admin, int Id)
+        public async Task<IActionResult> UpdateAdmin(AdminWithProfilePic admin, int Id)
         {
             try
             {
