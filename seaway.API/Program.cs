@@ -36,6 +36,7 @@ try
     builder.Services.AddScoped<RoomManager>();
     builder.Services.AddScoped<EmailManager>();
     builder.Services.AddScoped<BookingManager>();
+    builder.Services.AddScoped<PackageManager>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
