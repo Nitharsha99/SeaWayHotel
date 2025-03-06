@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using seaway.API.Models.Enum;
+using System.Diagnostics.Eventing.Reader;
 
 namespace seaway.API.Manager
 {
@@ -65,6 +66,62 @@ namespace seaway.API.Manager
             {
                 _logger.LogWarning(" Warning -- " + ex.Message);
                 throw;
+            }
+        }
+
+        public async Task<Package> GetPackageById(int packageId)
+        {
+            try
+            {
+                Package package = null;
+                var query = "GetPackageById";
+
+               // using (SqlConnection _con = new SqlConnection(this._conString))
+                //{
+                    using (SqlConnection _con = new SqlConnection(this._conString))
+                    {
+                        SqlCommand command = new SqlCommand(query, _con);
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@packageId", SqlDbType.Int) { Value = packageId });
+
+                        await _con.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                package = new Package
+                                {
+                                    Id = (int)reader["PackageId"],
+                                    Name = reader["PackageName"].ToString(),
+                                    Description = reader["Description"].ToString(),
+                                    DurationType = (PackageDurationType)reader["PackageDurationType"],
+                                    Price = reader["Price"] == DBNull.Value ? 0.0 : Convert.ToDouble(reader["Price"]),
+                                    UserType = (UserType)reader["UserType"],
+                                    IsActive = Convert.ToBoolean(reader["IsActive"])
+
+                                };
+                            }
+                        }
+                        await _con.CloseAsync();
+                    }
+
+                //}
+                if (package != null)
+                {
+                    _logger.LogTrace($"Package with ID {packageId} retrieved successfully.");
+                }
+                else
+                {
+                    _logger.LogWarning($"Package with ID {packageId} not found.");
+
+                }
+                return package;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Warning --{ex.Message}");
+                throw;
+
             }
         }
     }

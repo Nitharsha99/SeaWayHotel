@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 using seaway.API.Configurations;
 using seaway.API.Manager;
 using seaway.API.Models;
+using System.Net;
+using System.Text;
+
 
 namespace seaway.API.Controllers
 {
@@ -49,6 +52,43 @@ namespace seaway.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(LogMessages.GetPackageDataError + ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [Route("{packageId:int}")]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetPackageById(int packageId)
+        {
+            try
+            {
+                if (packageId <= 0)
+                {
+                    return BadRequest("Invalid package ID.");
+                }
+                Package package = await _packageManager.GetPackageById(packageId);
+                if (package == null)
+                {
+                    _logger.LogWarning($"Package with ID {packageId} not found");
+                    return NotFound($"Package with ID {packageId} does not exist.");
+                }
+                string responseBody = JsonConvert.SerializeObject(package);
+                string requestUrl = HttpContext.Request.Path.ToString();
+                var response = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(responseBody, Encoding.UTF8, "application/json")
+                };
+
+                _log.setLogTrace(new HttpRequestMessage(), new HttpResponseMessage(), responseBody, requestUrl);
+
+                return Ok(package);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching package data:{ex.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
