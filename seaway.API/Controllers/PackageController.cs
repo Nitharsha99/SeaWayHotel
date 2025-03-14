@@ -92,5 +92,32 @@ namespace seaway.API.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [HttpDelete("{packageId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeletePackage(int packageId)
+        {
+            try
+            {
+                if (packageId <= 0)
+                {
+                    return BadRequest("Invalid package id");
+                }
+                bool isDeleted = await _packageManager.DeletePackage(packageId);
+                if (!isDeleted)
+                {
+                    _logger.LogWarning($"Package with Id {packageId} not found.");
+                    return NotFound($"Package with Id {packageId} does not exist.");
+                }
+                return Ok($"Package with Id {packageId} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting package: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }

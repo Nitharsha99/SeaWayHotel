@@ -76,8 +76,7 @@ namespace seaway.API.Manager
                 Package package = null;
                 var query = "GetPackageById";
 
-               // using (SqlConnection _con = new SqlConnection(this._conString))
-                //{
+              
                     using (SqlConnection _con = new SqlConnection(this._conString))
                     {
                         SqlCommand command = new SqlCommand(query, _con);
@@ -105,7 +104,7 @@ namespace seaway.API.Manager
                         await _con.CloseAsync();
                     }
 
-                //}
+                
                 if (package != null)
                 {
                     _logger.LogTrace($"Package with ID {packageId} retrieved successfully.");
@@ -122,6 +121,32 @@ namespace seaway.API.Manager
                 _logger.LogWarning($"Warning --{ex.Message}");
                 throw;
 
+            }
+        }
+
+        public async Task<bool> DeletePackage(int packageId)
+        {
+            try
+            {
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    SqlCommand command = new SqlCommand("DeletePackage", _con);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@packageId", SqlDbType.Int) { Value = packageId });
+
+                    await _con.OpenAsync();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+                    await _con.CloseAsync();
+
+                    _logger.LogTrace($"Package with ID {packageId} deleted successfully.");
+
+                    return rowsAffected > 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"Error deleting package: {ex.Message}");
+                throw;
             }
         }
     }
