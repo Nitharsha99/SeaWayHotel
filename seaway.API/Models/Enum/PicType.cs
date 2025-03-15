@@ -4,6 +4,7 @@
     {
         Room = 1,
         Activity = 2,
-        Offer = 3
+        Offer = 3,
+        Package = 4
     }
 }
