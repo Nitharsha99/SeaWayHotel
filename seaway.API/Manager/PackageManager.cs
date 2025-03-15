@@ -123,6 +123,48 @@ namespace seaway.API.Manager
 
             }
         }
+        public async Task<int> CreatePackage(Package package)
+        {
+            try
+            {
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    SqlCommand command = new SqlCommand("CreatePackage", _con);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@PackageName", package.Name);
+                    command.Parameters.AddWithValue("@Description", package.Description);
+                    command.Parameters.AddWithValue("@PackageDurationType", (int)package.DurationType);
+                    command.Parameters.AddWithValue("@Price", package.Price);
+                    command.Parameters.AddWithValue("@UserType", (int)package.UserType);
+                    command.Parameters.AddWithValue("@IsActive", package.IsActive);
+                    command.Parameters.AddWithValue("@CreatedBy", package.CreatedBy);
+                    command.Parameters.AddWithValue("@UpdatedBy", package.UpdatedBy);
+                    command.Parameters.AddWithValue("@Created", package.Created);
+                    command.Parameters.AddWithValue("@Updated", package.Updated);
+
+                    SqlParameter outputId = new SqlParameter("@PackageId", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(outputId);
+
+                    await _con.OpenAsync();
+                    await command.ExecuteNonQueryAsync();
+                    await _con.CloseAsync();
+
+                    int newPackageId = (int)outputId.Value;
+                    _logger.LogTrace($"Package created successfully with ID {newPackageId}");
+
+                    return newPackageId;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error creating package: {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<bool> DeletePackage(int packageId)
         {
