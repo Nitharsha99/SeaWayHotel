@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using seaway.API.Models.Enum;
+using System.Diagnostics;
 
 namespace seaway.API.Manager
 {
@@ -65,6 +66,76 @@ namespace seaway.API.Manager
             {
                 _logger.LogWarning(" Warning -- " + ex.Message);
                 throw;
+            }
+        }
+
+        public async Task<int> NewPackage(Package package)
+        {
+            try
+            {
+                int packageId = 0;
+                using (SqlConnection _con = new SqlConnection(this._conString))
+                {
+                    using (SqlCommand command = new SqlCommand("InsertPackage", _con))
+                    {
+                        await _con.OpenAsync();
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Clear();
+
+                        command.Parameters.AddWithValue("@name", package.Name);
+                        command.Parameters.AddWithValue("@description", package.Description);
+                        command.Parameters.AddWithValue("@durationType", package.DurationType);
+                        command.Parameters.AddWithValue("@price", package.Price);
+                        command.Parameters.AddWithValue("@userType", package.UserType);
+                        command.Parameters.AddWithValue("@createdBy", package.CreatedBy);
+
+                        packageId = (int?)(await command.ExecuteScalarAsync()) ?? 0;
+
+
+                    }
+                }
+
+                _logger.LogTrace("Get Package Id --> " + packageId);
+
+                return packageId;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning("Warning at Post Package : " + ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<bool> IsNameExist(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+            else
+            {
+                var result = (await GetAllPackages())
+                    .Where(a => a.Name.Trim().ToLower() == name.Trim().ToLower())
+                    .ToList();
+
+                if (result.Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsNameChange(string inputName, string oldName)
+        {
+            if (string.IsNullOrEmpty(inputName) || string.IsNullOrEmpty(oldName)) { return false; }
+            else
+            {
+                bool isNameChange = inputName.Trim().ToLower() != oldName.Trim().ToLower();
+                return isNameChange;
             }
         }
     }
