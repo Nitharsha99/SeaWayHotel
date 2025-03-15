@@ -92,34 +92,7 @@ namespace seaway.API.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreatePackage(Package package)
-        {
-            try
-            {
-                if(package == null||string.IsNullOrWhiteSpace(package.Name))
-                {
-                    return BadRequest("Invalid package data.");
-                }
-                int packageId=await _packageManager.CreatePackage(package);
-                if (packageId>0)
-                {
-                    return CreatedAtAction(nameof(GetPackageById),new { packageId }, new {message="Package created successfully", packageId});
-                }
-                else
-                {
-                    return BadRequest("Failed to create package");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error to create package:{ex.Message}");
-                return StatusCode(500, "Internal server Error");
-            }
-        }
+       
 
         [HttpDelete("{packageId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
