@@ -37,6 +37,9 @@ import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.com
 import { RoomsComponent } from './Components/Admin/rooms/rooms.component';
 import { AllManagersComponent } from './Components/Admin/managers/all-managers/all-managers.component';
 import { AddManagerComponent } from './Components/Admin/managers/add-manager/add-manager.component';
+import { PackagesComponent } from './Components/Admin/packages/packages.component';
+import { AddPackagesComponent } from './Components/Admin/packages/add-packages/add-packages.component';
+import { AllPackagesComponent } from './Components/Admin/packages/all-packages/all-packages.component';
 
 
 @NgModule({
@@ -68,7 +71,10 @@ import { AddManagerComponent } from './Components/Admin/managers/add-manager/add
     AddRoomComponent,
     RoomsComponent,
     AllManagersComponent,
-    AddManagerComponent
+    AddManagerComponent,
+    PackagesComponent,
+    AddPackagesComponent,
+    AllPackagesComponent
   ],
   imports: [
     BrowserModule,
