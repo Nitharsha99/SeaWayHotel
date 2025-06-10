@@ -21,7 +21,8 @@ import { AddRoomComponent } from './Components/Admin/rooms/add-room/add-room.com
 import { AddRoomCategoryComponent } from './Components/Admin/room-categories/add-room-category/add-room-category.component';
 import { AllManagersComponent } from './Components/Admin/managers/all-managers/all-managers.component';
 import { AddManagerComponent } from './Components/Admin/managers/add-manager/add-manager.component';
-
+import { PackagesComponent } from './Components/Admin/packages/packages.component';
+import { PackageListComponent } from './Components/Admin/packages/package-list/package-list.component';
 const routes: Routes = [
   {path: '', component: HomePageComponent},
   {path: "rooms", component: RoomListComponent},
@@ -58,9 +59,11 @@ const routes: Routes = [
         {path: 'editOffer/:id', component: AddOffersComponent}
       ]
     },
-    // {path: 'Packages', component: PackagesComponent,
-     
-    // },
+    {path: 'Packages', component: PackagesComponent,
+     children:[
+      {path: '', component:PackageListComponent}
+     ]
+    },
     {path: 'Managers', component: ManagersComponent,
       children: [
         {path: '', component: AllManagersComponent},
